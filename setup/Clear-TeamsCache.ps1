@@ -12,9 +12,10 @@ Write-Host ""
 # ── Step 1: Stop Teams ────────────────────────────────────────────
 Write-Host "  [1/4] Stopping Teams..." -ForegroundColor Yellow
 Stop-Process -Name MSTeams -Force -ErrorAction SilentlyContinue
-Start-Sleep -Seconds 3
 Write-Host "        Done." -ForegroundColor Green
 Write-Host ""
+
+Start-Sleep -Seconds 3
 
 # ── Step 2: Clear Cache ───────────────────────────────────────────
 Write-Host "  [2/4] Clearing Teams cache..." -ForegroundColor Yellow
@@ -23,11 +24,15 @@ Get-ChildItem -Path $cachePath -Recurse | Remove-Item -Recurse -Force -ErrorActi
 Write-Host "        Done." -ForegroundColor Green
 Write-Host ""
 
+Start-Sleep -Seconds 3
+
 # ── Step 3: Reset Teams App ───────────────────────────────────────
 Write-Host "  [3/4] Resetting Teams app..." -ForegroundColor Yellow
 Get-AppxPackage -Name MSTeams | Reset-AppxPackage
 Write-Host "        Done." -ForegroundColor Green
 Write-Host ""
+
+Start-Sleep -Seconds 3
 
 # ── Step 4: Start Teams ───────────────────────────────────────────
 Write-Host "  [4/4] Starting Teams..." -ForegroundColor Yellow
