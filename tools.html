@@ -3,384 +3,502 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IT Utility Tools</title>
+  <title>IT Control Centre</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
-    /* ── Reset & Base ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:        #0d1117;
-      --surface:   #161b22;
-      --border:    #30363d;
-      --text:      #e6edf3;
-      --muted:     #8b949e;
-      --blue:      #388bfd;
-      --blue-glow: rgba(56,139,253,.35);
-      --red:       #f85149;
-      --red-glow:  rgba(248,81,73,.35);
-      --green:     #3fb950;
-      --orange:    #d29922;
-      --radius:    14px;
+      --bg:          #07080f;
+      --card:        rgba(255,255,255,0.04);
+      --card-border: rgba(255,255,255,0.08);
+      --text:        #f0f2f8;
+      --muted:       #6b7280;
+      --blue:        #3b82f6;
+      --blue-mid:    #6366f1;
+      --red:         #ef4444;
+      --red-mid:     #f97316;
+      --green:       #22c55e;
+      --amber:       #f59e0b;
+    }
+
+    html, body {
+      height: 100%;
     }
 
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: 'Inter', -apple-system, sans-serif;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 2rem;
+      padding: 2rem 1.25rem;
       overflow-x: hidden;
+      position: relative;
     }
 
-    /* ── Background orbs ── */
-    body::before, body::after {
-      content: "";
+    /* ── Animated background blobs ── */
+    .blob {
       position: fixed;
       border-radius: 50%;
-      filter: blur(120px);
-      opacity: .18;
+      filter: blur(100px);
+      opacity: 0.12;
       pointer-events: none;
       z-index: 0;
+      animation: drift 18s ease-in-out infinite alternate;
     }
-    body::before {
-      width: 600px; height: 600px;
-      background: var(--blue);
-      top: -200px; left: -200px;
-    }
-    body::after {
-      width: 500px; height: 500px;
-      background: var(--red);
-      bottom: -150px; right: -150px;
+    .blob-1 { width: 700px; height: 700px; background: #6366f1; top: -250px; left: -200px; animation-duration: 20s; }
+    .blob-2 { width: 600px; height: 600px; background: #ef4444; bottom: -200px; right: -150px; animation-duration: 16s; animation-delay: -8s; }
+    .blob-3 { width: 400px; height: 400px; background: #3b82f6; top: 50%; left: 55%; animation-duration: 24s; animation-delay: -4s; }
+
+    @keyframes drift {
+      from { transform: translate(0, 0) scale(1); }
+      to   { transform: translate(40px, 30px) scale(1.08); }
     }
 
-    /* ── Card wrapper ── */
-    .card {
+    /* ── Main wrapper ── */
+    .wrapper {
       position: relative;
       z-index: 1;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      padding: 3rem 2.5rem;
-      max-width: 700px;
       width: 100%;
-      box-shadow: 0 16px 64px rgba(0,0,0,.5);
+      max-width: 780px;
     }
 
     /* ── Header ── */
-    .header { text-align: center; margin-bottom: 2.5rem; }
-    .header .icon { font-size: 2.8rem; display: block; margin-bottom: .75rem; }
-    .header h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -.4px; }
-    .header p  { color: var(--muted); margin-top: .5rem; font-size: .95rem; }
+    .header {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 72px;
+      height: 72px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #6366f1, #3b82f6);
+      font-size: 2rem;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 0 40px rgba(99,102,241,0.4);
+    }
+
+    .header h1 {
+      font-size: clamp(1.75rem, 4vw, 2.5rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      background: linear-gradient(135deg, #fff 30%, #a5b4fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 0.5rem;
+    }
+
+    .header p {
+      color: var(--muted);
+      font-size: 0.95rem;
+      font-weight: 400;
+    }
 
     /* ── Button grid ── */
-    .btn-grid {
+    .grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 1.25rem;
+      margin-bottom: 1.5rem;
     }
-    @media (max-width: 520px) { .btn-grid { grid-template-columns: 1fr; } }
+    @media (max-width: 540px) { .grid { grid-template-columns: 1fr; } }
 
-    /* ── Action button ── */
-    .action-btn {
+    /* ── Action card ── */
+    .action-card {
       position: relative;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: .85rem;
-      padding: 2rem 1.5rem;
-      border-radius: var(--radius);
-      border: 1px solid var(--border);
+      align-items: flex-start;
+      gap: 0;
+      padding: 0;
+      border-radius: 20px;
+      border: 1px solid var(--card-border);
+      background: var(--card);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
       cursor: pointer;
-      background: rgba(255,255,255,.03);
-      transition: transform .18s, box-shadow .18s, border-color .18s, background .18s;
-      text-align: center;
-      user-select: none;
+      overflow: hidden;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+      text-align: left;
       outline: none;
     }
-    .action-btn:hover  { transform: translateY(-4px); background: rgba(255,255,255,.06); }
-    .action-btn:active { transform: translateY(-1px); }
 
-    .action-btn.blue { border-color: rgba(56,139,253,.45); }
-    .action-btn.blue:hover { box-shadow: 0 8px 32px var(--blue-glow); border-color: var(--blue); }
+    .action-card:hover  { transform: translateY(-6px); }
+    .action-card:active { transform: translateY(-2px); }
 
-    .action-btn.red  { border-color: rgba(248,81,73,.45); }
-    .action-btn.red:hover  { box-shadow: 0 8px 32px var(--red-glow); border-color: var(--red); }
+    .action-card.blue:hover { box-shadow: 0 20px 60px rgba(99,102,241,0.25); border-color: rgba(99,102,241,0.5); }
+    .action-card.red:hover  { box-shadow: 0 20px 60px rgba(239,68,68,0.25);  border-color: rgba(239,68,68,0.5); }
 
-    /* Running state */
-    .action-btn.running { opacity: .75; pointer-events: none; }
-    .action-btn.running .btn-icon { animation: spin 1s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    .action-btn .btn-icon { font-size: 2.2rem; line-height: 1; display: inline-block; }
-    .action-btn .btn-label {
-      font-size: 1rem;
-      font-weight: 600;
+    /* Gradient top bar */
+    .card-bar {
+      width: 100%;
+      height: 4px;
+      border-radius: 20px 20px 0 0;
     }
-    .action-btn.blue .btn-label { color: #79b8ff; }
-    .action-btn.red  .btn-label { color: #ff7b72; }
-    .action-btn .btn-desc {
-      font-size: .8rem;
+    .blue .card-bar { background: linear-gradient(90deg, #6366f1, #3b82f6); }
+    .red  .card-bar { background: linear-gradient(90deg, #ef4444, #f97316); }
+
+    .card-body {
+      padding: 1.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+    }
+
+    /* Icon */
+    .card-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      flex-shrink: 0;
+    }
+    .blue .card-icon { background: rgba(99,102,241,0.15); }
+    .red  .card-icon { background: rgba(239,68,68,0.15); }
+
+    .card-text {}
+    .card-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 0.35rem;
+      letter-spacing: -0.01em;
+    }
+    .card-desc {
+      font-size: 0.82rem;
       color: var(--muted);
-      line-height: 1.4;
+      line-height: 1.55;
     }
 
-    /* ── Status strip (shows feedback after click) ── */
-    .status-strip {
-      margin-top: .75rem;
-      min-height: 1.4em;
-      font-size: .78rem;
-      font-weight: 600;
-      letter-spacing: .2px;
-      text-align: center;
-      opacity: 0;
-      transition: opacity .3s;
+    /* Action row */
+    .card-action {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 0.25rem;
     }
-    .status-strip.show { opacity: 1; }
-    .status-strip.ok   { color: var(--green); }
-    .status-strip.warn { color: var(--orange); }
+
+    .card-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 1.1rem;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .card-btn:hover { opacity: 0.85; }
+    .blue .card-btn { background: linear-gradient(135deg, #6366f1, #3b82f6); }
+    .red  .card-btn { background: linear-gradient(135deg, #ef4444, #f97316); }
+
+    .card-status {
+      font-size: 0.75rem;
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    .card-status.show { opacity: 1; }
+    .card-status.ok   { color: var(--green); }
+    .card-status.warn { color: var(--amber); }
+
+    /* ── Footer note ── */
+    .note {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 1rem 1.25rem;
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .note-icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem; }
+    .note strong { color: rgba(255,255,255,0.6); }
 
     /* ── Toast ── */
     #toast {
       position: fixed;
       bottom: 2rem;
       left: 50%;
-      transform: translateX(-50%) translateY(140%);
-      background: #1c2128;
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: .85rem 1.5rem;
+      transform: translateX(-50%) translateY(120%);
+      background: rgba(15,17,25,0.95);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 0.9rem 1.5rem;
       display: flex;
       align-items: center;
-      gap: .7rem;
-      font-size: .875rem;
+      gap: 0.75rem;
+      font-size: 0.875rem;
+      font-weight: 500;
       color: var(--text);
-      box-shadow: 0 8px 24px rgba(0,0,0,.5);
-      transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.6);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
       z-index: 1000;
       max-width: 90vw;
+      white-space: nowrap;
     }
     #toast.show { transform: translateX(-50%) translateY(0); }
-    #toast .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-    #toast .dot.green  { background: var(--green); }
-    #toast .dot.orange { background: var(--orange); }
+    .toast-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    .toast-dot.green  { background: var(--green); box-shadow: 0 0 8px var(--green); }
+    .toast-dot.amber  { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
 
-    /* ── Confirmation Modal ── */
+    /* ── Modal ── */
     .overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,.65);
+      background: rgba(0,0,0,0.7);
       z-index: 900;
-      backdrop-filter: blur(4px);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       align-items: center;
       justify-content: center;
       padding: 1.5rem;
     }
     .overlay.active { display: flex; }
+
     .modal {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
+      background: #10121e;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
       padding: 2rem;
-      max-width: 440px;
+      max-width: 420px;
       width: 100%;
-      box-shadow: 0 20px 60px rgba(0,0,0,.6);
-      animation: modalIn .2s ease;
+      box-shadow: 0 24px 80px rgba(0,0,0,0.8);
+      animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
     }
-    @keyframes modalIn {
-      from { opacity:0; transform: scale(.92); }
-      to   { opacity:1; transform: scale(1); }
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(0.88); }
+      to   { opacity: 1; transform: scale(1); }
     }
-    .modal h2 { font-size: 1.15rem; margin-bottom: .5rem; }
-    .modal p  { color: var(--muted); font-size: .875rem; line-height: 1.55; margin-bottom: 1.5rem; }
-    .modal-actions { display: flex; gap: .75rem; justify-content: flex-end; }
-    .btn-cancel, .btn-confirm {
-      padding: .55rem 1.2rem;
-      border-radius: 8px;
-      font-size: .875rem;
+
+    .modal-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 14px;
+      background: rgba(239,68,68,0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .modal h2 {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 0.6rem;
+      letter-spacing: -0.01em;
+    }
+
+    .modal p {
+      color: var(--muted);
+      font-size: 0.875rem;
+      line-height: 1.6;
+      margin-bottom: 1.5rem;
+    }
+
+    .modal p code {
+      background: rgba(255,255,255,0.08);
+      padding: 0.1em 0.45em;
+      border-radius: 5px;
+      font-family: monospace;
+      font-size: 0.85em;
+      color: #e2e8f0;
+    }
+
+    .modal-actions {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: flex-end;
+    }
+
+    .btn-cancel {
+      padding: 0.6rem 1.2rem;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: transparent;
+      color: var(--muted);
+      font-size: 0.875rem;
       font-weight: 600;
       cursor: pointer;
-      border: 1px solid var(--border);
-      transition: opacity .15s;
+      transition: color 0.15s, border-color 0.15s;
     }
-    .btn-cancel  { background: transparent; color: var(--muted); }
-    .btn-cancel:hover { color: var(--text); }
-    .btn-confirm { background: var(--red); color: #fff; border-color: var(--red); }
-    .btn-confirm:hover { opacity: .88; }
+    .btn-cancel:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
 
-    /* ── Footer note ── */
-    .note {
-      margin-top: 2rem;
-      padding-top: 1.5rem;
-      border-top: 1px solid var(--border);
-      font-size: .78rem;
-      color: var(--muted);
-      text-align: center;
-      line-height: 1.7;
+    .btn-confirm {
+      padding: 0.6rem 1.2rem;
+      border-radius: 10px;
+      border: none;
+      background: linear-gradient(135deg, #ef4444, #f97316);
+      color: #fff;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: opacity 0.15s;
     }
-    .note a { color: var(--blue); text-decoration: none; }
-    .note a:hover { text-decoration: underline; }
-    .note .alert {
-      background: rgba(210, 153, 34, .12);
-      border: 1px solid rgba(210, 153, 34, .35);
-      border-radius: 8px;
-      padding: .65rem 1rem;
-      color: var(--orange);
-      margin-bottom: .75rem;
+    .btn-confirm:hover { opacity: 0.85; }
+
+    /* ── Divider ── */
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent);
+      margin: 1.5rem 0;
     }
   </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════ CARD ══ -->
-<div class="card">
+<!-- Background blobs -->
+<div class="blob blob-1"></div>
+<div class="blob blob-2"></div>
+<div class="blob blob-3"></div>
 
+<div class="wrapper">
+
+  <!-- Header -->
   <div class="header">
-    <span class="icon">🛠️</span>
-    <h1>IT Utility Tools</h1>
-    <p>Click a button — the action runs instantly on <em>your</em> machine.</p>
+    <div class="logo">🛠️</div>
+    <h1>IT Control Centre</h1>
+    <p>Click a button — the action runs instantly on your PC.</p>
   </div>
 
-  <div class="btn-grid">
+  <!-- Action cards -->
+  <div class="grid">
 
-    <!-- ── Button 1: Clear Teams Cache ── -->
-    <button class="action-btn blue" id="btn-teams" onclick="runTeams()">
-      <span class="btn-icon">💬</span>
-      <span class="btn-label">Clear Teams Cache<br>&amp; Restart Teams</span>
-      <span class="btn-desc">
-        Stops Teams, deletes cached data, then restarts it.
-        Fixes most Teams glitches and login problems.
-      </span>
-      <div class="status-strip" id="status-teams"></div>
+    <!-- Teams -->
+    <button class="action-card blue" onclick="runTeams()">
+      <div class="card-bar"></div>
+      <div class="card-body">
+        <div class="card-icon">💬</div>
+        <div class="card-text">
+          <div class="card-title">Clear Teams Cache</div>
+          <div class="card-desc">Stops Teams, wipes cached data, resets the app, then restarts it fresh. Fixes login issues and glitches.</div>
+        </div>
+        <div class="card-action">
+          <span class="card-btn">▶ Run now</span>
+          <span class="card-status" id="status-teams"></span>
+        </div>
+      </div>
     </button>
 
-    <!-- ── Button 2: Restart PC ── -->
-    <button class="action-btn red" id="btn-restart" onclick="openRestartModal()">
-      <span class="btn-icon">🔄</span>
-      <span class="btn-label">Restart PC</span>
-      <span class="btn-desc">
-        Restarts your Windows PC with a 60-second delay
-        so you can save open files first.
-      </span>
-      <div class="status-strip" id="status-restart"></div>
+    <!-- Restart -->
+    <button class="action-card red" onclick="openModal()">
+      <div class="card-bar"></div>
+      <div class="card-body">
+        <div class="card-icon">⏻</div>
+        <div class="card-text">
+          <div class="card-title">Restart PC</div>
+          <div class="card-desc">Schedules a Windows restart in 60 seconds so you have time to save your work first.</div>
+        </div>
+        <div class="card-action">
+          <span class="card-btn">▶ Run now</span>
+          <span class="card-status" id="status-restart"></span>
+        </div>
+      </div>
     </button>
 
   </div>
 
-  <!-- ── Footer ── -->
+  <div class="divider"></div>
+
+  <!-- Note -->
   <div class="note">
-    <div class="alert">
-      ⚠️ <strong>First time?</strong> This tool only works after the IT Tools agent
-      has been installed on your PC by your IT team via SCCM.
-      If buttons do nothing, contact the helpdesk.
-    </div>
-    When you click a button, Windows will ask <em>"Allow this page to open IT Tools?"</em>
-    — click <strong>Open</strong> to proceed. A PowerShell window will appear and show progress.
+    <span class="note-icon">ℹ️</span>
+    <span>
+      <strong>First time?</strong> Run <strong>Start-Here.bat</strong> once to connect this website to your PC.
+      When you click a button your browser may ask <em>"Allow this site to open IT Tools?"</em> — click <strong>Open</strong>.
+    </span>
   </div>
 
 </div>
 
-<!-- ═══════════════════════════════ RESTART CONFIRMATION ══ -->
-<div class="overlay" id="restartOverlay">
+<!-- Restart modal -->
+<div class="overlay" id="overlay">
   <div class="modal">
-    <h2>⚠️ Restart your PC?</h2>
+    <div class="modal-icon">⚠️</div>
+    <h2>Restart your PC?</h2>
     <p>
-      Your PC will <strong>restart in 60 seconds</strong> after you click Confirm.
-      Please <strong>save all open files</strong> right now.<br><br>
-      If you change your mind, open a Command Prompt and type&nbsp;&nbsp;
-      <code>shutdown /a</code>&nbsp; to cancel.
+      Your PC will restart in <strong>60 seconds</strong>. Save all open files now.<br><br>
+      To cancel after confirming, open Command Prompt and type <code>shutdown /a</code>
     </p>
     <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeRestartModal()">Cancel</button>
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
       <button class="btn-confirm" onclick="runRestart()">Confirm Restart</button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════ TOAST ══ -->
+<!-- Toast -->
 <div id="toast">
-  <div class="dot green" id="toastDot"></div>
+  <div class="toast-dot green" id="toastDot"></div>
   <span id="toastMsg"></span>
 </div>
 
-<!-- ═══════════════════════════════════════════ JS ═══ -->
 <script>
-  // ── Toast ──────────────────────────────────────────────────
   function showToast(msg, type) {
-    const t   = document.getElementById('toast');
-    const dot = document.getElementById('toastDot');
+    const t = document.getElementById('toast');
     document.getElementById('toastMsg').textContent = msg;
-    dot.className = 'dot ' + (type === 'warn' ? 'orange' : 'green');
+    document.getElementById('toastDot').className = 'toast-dot ' + (type === 'warn' ? 'amber' : 'green');
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 4000);
   }
 
-  // ── Status strip beneath a button ─────────────────────────
   function setStatus(id, msg, type) {
     const el = document.getElementById(id);
     el.textContent = msg;
-    el.className = 'status-strip show ' + type;
-    if (type === 'ok') {
-      setTimeout(() => { el.className = 'status-strip'; }, 6000);
-    }
+    el.className = 'card-status show ' + type;
+    if (type === 'ok') setTimeout(() => el.className = 'card-status', 6000);
   }
 
-  // ── Launch a custom protocol URL ──────────────────────────
-  // This tells Windows to run the locally-installed handler.
-  function launchProtocol(action) {
-    // Use a hidden iframe so the current page doesn't navigate away.
-    const url = 'ittools://' + action;
+  function launch(action) {
     const frame = document.createElement('iframe');
     frame.style.display = 'none';
     document.body.appendChild(frame);
-    try {
-      frame.src = url;
-    } catch(e) { /* ignored */ }
-    // Clean up after a moment
+    try { frame.src = 'ittools://' + action; } catch(e) {}
     setTimeout(() => document.body.removeChild(frame), 2000);
   }
 
-  // ══════════════════════════════════════════════════════════
-  //  Action 1 – Clear Teams Cache
-  // ══════════════════════════════════════════════════════════
   function runTeams() {
-    launchProtocol('clear-teams-cache');
-
-    // Visual feedback
-    setStatus('status-teams', '⏳ Sent command to your PC...', 'ok');
-    showToast('✅ Teams cache clear command sent! A window will open shortly.', 'ok');
+    launch('clear-teams-cache');
+    setStatus('status-teams', '⏳ Running...', 'ok');
+    showToast('✅ Teams cache clear started — a window will appear shortly.', 'ok');
   }
 
-  // ══════════════════════════════════════════════════════════
-  //  Action 2 – Restart PC  (with confirmation modal)
-  // ══════════════════════════════════════════════════════════
-  function openRestartModal() {
-    document.getElementById('restartOverlay').classList.add('active');
-  }
-
-  function closeRestartModal() {
-    document.getElementById('restartOverlay').classList.remove('active');
-  }
+  function openModal()  { document.getElementById('overlay').classList.add('active'); }
+  function closeModal() { document.getElementById('overlay').classList.remove('active'); }
 
   function runRestart() {
-    closeRestartModal();
-    launchProtocol('restart-pc');
-
-    setStatus('status-restart', '⏳ Restart scheduled in 60 seconds...', 'warn');
-    showToast('🔄 Restart command sent! Save your work now. Cancel: shutdown /a', 'warn');
+    closeModal();
+    launch('restart-pc');
+    setStatus('status-restart', '⏳ Restarting in 60s…', 'warn');
+    showToast('⚠️ Restart in 60 seconds. To cancel: shutdown /a', 'warn');
   }
 
-  // ── Keyboard / click-outside for modal ────────────────────
-  document.getElementById('restartOverlay').addEventListener('click', function(e) {
-    if (e.target === this) closeRestartModal();
-  });
-  document.addEventListener('keydown', function(e) {
-    if (e.key === 'Escape') closeRestartModal();
-  });
+  document.getElementById('overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 </script>
 
 </body>
