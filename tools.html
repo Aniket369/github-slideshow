@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>IT Utility Tools</title>
+  <style>
+    /* ── Reset & Base ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d1117;
+      --surface:   #161b22;
+      --border:    #30363d;
+      --text:      #e6edf3;
+      --muted:     #8b949e;
+      --blue:      #388bfd;
+      --blue-glow: rgba(56,139,253,.35);
+      --red:       #f85149;
+      --red-glow:  rgba(248,81,73,.35);
+      --green:     #3fb950;
+      --radius:    14px;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      overflow-x: hidden;
+    }
+
+    /* ── Background orbs ── */
+    body::before, body::after {
+      content: "";
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      opacity: .18;
+      pointer-events: none;
+      z-index: 0;
+    }
+    body::before {
+      width: 600px; height: 600px;
+      background: var(--blue);
+      top: -200px; left: -200px;
+    }
+    body::after {
+      width: 500px; height: 500px;
+      background: var(--red);
+      bottom: -150px; right: -150px;
+    }
+
+    /* ── Card wrapper ── */
+    .card {
+      position: relative;
+      z-index: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 3rem 2.5rem;
+      max-width: 700px;
+      width: 100%;
+      box-shadow: 0 16px 64px rgba(0,0,0,.5);
+    }
+
+    /* ── Header ── */
+    .header { text-align: center; margin-bottom: 2.5rem; }
+    .header .icon { font-size: 2.8rem; display: block; margin-bottom: .75rem; }
+    .header h1 { font-size: 1.75rem; font-weight: 700; letter-spacing: -.4px; }
+    .header p  { color: var(--muted); margin-top: .5rem; font-size: .95rem; }
+
+    /* ── Button grid ── */
+    .btn-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+    @media (max-width: 520px) { .btn-grid { grid-template-columns: 1fr; } }
+
+    /* ── Action button ── */
+    .action-btn {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .85rem;
+      padding: 2rem 1.5rem;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      cursor: pointer;
+      background: rgba(255,255,255,.03);
+      transition: transform .18s, box-shadow .18s, border-color .18s, background .18s;
+      text-align: center;
+      user-select: none;
+    }
+    .action-btn:hover  { transform: translateY(-4px); background: rgba(255,255,255,.06); }
+    .action-btn:active { transform: translateY(-1px); }
+
+    .action-btn.blue { border-color: rgba(56,139,253,.45); }
+    .action-btn.blue:hover { box-shadow: 0 8px 32px var(--blue-glow); border-color: var(--blue); }
+
+    .action-btn.red  { border-color: rgba(248,81,73,.45); }
+    .action-btn.red:hover  { box-shadow: 0 8px 32px var(--red-glow); border-color: var(--red); }
+
+    .action-btn .btn-icon { font-size: 2.2rem; line-height: 1; }
+
+    .action-btn .btn-label {
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+    }
+    .action-btn.blue .btn-label { color: #79b8ff; }
+    .action-btn.red  .btn-label { color: #ff7b72; }
+
+    .action-btn .btn-desc {
+      font-size: .8rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    /* ── Pill badge ── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .5px;
+      text-transform: uppercase;
+      padding: .2rem .65rem;
+      border-radius: 99px;
+    }
+    .badge.ps { background: rgba(56,139,253,.15); color: var(--blue); }
+
+    /* ── Status toast ── */
+    #toast {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(120%);
+      background: #1c2128;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: .85rem 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+      font-size: .9rem;
+      color: var(--text);
+      box-shadow: 0 8px 24px rgba(0,0,0,.5);
+      transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+      z-index: 1000;
+      white-space: nowrap;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+    #toast .dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--green);
+      flex-shrink: 0;
+    }
+
+    /* ── Modal overlay ── */
+    .overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.65);
+      z-index: 900;
+      backdrop-filter: blur(4px);
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+    }
+    .overlay.active { display: flex; }
+
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2rem;
+      max-width: 440px;
+      width: 100%;
+      box-shadow: 0 20px 60px rgba(0,0,0,.6);
+      animation: modalIn .2s ease;
+    }
+    @keyframes modalIn {
+      from { opacity:0; transform: scale(.92); }
+      to   { opacity:1; transform: scale(1); }
+    }
+    .modal h2 { font-size: 1.15rem; margin-bottom: .5rem; }
+    .modal p  { color: var(--muted); font-size: .875rem; line-height: 1.55; margin-bottom: 1.5rem; }
+
+    .modal-actions { display: flex; gap: .75rem; justify-content: flex-end; }
+    .btn-cancel, .btn-confirm {
+      padding: .55rem 1.2rem;
+      border-radius: 8px;
+      font-size: .875rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      transition: opacity .15s;
+    }
+    .btn-cancel  { background: transparent; color: var(--muted); }
+    .btn-cancel:hover { color: var(--text); }
+    .btn-confirm { background: var(--red); color: #fff; border-color: var(--red); }
+    .btn-confirm:hover { opacity: .88; }
+
+    /* ── Footer note ── */
+    .note {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid var(--border);
+      font-size: .78rem;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.6;
+    }
+    .note strong { color: var(--text); }
+  </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════ CARD ══ -->
+<div class="card">
+
+  <div class="header">
+    <span class="icon">🛠️</span>
+    <h1>IT Utility Tools</h1>
+    <p>Quick-access scripts for common Windows maintenance tasks.</p>
+  </div>
+
+  <div class="btn-grid">
+
+    <!-- Button 1 – Teams Cache -->
+    <button class="action-btn blue" onclick="downloadTeamsScript()">
+      <span class="btn-icon">💬</span>
+      <span class="btn-label">Clear Teams Cache<br>&amp; Restart Teams</span>
+      <span class="btn-desc">
+        Stops Teams, wipes cached data&nbsp;(blobs, IndexedDB, GPU cache),
+        then relaunches the app.
+      </span>
+      <span class="badge ps">⬇ PowerShell Script</span>
+    </button>
+
+    <!-- Button 2 – Restart PC -->
+    <button class="action-btn red" onclick="openRestartModal()">
+      <span class="btn-icon">🔄</span>
+      <span class="btn-label">Restart PC</span>
+      <span class="btn-desc">
+        Gracefully restarts Windows&nbsp;— saves open files first.
+        A&nbsp;confirmation prompt appears before download.
+      </span>
+      <span class="badge ps">⬇ PowerShell Script</span>
+    </button>
+
+  </div>
+
+  <div class="note">
+    <strong>How to use:</strong> Click a button to download the <code>.ps1</code> script.
+    Right-click the downloaded file → <strong>Run with PowerShell</strong>.
+    If prompted, choose <em>Run anyway</em> (scripts are unsigned).
+    Administrator rights may be required.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ RESTART CONFIRMATION ══ -->
+<div class="overlay" id="restartOverlay">
+  <div class="modal">
+    <h2>⚠️ Restart your PC?</h2>
+    <p>
+      This will download a script that <strong>restarts Windows in&nbsp;30&nbsp;seconds</strong>
+      after you run it. Save any open work before running the script.
+      You can cancel with <code>shutdown /a</code> in the terminal if needed.
+    </p>
+    <div class="modal-actions">
+      <button class="btn-cancel" onclick="closeRestartModal()">Cancel</button>
+      <button class="btn-confirm" onclick="downloadRestartScript()">Yes, Download Script</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════ TOAST ══ -->
+<div id="toast">
+  <div class="dot"></div>
+  <span id="toastMsg">Script downloaded!</span>
+</div>
+
+<!-- ═══════════════════════════════════════════════ JS ═══ -->
+<script>
+  /* ── Toast helper ── */
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 3200);
+  }
+
+  /* ── Generic script downloader ── */
+  function downloadScript(filename, content) {
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     SCRIPT 1 – Clear Teams cache & restart Teams
+  ═══════════════════════════════════════════════════════ */
+  function downloadTeamsScript() {
+    const ps = `# ============================================================
+#  Clear Microsoft Teams Cache and Restart Teams
+#  Run with: Right-click -> Run with PowerShell
+# ============================================================
+
+Write-Host ""
+Write-Host "  Teams Cache Cleaner" -ForegroundColor Cyan
+Write-Host "  -------------------" -ForegroundColor DarkCyan
+Write-Host ""
+
+# 1. Kill Teams processes
+Write-Host "[1/3] Stopping Microsoft Teams..." -ForegroundColor Yellow
+$procs = @("Teams", "ms-teams", "msedgewebview2")
+foreach ($p in $procs) {
+    Get-Process -Name $p -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
+}
+Start-Sleep -Seconds 3
+Write-Host "      Teams stopped." -ForegroundColor Green
+
+# 2. Delete cache folders
+Write-Host "[2/3] Clearing cache folders..." -ForegroundColor Yellow
+
+$cachePaths = @(
+    "$env:APPDATA\\Microsoft\\Teams\\Cache",
+    "$env:APPDATA\\Microsoft\\Teams\\blob_storage",
+    "$env:APPDATA\\Microsoft\\Teams\\databases",
+    "$env:APPDATA\\Microsoft\\Teams\\GPUCache",
+    "$env:APPDATA\\Microsoft\\Teams\\IndexedDB",
+    "$env:APPDATA\\Microsoft\\Teams\\Local Storage",
+    "$env:APPDATA\\Microsoft\\Teams\\tmp",
+    "$env:LOCALAPPDATA\\Packages\\MSTeams_8wekyb3d8bbwe\\LocalCache\\Microsoft\\MSTeams",
+    "$env:LOCALAPPDATA\\Microsoft\\Teams\\Current\\Cache"
+)
+
+$cleared = 0
+foreach ($path in $cachePaths) {
+    if (Test-Path $path) {
+        try {
+            Remove-Item -Path $path -Recurse -Force -ErrorAction Stop
+            Write-Host "      Cleared: $path" -ForegroundColor DarkGray
+            $cleared++
+        } catch {
+            Write-Host "      Skipped (in use): $path" -ForegroundColor DarkYellow
+        }
+    }
+}
+Write-Host "      $cleared folder(s) cleared." -ForegroundColor Green
+
+# 3. Restart Teams – try new Teams first, fall back to classic
+Write-Host "[3/3] Restarting Teams..." -ForegroundColor Yellow
+
+$newTeams     = "$env:LOCALAPPDATA\\Microsoft\\WindowsApps\\ms-teams.exe"
+$classicTeams = "$env:LOCALAPPDATA\\Microsoft\\Teams\\Update.exe"
+
+if (Test-Path $newTeams) {
+    Start-Process $newTeams
+    Write-Host "      New Teams launched." -ForegroundColor Green
+} elseif (Test-Path $classicTeams) {
+    Start-Process $classicTeams -ArgumentList "--processStart", "Teams.exe"
+    Write-Host "      Classic Teams launched." -ForegroundColor Green
+} else {
+    Write-Host "      Teams executable not found. Please start Teams manually." -ForegroundColor Red
+}
+
+Write-Host ""
+Write-Host "  Done! Teams cache has been cleared." -ForegroundColor Cyan
+Write-Host ""
+Start-Sleep -Seconds 3
+`;
+    downloadScript('Clear-TeamsCache.ps1', ps);
+    showToast('📥 Clear-TeamsCache.ps1 downloaded!');
+  }
+
+  /* ═══════════════════════════════════════════════════════
+     SCRIPT 2 – Restart PC
+  ═══════════════════════════════════════════════════════ */
+  function downloadRestartScript() {
+    closeRestartModal();
+    const ps = `# ============================================================
+#  Restart PC
+#  Run with: Right-click -> Run with PowerShell
+#  To cancel: open a terminal and type  shutdown /a
+# ============================================================
+
+Write-Host ""
+Write-Host "  PC Restart Utility" -ForegroundColor Cyan
+Write-Host "  ------------------" -ForegroundColor DarkCyan
+Write-Host ""
+Write-Host "  Your PC will restart in 30 seconds." -ForegroundColor Yellow
+Write-Host "  Save all open files now!" -ForegroundColor Yellow
+Write-Host ""
+Write-Host "  To cancel, open a terminal (Win+R > cmd) and type:" -ForegroundColor DarkGray
+Write-Host "      shutdown /a" -ForegroundColor White
+Write-Host ""
+
+# Countdown display
+for ($i = 30; $i -gt 0; $i--) {
+    Write-Host "  Restarting in $i second(s)...   " -NoNewline -ForegroundColor DarkYellow
+    Write-Host "`r" -NoNewline
+    Start-Sleep -Seconds 1
+}
+
+# Trigger restart
+shutdown /r /t 0 /c "Restarting PC via IT Utility Tool"
+`;
+    downloadScript('Restart-PC.ps1', ps);
+    showToast('📥 Restart-PC.ps1 downloaded!');
+  }
+
+  /* ── Modal helpers ── */
+  function openRestartModal()  {
+    document.getElementById('restartOverlay').classList.add('active');
+  }
+  function closeRestartModal() {
+    document.getElementById('restartOverlay').classList.remove('active');
+  }
+
+  // Close modal on overlay click
+  document.getElementById('restartOverlay').addEventListener('click', function(e) {
+    if (e.target === this) closeRestartModal();
+  });
+
+  // Close modal on Escape
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') closeRestartModal();
+  });
+</script>
+
+</body>
+</html>
