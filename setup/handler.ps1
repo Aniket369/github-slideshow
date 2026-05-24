@@ -1,32 +1,37 @@
 # ================================================================
-#  IT Tools – URL Protocol Handler
-#  Installed to: C:\IT-Tools\handler.ps1
-#
-#  This script is called automatically by Windows every time a
-#  user clicks a button on the IT Tools website.
-#  It receives the URL (e.g. ittools://clear-teams-cache) and
-#  runs the matching script.
+#  IT Tools - URL Protocol Handler
+#  This file lives locally on your PC (installed once by Start-Here.bat).
+#  It always fetches the LATEST script from GitHub when a button
+#  is clicked, so updates are automatic - no file management needed.
 # ================================================================
 
-param (
-    [string]$Url   # e.g. "ittools://clear-teams-cache"
-)
+param ([string]$Url)
 
-# Strip the protocol prefix to get the action name
 $action = $Url -replace 'ittools://', '' -replace '/$', '' -replace '/', ''
 
-$scriptFolder = Split-Path -Parent $MyInvocation.MyCommand.Path
+# ── Always pull latest scripts from GitHub ────────────────────────
+$base = "https://raw.githubusercontent.com/Aniket369/github-slideshow/claude/teams-cache-restart-website-FqEts/setup"
+
+function Run-FromGitHub($scriptName) {
+    Write-Host ""
+    Write-Host "  Fetching latest script from GitHub..." -ForegroundColor DarkGray
+    try {
+        $url    = "$base/$scriptName"
+        $tmp    = [System.IO.Path]::GetTempPath() + $scriptName
+        Invoke-WebRequest -Uri $url -OutFile $tmp -UseBasicParsing
+        Unblock-File -Path $tmp
+        & $tmp
+        Remove-Item $tmp -Force -ErrorAction SilentlyContinue
+    } catch {
+        Write-Host "  ERROR: Could not fetch script. Check your internet connection." -ForegroundColor Red
+        Write-Host "  $($_.Exception.Message)" -ForegroundColor DarkRed
+        Start-Sleep -Seconds 5
+    }
+}
 
 switch ($action) {
-
-    'clear-teams-cache' {
-        & "$scriptFolder\Clear-TeamsCache.ps1"
-    }
-
-    'restart-pc' {
-        & "$scriptFolder\Restart-PC.ps1"
-    }
-
+    'clear-teams-cache' { Run-FromGitHub "Clear-TeamsCache.ps1" }
+    'restart-pc'        { Run-FromGitHub "Restart-PC.ps1"       }
     default {
         Write-Host "Unknown action: $action" -ForegroundColor Red
         Start-Sleep -Seconds 3

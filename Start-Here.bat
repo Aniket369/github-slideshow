@@ -1,7 +1,8 @@
 @echo off
 :: ================================================================
-::  IT Tools - Personal Machine Setup
-::  Just double-click this. No admin needed.
+::  IT Tools - One-Time Setup
+::  Run this ONCE. After that, just use the website.
+::  No admin needed.
 :: ================================================================
 
 title IT Tools Setup
@@ -10,53 +11,47 @@ color 0A
 cls
 echo.
 echo  =====================================================
-echo    IT Tools  -  Personal Machine Setup
+echo    IT Tools  -  One-Time Setup
 echo  =====================================================
 echo.
-echo  This will:
-echo    1. Copy scripts to your user folder (no admin needed)
-echo    2. Register the ittools:// shortcut in Windows
-echo    3. Open the website in your browser
+echo  This sets up the connection between the website
+echo  and your PC. Run this once - that's it.
+echo.
+echo  After setup, just open tools.html and click buttons.
+echo  Scripts always run the latest version automatically.
 echo.
 echo  Press any key to start, or close this window to cancel.
 echo.
 pause > nul
 
-:: ── Step 1: Create install folder in user profile (no admin needed) ──
+:: ── Step 1: Create install folder ─────────────────────────────────
 echo.
 echo  [1/3] Creating install folder...
-
 set "INSTALL=%USERPROFILE%\IT-Tools"
-
 if not exist "%INSTALL%" mkdir "%INSTALL%"
-echo        Folder: %INSTALL%
+echo        %INSTALL%
 echo        OK.
 
-:: ── Step 2: Copy the scripts ──────────────────────────────────────────
+:: ── Step 2: Copy ONLY the handler (scripts come from GitHub live) ──
 echo.
-echo  [2/3] Copying scripts...
+echo  [2/3] Installing handler...
 
 set "SOURCE=%~dp0setup"
 
 if not exist "%SOURCE%\handler.ps1" (
     echo.
-    echo  ERROR: Cannot find the setup\ folder.
-    echo  Make sure Start-Here.bat and the setup\ folder are in the same place.
+    echo  ERROR: Cannot find the setup\ folder next to this bat file.
+    echo  Make sure Start-Here.bat and the setup\ folder are together.
     echo.
     pause
     exit /b 1
 )
 
-copy /Y "%SOURCE%\handler.ps1"          "%INSTALL%\handler.ps1"          > nul
-copy /Y "%SOURCE%\Clear-TeamsCache.ps1" "%INSTALL%\Clear-TeamsCache.ps1" > nul
-copy /Y "%SOURCE%\Restart-PC.ps1"       "%INSTALL%\Restart-PC.ps1"       > nul
+copy /Y "%SOURCE%\handler.ps1" "%INSTALL%\handler.ps1" > nul
+powershell -Command "Unblock-File '%INSTALL%\handler.ps1'" > nul 2>&1
+echo        OK.
 
-:: Unblock scripts so Windows doesnt flag them as downloaded from internet
-powershell -Command "Get-ChildItem '%INSTALL%\*.ps1' | Unblock-File" > nul 2>&1
-
-echo        OK - 3 scripts copied.
-
-:: ── Step 3: Register ittools:// under HKCU (no admin needed!) ─────────
+:: ── Step 3: Register ittools:// protocol (no admin needed) ────────
 echo.
 echo  [3/3] Registering ittools:// in Windows...
 
@@ -68,16 +63,17 @@ reg add "HKCU\SOFTWARE\Classes\ittools\shell"              /ve /d "" /f         
 reg add "HKCU\SOFTWARE\Classes\ittools\shell\open"         /ve /d "" /f                        > nul
 reg add "HKCU\SOFTWARE\Classes\ittools\shell\open\command" /ve /d "%CMD%" /f                   > nul
 
-echo        OK - Windows now knows what to do when you click a button.
+echo        OK.
 
-:: ── Done ──────────────────────────────────────────────────────────────
+:: ── Done ──────────────────────────────────────────────────────────
 echo.
 echo  =====================================================
-echo    All done! Opening website in your browser...
+echo    Setup complete! Opening website now...
 echo  =====================================================
+echo.
+echo  From now on, just open tools.html and click buttons.
+echo  No more setup needed - ever.
 echo.
 
 start "" "%~dp0tools.html"
-
-echo  This window will close in 3 seconds.
 timeout /t 3 > nul
