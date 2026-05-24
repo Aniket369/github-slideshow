@@ -8,247 +8,96 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg:          #07080f;
-      --card:        rgba(255,255,255,0.04);
-      --card-border: rgba(255,255,255,0.08);
-      --text:        #f0f2f8;
-      --muted:       #6b7280;
-      --blue:        #3b82f6;
-      --blue-mid:    #6366f1;
-      --red:         #ef4444;
-      --red-mid:     #f97316;
-      --green:       #22c55e;
-      --amber:       #f59e0b;
+      --bg: #07080f; --card: rgba(255,255,255,0.04); --card-border: rgba(255,255,255,0.08);
+      --text: #f0f2f8; --muted: #6b7280; --green: #22c55e; --amber: #f59e0b;
     }
-
     html, body { height: 100%; }
-
     body {
-      background: var(--bg);
-      color: var(--text);
+      background: var(--bg); color: var(--text);
       font-family: 'Inter', -apple-system, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem 1.25rem;
-      overflow-x: hidden;
-      position: relative;
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 2rem 1.25rem; overflow-x: hidden; position: relative;
     }
-
-    .blob {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(100px);
-      opacity: 0.12;
-      pointer-events: none;
-      z-index: 0;
-      animation: drift 18s ease-in-out infinite alternate;
-    }
+    .blob { position: fixed; border-radius: 50%; filter: blur(110px); opacity: 0.11; pointer-events: none; z-index: 0; animation: drift 18s ease-in-out infinite alternate; }
     .blob-1 { width: 700px; height: 700px; background: #6366f1; top: -250px; left: -200px; animation-duration: 20s; }
     .blob-2 { width: 600px; height: 600px; background: #ef4444; bottom: -200px; right: -150px; animation-duration: 16s; animation-delay: -8s; }
-    .blob-3 { width: 400px; height: 400px; background: #3b82f6; top: 50%; left: 55%; animation-duration: 24s; animation-delay: -4s; }
-
-    @keyframes drift {
-      from { transform: translate(0, 0) scale(1); }
-      to   { transform: translate(40px, 30px) scale(1.08); }
-    }
-
-    .wrapper { position: relative; z-index: 1; width: 100%; max-width: 780px; }
-
+    .blob-3 { width: 350px; height: 350px; background: #10b981; top: 60%; left: 50%; animation-duration: 22s; animation-delay: -4s; }
+    @keyframes drift { from { transform: translate(0,0) scale(1); } to { transform: translate(40px,30px) scale(1.1); } }
+    .wrapper { position: relative; z-index: 1; width: 100%; max-width: 800px; }
     .header { text-align: center; margin-bottom: 2.5rem; }
-
-    .logo {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 72px; height: 72px;
-      border-radius: 20px;
-      background: linear-gradient(135deg, #6366f1, #3b82f6);
-      font-size: 2rem;
-      margin-bottom: 1.25rem;
-      box-shadow: 0 0 40px rgba(99,102,241,0.4);
-    }
-
-    .header h1 {
-      font-size: clamp(1.75rem, 4vw, 2.5rem);
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      background: linear-gradient(135deg, #fff 30%, #a5b4fc);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 0.5rem;
-    }
-
+    .logo { display: inline-flex; align-items: center; justify-content: center; width: 72px; height: 72px; border-radius: 20px; background: linear-gradient(135deg,#6366f1,#3b82f6); font-size: 2rem; margin-bottom: 1.25rem; box-shadow: 0 0 40px rgba(99,102,241,0.4); }
+    .header h1 { font-size: clamp(1.75rem,4vw,2.5rem); font-weight: 800; letter-spacing: -0.03em; background: linear-gradient(135deg,#fff 30%,#a5b4fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 0.5rem; }
     .header p { color: var(--muted); font-size: 0.95rem; }
-
-    .grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.25rem;
-      margin-bottom: 1.5rem;
-    }
-    @media (max-width: 540px) { .grid { grid-template-columns: 1fr; } }
-
-    .action-card {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      padding: 0;
-      border-radius: 20px;
-      border: 1px solid var(--card-border);
-      background: var(--card);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      cursor: pointer;
-      overflow: hidden;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-      text-align: left;
-      outline: none;
-    }
-
-    .action-card:hover  { transform: translateY(-6px); }
+    .grid-top { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; margin-bottom: 1.25rem; }
+    @media (max-width: 540px) { .grid-top { grid-template-columns: 1fr; } }
+    .action-card { position: relative; display: flex; flex-direction: column; padding: 0; border-radius: 20px; border: 1px solid var(--card-border); background: var(--card); backdrop-filter: blur(20px); cursor: pointer; overflow: hidden; transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease; text-align: left; outline: none; width: 100%; }
+    .action-card:hover { transform: translateY(-5px); }
     .action-card:active { transform: translateY(-2px); }
     .action-card.blue:hover { box-shadow: 0 20px 60px rgba(99,102,241,0.25); border-color: rgba(99,102,241,0.5); }
-    .action-card.red:hover  { box-shadow: 0 20px 60px rgba(239,68,68,0.25);  border-color: rgba(239,68,68,0.5); }
-
-    .card-bar { width: 100%; height: 4px; border-radius: 20px 20px 0 0; }
-    .blue .card-bar { background: linear-gradient(90deg, #6366f1, #3b82f6); }
-    .red  .card-bar { background: linear-gradient(90deg, #ef4444, #f97316); }
-
+    .action-card.red:hover  { box-shadow: 0 20px 60px rgba(239,68,68,0.25); border-color: rgba(239,68,68,0.5); }
+    .action-card.teal:hover { box-shadow: 0 20px 60px rgba(16,185,129,0.25); border-color: rgba(16,185,129,0.5); }
+    .card-bar { width: 100%; height: 4px; }
+    .blue .card-bar { background: linear-gradient(90deg,#6366f1,#3b82f6); }
+    .red  .card-bar { background: linear-gradient(90deg,#ef4444,#f97316); }
+    .teal .card-bar { background: linear-gradient(90deg,#10b981,#06b6d4); }
     .card-body { padding: 1.75rem; display: flex; flex-direction: column; gap: 1rem; width: 100%; }
-
-    .card-icon {
-      width: 52px; height: 52px;
-      border-radius: 14px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.6rem;
-    }
+    .card-body.horizontal { flex-direction: row; align-items: center; gap: 1.5rem; }
+    .card-body.horizontal .card-text { flex: 1; }
+    .card-body.horizontal .card-action { margin-top: 0; flex-shrink: 0; }
+    .card-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; flex-shrink: 0; }
     .blue .card-icon { background: rgba(99,102,241,0.15); }
     .red  .card-icon { background: rgba(239,68,68,0.15); }
-
-    .card-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.35rem; letter-spacing: -0.01em; }
+    .teal .card-icon { background: rgba(16,185,129,0.15); }
+    .card-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.35rem; letter-spacing: -0.01em; color: var(--text); }
     .card-desc  { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
-
-    .card-action { display: flex; align-items: center; justify-content: space-between; margin-top: 0.25rem; }
-
-    .card-btn {
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      padding: 0.5rem 1.1rem;
-      border-radius: 10px;
-      font-size: 0.82rem; font-weight: 600;
-      color: #fff; border: none; cursor: pointer;
-      transition: opacity 0.15s;
-    }
+    .card-action { display: flex; align-items: center; gap: 1rem; margin-top: 0.25rem; }
+    .card-btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.55rem 1.2rem; border-radius: 10px; font-size: 0.82rem; font-weight: 600; color: #fff; border: none; cursor: pointer; transition: opacity 0.15s; white-space: nowrap; flex-shrink: 0; }
     .card-btn:hover { opacity: 0.85; }
-    .blue .card-btn { background: linear-gradient(135deg, #6366f1, #3b82f6); }
-    .red  .card-btn { background: linear-gradient(135deg, #ef4444, #f97316); }
-
+    .blue .card-btn { background: linear-gradient(135deg,#6366f1,#3b82f6); }
+    .red  .card-btn { background: linear-gradient(135deg,#ef4444,#f97316); }
+    .teal .card-btn { background: linear-gradient(135deg,#10b981,#06b6d4); }
     .card-status { font-size: 0.75rem; font-weight: 600; opacity: 0; transition: opacity 0.3s; }
     .card-status.show { opacity: 1; }
     .card-status.ok   { color: var(--green); }
     .card-status.warn { color: var(--amber); }
-
-    .note {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--card-border);
-      border-radius: 14px;
-      padding: 1rem 1.25rem;
-      display: flex; align-items: flex-start; gap: 0.75rem;
-      font-size: 0.8rem; color: var(--muted); line-height: 1.6;
-    }
+    .divider { height: 1px; background: linear-gradient(90deg,transparent,rgba(255,255,255,0.06),transparent); margin: 1.5rem 0; }
+    .note { background: rgba(255,255,255,0.03); border: 1px solid var(--card-border); border-radius: 14px; padding: 1rem 1.25rem; display: flex; align-items: flex-start; gap: 0.75rem; font-size: 0.8rem; color: var(--muted); line-height: 1.6; }
     .note-icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem; }
     .note strong { color: rgba(255,255,255,0.6); }
-
-    #toast {
-      position: fixed; bottom: 2rem; left: 50%;
-      transform: translateX(-50%) translateY(120%);
-      background: rgba(15,17,25,0.95);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 14px; padding: 0.9rem 1.5rem;
-      display: flex; align-items: center; gap: 0.75rem;
-      font-size: 0.875rem; font-weight: 500; color: var(--text);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.6);
-      backdrop-filter: blur(20px);
-      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-      z-index: 1000; max-width: 90vw; white-space: nowrap;
-    }
+    #toast { position: fixed; bottom: 2rem; left: 50%; transform: translateX(-50%) translateY(120%); background: rgba(15,17,25,0.95); border: 1px solid rgba(255,255,255,0.1); border-radius: 14px; padding: 0.9rem 1.5rem; display: flex; align-items: center; gap: 0.75rem; font-size: 0.875rem; font-weight: 500; color: var(--text); box-shadow: 0 12px 40px rgba(0,0,0,0.6); backdrop-filter: blur(20px); transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1); z-index: 1000; max-width: 90vw; white-space: nowrap; }
     #toast.show { transform: translateX(-50%) translateY(0); }
     .toast-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
     .toast-dot.green { background: var(--green); box-shadow: 0 0 8px var(--green); }
     .toast-dot.amber { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
-
-    .overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.7); z-index: 900;
-      backdrop-filter: blur(8px);
-      align-items: center; justify-content: center; padding: 1.5rem;
-    }
+    .toast-dot.teal  { background: #10b981; box-shadow: 0 0 8px #10b981; }
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.7); z-index: 900; backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 1.5rem; }
     .overlay.active { display: flex; }
-
-    .modal {
-      background: #10121e;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 20px; padding: 2rem;
-      max-width: 420px; width: 100%;
-      box-shadow: 0 24px 80px rgba(0,0,0,0.8);
-      animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    @keyframes popIn {
-      from { opacity: 0; transform: scale(0.88); }
-      to   { opacity: 1; transform: scale(1); }
-    }
-
-    .modal-icon {
-      width: 52px; height: 52px; border-radius: 14px;
-      background: rgba(239,68,68,0.15);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.5rem; margin-bottom: 1rem;
-    }
+    .modal { background: #10121e; border: 1px solid rgba(255,255,255,0.1); border-radius: 20px; padding: 2rem; max-width: 420px; width: 100%; box-shadow: 0 24px 80px rgba(0,0,0,0.8); animation: popIn 0.25s cubic-bezier(0.34,1.56,0.64,1); }
+    @keyframes popIn { from { opacity:0; transform: scale(0.88); } to { opacity:1; transform: scale(1); } }
+    .modal-icon { width: 52px; height: 52px; border-radius: 14px; background: rgba(239,68,68,0.15); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; margin-bottom: 1rem; }
     .modal h2 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.6rem; letter-spacing: -0.01em; }
-    .modal p { color: var(--muted); font-size: 0.875rem; line-height: 1.6; margin-bottom: 1.5rem; }
+    .modal p  { color: var(--muted); font-size: 0.875rem; line-height: 1.6; margin-bottom: 1.5rem; }
     .modal p code { background: rgba(255,255,255,0.08); padding: 0.1em 0.45em; border-radius: 5px; font-family: monospace; font-size: 0.85em; color: #e2e8f0; }
-
     .modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
-
-    .btn-cancel {
-      padding: 0.6rem 1.2rem; border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: transparent; color: var(--muted);
-      font-size: 0.875rem; font-weight: 600; cursor: pointer;
-      transition: color 0.15s, border-color 0.15s;
-    }
+    .btn-cancel { padding: 0.6rem 1.2rem; border-radius: 10px; border: 1px solid rgba(255,255,255,0.1); background: transparent; color: var(--muted); font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: color 0.15s, border-color 0.15s; }
     .btn-cancel:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
-
-    .btn-confirm {
-      padding: 0.6rem 1.2rem; border-radius: 10px; border: none;
-      background: linear-gradient(135deg, #ef4444, #f97316);
-      color: #fff; font-size: 0.875rem; font-weight: 600; cursor: pointer;
-      transition: opacity 0.15s;
-    }
+    .btn-confirm { padding: 0.6rem 1.2rem; border-radius: 10px; border: none; background: linear-gradient(135deg,#ef4444,#f97316); color: #fff; font-size: 0.875rem; font-weight: 600; cursor: pointer; transition: opacity 0.15s; }
     .btn-confirm:hover { opacity: 0.85; }
-
-    .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent); margin: 1.5rem 0; }
   </style>
 </head>
 <body>
-
 <div class="blob blob-1"></div>
 <div class="blob blob-2"></div>
 <div class="blob blob-3"></div>
-
 <div class="wrapper">
   <div class="header">
     <div class="logo">🛠️</div>
     <h1>IT Control Centre</h1>
     <p>Click a button — the action runs instantly on your PC.</p>
   </div>
-
-  <div class="grid">
+  <div class="grid-top">
     <button class="action-card blue" onclick="runTeams()">
       <div class="card-bar"></div>
       <div class="card-body">
@@ -263,7 +112,6 @@
         </div>
       </div>
     </button>
-
     <button class="action-card red" onclick="openModal()">
       <div class="card-bar"></div>
       <div class="card-body">
@@ -279,18 +127,26 @@
       </div>
     </button>
   </div>
-
+  <button class="action-card teal" onclick="runGPUpdate()">
+    <div class="card-bar"></div>
+    <div class="card-body horizontal">
+      <div class="card-icon">🖥️</div>
+      <div class="card-text">
+        <div class="card-title">Run GPUpdate</div>
+        <div class="card-desc">Opens a terminal and runs <strong style="color:rgba(255,255,255,0.5)">gpupdate /force</strong> to apply the latest Group Policy settings from your organisation.</div>
+      </div>
+      <div class="card-action">
+        <span class="card-btn">▶ Run now</span>
+        <span class="card-status" id="status-gpu"></span>
+      </div>
+    </div>
+  </button>
   <div class="divider"></div>
-
   <div class="note">
     <span class="note-icon">ℹ️</span>
-    <span>
-      <strong>First time?</strong> Run <strong>Start-Here.bat</strong> once to connect this website to your PC.
-      When you click a button your browser may ask <em>&ldquo;Allow this site to open IT Tools?&rdquo;</em> — click <strong>Open</strong>.
-    </span>
+    <span><strong>First time?</strong> Run <strong>Start-Here.bat</strong> once to connect this website to your PC. When you click a button your browser may ask <em>&ldquo;Allow this site to open IT Tools?&rdquo;</em> &mdash; click <strong>Open</strong>.</span>
   </div>
 </div>
-
 <div class="overlay" id="overlay">
   <div class="modal">
     <div class="modal-icon">⚠️</div>
@@ -302,48 +158,18 @@
     </div>
   </div>
 </div>
-
-<div id="toast">
-  <div class="toast-dot green" id="toastDot"></div>
-  <span id="toastMsg"></span>
-</div>
-
+<div id="toast"><div class="toast-dot green" id="toastDot"></div><span id="toastMsg"></span></div>
 <script>
-  function showToast(msg, type) {
-    const t = document.getElementById('toast');
-    document.getElementById('toastMsg').textContent = msg;
-    document.getElementById('toastDot').className = 'toast-dot ' + (type === 'warn' ? 'amber' : 'green');
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 4000);
-  }
-  function setStatus(id, msg, type) {
-    const el = document.getElementById(id);
-    el.textContent = msg; el.className = 'card-status show ' + type;
-    if (type === 'ok') setTimeout(() => el.className = 'card-status', 6000);
-  }
-  function launch(action) {
-    const frame = document.createElement('iframe');
-    frame.style.display = 'none';
-    document.body.appendChild(frame);
-    try { frame.src = 'ittools://' + action; } catch(e) {}
-    setTimeout(() => document.body.removeChild(frame), 2000);
-  }
-  function runTeams() {
-    launch('clear-teams-cache');
-    setStatus('status-teams', '⏳ Running...', 'ok');
-    showToast('✅ Teams cache clear started — a window will appear shortly.', 'ok');
-  }
-  function openModal()  { document.getElementById('overlay').classList.add('active'); }
-  function closeModal() { document.getElementById('overlay').classList.remove('active'); }
-  function runRestart() {
-    closeModal();
-    launch('restart-pc');
-    setStatus('status-restart', '⏳ Restarting in 60s…', 'warn');
-    showToast('⚠️ Restart in 60 seconds. To cancel: shutdown /a', 'warn');
-  }
-  document.getElementById('overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+  function showToast(msg,type){const t=document.getElementById('toast');document.getElementById('toastMsg').textContent=msg;document.getElementById('toastDot').className='toast-dot '+(type==='warn'?'amber':type==='teal'?'teal':'green');t.classList.add('show');setTimeout(()=>t.classList.remove('show'),4000);}
+  function setStatus(id,msg,type){const el=document.getElementById(id);el.textContent=msg;el.className='card-status show '+type;if(type==='ok')setTimeout(()=>el.className='card-status',6000);}
+  function launch(action){const frame=document.createElement('iframe');frame.style.display='none';document.body.appendChild(frame);try{frame.src='ittools://'+action;}catch(e){}setTimeout(()=>document.body.removeChild(frame),2000);}
+  function runTeams(){launch('clear-teams-cache');setStatus('status-teams','⏳ Running...','ok');showToast('✅ Teams cache clear started — a window will appear shortly.','ok');}
+  function openModal(){document.getElementById('overlay').classList.add('active');}
+  function closeModal(){document.getElementById('overlay').classList.remove('active');}
+  function runRestart(){closeModal();launch('restart-pc');setStatus('status-restart','⏳ Restarting in 60s…','warn');showToast('⚠️ Restart in 60 seconds. To cancel: shutdown /a','warn');}
+  function runGPUpdate(){launch('gpupdate');setStatus('status-gpu','⏳ Running...','ok');showToast('🖥️ GPUpdate started — a terminal window will open shortly.','teal');}
+  document.getElementById('overlay').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
 </script>
-
 </body>
 </html>
