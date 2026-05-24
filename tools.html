@@ -19,6 +19,7 @@
       --red:       #f85149;
       --red-glow:  rgba(248,81,73,.35);
       --green:     #3fb950;
+      --orange:    #d29922;
       --radius:    14px;
     }
 
@@ -85,6 +86,7 @@
 
     /* ── Action button ── */
     .action-btn {
+      position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -97,6 +99,7 @@
       transition: transform .18s, box-shadow .18s, border-color .18s, background .18s;
       text-align: center;
       user-select: none;
+      outline: none;
     }
     .action-btn:hover  { transform: translateY(-4px); background: rgba(255,255,255,.06); }
     .action-btn:active { transform: translateY(-1px); }
@@ -107,42 +110,45 @@
     .action-btn.red  { border-color: rgba(248,81,73,.45); }
     .action-btn.red:hover  { box-shadow: 0 8px 32px var(--red-glow); border-color: var(--red); }
 
-    .action-btn .btn-icon { font-size: 2.2rem; line-height: 1; }
+    /* Running state */
+    .action-btn.running { opacity: .75; pointer-events: none; }
+    .action-btn.running .btn-icon { animation: spin 1s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
+    .action-btn .btn-icon { font-size: 2.2rem; line-height: 1; display: inline-block; }
     .action-btn .btn-label {
       font-size: 1rem;
       font-weight: 600;
-      color: var(--text);
     }
     .action-btn.blue .btn-label { color: #79b8ff; }
     .action-btn.red  .btn-label { color: #ff7b72; }
-
     .action-btn .btn-desc {
       font-size: .8rem;
       color: var(--muted);
       line-height: 1.4;
     }
 
-    /* ── Pill badge ── */
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: .35rem;
-      font-size: .7rem;
+    /* ── Status strip (shows feedback after click) ── */
+    .status-strip {
+      margin-top: .75rem;
+      min-height: 1.4em;
+      font-size: .78rem;
       font-weight: 600;
-      letter-spacing: .5px;
-      text-transform: uppercase;
-      padding: .2rem .65rem;
-      border-radius: 99px;
+      letter-spacing: .2px;
+      text-align: center;
+      opacity: 0;
+      transition: opacity .3s;
     }
-    .badge.ps { background: rgba(56,139,253,.15); color: var(--blue); }
+    .status-strip.show { opacity: 1; }
+    .status-strip.ok   { color: var(--green); }
+    .status-strip.warn { color: var(--orange); }
 
-    /* ── Status toast ── */
+    /* ── Toast ── */
     #toast {
       position: fixed;
       bottom: 2rem;
       left: 50%;
-      transform: translateX(-50%) translateY(120%);
+      transform: translateX(-50%) translateY(140%);
       background: #1c2128;
       border: 1px solid var(--border);
       border-radius: 10px;
@@ -150,22 +156,19 @@
       display: flex;
       align-items: center;
       gap: .7rem;
-      font-size: .9rem;
+      font-size: .875rem;
       color: var(--text);
       box-shadow: 0 8px 24px rgba(0,0,0,.5);
       transition: transform .35s cubic-bezier(.34,1.56,.64,1);
       z-index: 1000;
-      white-space: nowrap;
+      max-width: 90vw;
     }
     #toast.show { transform: translateX(-50%) translateY(0); }
-    #toast .dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: var(--green);
-      flex-shrink: 0;
-    }
+    #toast .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+    #toast .dot.green  { background: var(--green); }
+    #toast .dot.orange { background: var(--orange); }
 
-    /* ── Modal overlay ── */
+    /* ── Confirmation Modal ── */
     .overlay {
       display: none;
       position: fixed;
@@ -178,7 +181,6 @@
       padding: 1.5rem;
     }
     .overlay.active { display: flex; }
-
     .modal {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -195,7 +197,6 @@
     }
     .modal h2 { font-size: 1.15rem; margin-bottom: .5rem; }
     .modal p  { color: var(--muted); font-size: .875rem; line-height: 1.55; margin-bottom: 1.5rem; }
-
     .modal-actions { display: flex; gap: .75rem; justify-content: flex-end; }
     .btn-cancel, .btn-confirm {
       padding: .55rem 1.2rem;
@@ -219,228 +220,164 @@
       font-size: .78rem;
       color: var(--muted);
       text-align: center;
-      line-height: 1.6;
+      line-height: 1.7;
     }
-    .note strong { color: var(--text); }
+    .note a { color: var(--blue); text-decoration: none; }
+    .note a:hover { text-decoration: underline; }
+    .note .alert {
+      background: rgba(210, 153, 34, .12);
+      border: 1px solid rgba(210, 153, 34, .35);
+      border-radius: 8px;
+      padding: .65rem 1rem;
+      color: var(--orange);
+      margin-bottom: .75rem;
+    }
   </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════════════ CARD ══ -->
+<!-- ═══════════════════════════════════════════ CARD ══ -->
 <div class="card">
 
   <div class="header">
     <span class="icon">🛠️</span>
     <h1>IT Utility Tools</h1>
-    <p>Quick-access scripts for common Windows maintenance tasks.</p>
+    <p>Click a button — the action runs instantly on <em>your</em> machine.</p>
   </div>
 
   <div class="btn-grid">
 
-    <!-- Button 1 – Teams Cache -->
-    <button class="action-btn blue" onclick="downloadTeamsScript()">
+    <!-- ── Button 1: Clear Teams Cache ── -->
+    <button class="action-btn blue" id="btn-teams" onclick="runTeams()">
       <span class="btn-icon">💬</span>
       <span class="btn-label">Clear Teams Cache<br>&amp; Restart Teams</span>
       <span class="btn-desc">
-        Stops Teams, wipes cached data&nbsp;(blobs, IndexedDB, GPU cache),
-        then relaunches the app.
+        Stops Teams, deletes cached data, then restarts it.
+        Fixes most Teams glitches and login problems.
       </span>
-      <span class="badge ps">⬇ PowerShell Script</span>
+      <div class="status-strip" id="status-teams"></div>
     </button>
 
-    <!-- Button 2 – Restart PC -->
-    <button class="action-btn red" onclick="openRestartModal()">
+    <!-- ── Button 2: Restart PC ── -->
+    <button class="action-btn red" id="btn-restart" onclick="openRestartModal()">
       <span class="btn-icon">🔄</span>
       <span class="btn-label">Restart PC</span>
       <span class="btn-desc">
-        Gracefully restarts Windows&nbsp;— saves open files first.
-        A&nbsp;confirmation prompt appears before download.
+        Restarts your Windows PC with a 60-second delay
+        so you can save open files first.
       </span>
-      <span class="badge ps">⬇ PowerShell Script</span>
+      <div class="status-strip" id="status-restart"></div>
     </button>
 
   </div>
 
+  <!-- ── Footer ── -->
   <div class="note">
-    <strong>How to use:</strong> Click a button to download the <code>.ps1</code> script.
-    Right-click the downloaded file → <strong>Run with PowerShell</strong>.
-    If prompted, choose <em>Run anyway</em> (scripts are unsigned).
-    Administrator rights may be required.
+    <div class="alert">
+      ⚠️ <strong>First time?</strong> This tool only works after the IT Tools agent
+      has been installed on your PC by your IT team via SCCM.
+      If buttons do nothing, contact the helpdesk.
+    </div>
+    When you click a button, Windows will ask <em>"Allow this page to open IT Tools?"</em>
+    — click <strong>Open</strong> to proceed. A PowerShell window will appear and show progress.
   </div>
+
 </div>
 
-<!-- ═══════════════════════════════════ RESTART CONFIRMATION ══ -->
+<!-- ═══════════════════════════════ RESTART CONFIRMATION ══ -->
 <div class="overlay" id="restartOverlay">
   <div class="modal">
     <h2>⚠️ Restart your PC?</h2>
     <p>
-      This will download a script that <strong>restarts Windows in&nbsp;30&nbsp;seconds</strong>
-      after you run it. Save any open work before running the script.
-      You can cancel with <code>shutdown /a</code> in the terminal if needed.
+      Your PC will <strong>restart in 60 seconds</strong> after you click Confirm.
+      Please <strong>save all open files</strong> right now.<br><br>
+      If you change your mind, open a Command Prompt and type&nbsp;&nbsp;
+      <code>shutdown /a</code>&nbsp; to cancel.
     </p>
     <div class="modal-actions">
       <button class="btn-cancel" onclick="closeRestartModal()">Cancel</button>
-      <button class="btn-confirm" onclick="downloadRestartScript()">Yes, Download Script</button>
+      <button class="btn-confirm" onclick="runRestart()">Confirm Restart</button>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════ TOAST ══ -->
+<!-- ═══════════════════════════════════════════ TOAST ══ -->
 <div id="toast">
-  <div class="dot"></div>
-  <span id="toastMsg">Script downloaded!</span>
+  <div class="dot green" id="toastDot"></div>
+  <span id="toastMsg"></span>
 </div>
 
-<!-- ═══════════════════════════════════════════════ JS ═══ -->
+<!-- ═══════════════════════════════════════════ JS ═══ -->
 <script>
-  /* ── Toast helper ── */
-  function showToast(msg) {
-    const t = document.getElementById('toast');
+  // ── Toast ──────────────────────────────────────────────────
+  function showToast(msg, type) {
+    const t   = document.getElementById('toast');
+    const dot = document.getElementById('toastDot');
     document.getElementById('toastMsg').textContent = msg;
+    dot.className = 'dot ' + (type === 'warn' ? 'orange' : 'green');
     t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 3200);
+    setTimeout(() => t.classList.remove('show'), 4000);
   }
 
-  /* ── Generic script downloader ── */
-  function downloadScript(filename, content) {
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url  = URL.createObjectURL(blob);
-    const a    = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
-
-  /* ═══════════════════════════════════════════════════════
-     SCRIPT 1 – Clear Teams cache & restart Teams
-  ═══════════════════════════════════════════════════════ */
-  function downloadTeamsScript() {
-    const ps = `# ============================================================
-#  Clear Microsoft Teams Cache and Restart Teams
-#  Run with: Right-click -> Run with PowerShell
-# ============================================================
-
-Write-Host ""
-Write-Host "  Teams Cache Cleaner" -ForegroundColor Cyan
-Write-Host "  -------------------" -ForegroundColor DarkCyan
-Write-Host ""
-
-# 1. Kill Teams processes
-Write-Host "[1/3] Stopping Microsoft Teams..." -ForegroundColor Yellow
-$procs = @("Teams", "ms-teams", "msedgewebview2")
-foreach ($p in $procs) {
-    Get-Process -Name $p -ErrorAction SilentlyContinue | Stop-Process -Force -ErrorAction SilentlyContinue
-}
-Start-Sleep -Seconds 3
-Write-Host "      Teams stopped." -ForegroundColor Green
-
-# 2. Delete cache folders
-Write-Host "[2/3] Clearing cache folders..." -ForegroundColor Yellow
-
-$cachePaths = @(
-    "$env:APPDATA\\Microsoft\\Teams\\Cache",
-    "$env:APPDATA\\Microsoft\\Teams\\blob_storage",
-    "$env:APPDATA\\Microsoft\\Teams\\databases",
-    "$env:APPDATA\\Microsoft\\Teams\\GPUCache",
-    "$env:APPDATA\\Microsoft\\Teams\\IndexedDB",
-    "$env:APPDATA\\Microsoft\\Teams\\Local Storage",
-    "$env:APPDATA\\Microsoft\\Teams\\tmp",
-    "$env:LOCALAPPDATA\\Packages\\MSTeams_8wekyb3d8bbwe\\LocalCache\\Microsoft\\MSTeams",
-    "$env:LOCALAPPDATA\\Microsoft\\Teams\\Current\\Cache"
-)
-
-$cleared = 0
-foreach ($path in $cachePaths) {
-    if (Test-Path $path) {
-        try {
-            Remove-Item -Path $path -Recurse -Force -ErrorAction Stop
-            Write-Host "      Cleared: $path" -ForegroundColor DarkGray
-            $cleared++
-        } catch {
-            Write-Host "      Skipped (in use): $path" -ForegroundColor DarkYellow
-        }
+  // ── Status strip beneath a button ─────────────────────────
+  function setStatus(id, msg, type) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.className = 'status-strip show ' + type;
+    if (type === 'ok') {
+      setTimeout(() => { el.className = 'status-strip'; }, 6000);
     }
-}
-Write-Host "      $cleared folder(s) cleared." -ForegroundColor Green
-
-# 3. Restart Teams – try new Teams first, fall back to classic
-Write-Host "[3/3] Restarting Teams..." -ForegroundColor Yellow
-
-$newTeams     = "$env:LOCALAPPDATA\\Microsoft\\WindowsApps\\ms-teams.exe"
-$classicTeams = "$env:LOCALAPPDATA\\Microsoft\\Teams\\Update.exe"
-
-if (Test-Path $newTeams) {
-    Start-Process $newTeams
-    Write-Host "      New Teams launched." -ForegroundColor Green
-} elseif (Test-Path $classicTeams) {
-    Start-Process $classicTeams -ArgumentList "--processStart", "Teams.exe"
-    Write-Host "      Classic Teams launched." -ForegroundColor Green
-} else {
-    Write-Host "      Teams executable not found. Please start Teams manually." -ForegroundColor Red
-}
-
-Write-Host ""
-Write-Host "  Done! Teams cache has been cleared." -ForegroundColor Cyan
-Write-Host ""
-Start-Sleep -Seconds 3
-`;
-    downloadScript('Clear-TeamsCache.ps1', ps);
-    showToast('📥 Clear-TeamsCache.ps1 downloaded!');
   }
 
-  /* ═══════════════════════════════════════════════════════
-     SCRIPT 2 – Restart PC
-  ═══════════════════════════════════════════════════════ */
-  function downloadRestartScript() {
-    closeRestartModal();
-    const ps = `# ============================================================
-#  Restart PC
-#  Run with: Right-click -> Run with PowerShell
-#  To cancel: open a terminal and type  shutdown /a
-# ============================================================
-
-Write-Host ""
-Write-Host "  PC Restart Utility" -ForegroundColor Cyan
-Write-Host "  ------------------" -ForegroundColor DarkCyan
-Write-Host ""
-Write-Host "  Your PC will restart in 30 seconds." -ForegroundColor Yellow
-Write-Host "  Save all open files now!" -ForegroundColor Yellow
-Write-Host ""
-Write-Host "  To cancel, open a terminal (Win+R > cmd) and type:" -ForegroundColor DarkGray
-Write-Host "      shutdown /a" -ForegroundColor White
-Write-Host ""
-
-# Countdown display
-for ($i = 30; $i -gt 0; $i--) {
-    Write-Host "  Restarting in $i second(s)...   " -NoNewline -ForegroundColor DarkYellow
-    Write-Host "`r" -NoNewline
-    Start-Sleep -Seconds 1
-}
-
-# Trigger restart
-shutdown /r /t 0 /c "Restarting PC via IT Utility Tool"
-`;
-    downloadScript('Restart-PC.ps1', ps);
-    showToast('📥 Restart-PC.ps1 downloaded!');
+  // ── Launch a custom protocol URL ──────────────────────────
+  // This tells Windows to run the locally-installed handler.
+  function launchProtocol(action) {
+    // Use a hidden iframe so the current page doesn't navigate away.
+    const url = 'ittools://' + action;
+    const frame = document.createElement('iframe');
+    frame.style.display = 'none';
+    document.body.appendChild(frame);
+    try {
+      frame.src = url;
+    } catch(e) { /* ignored */ }
+    // Clean up after a moment
+    setTimeout(() => document.body.removeChild(frame), 2000);
   }
 
-  /* ── Modal helpers ── */
-  function openRestartModal()  {
+  // ══════════════════════════════════════════════════════════
+  //  Action 1 – Clear Teams Cache
+  // ══════════════════════════════════════════════════════════
+  function runTeams() {
+    launchProtocol('clear-teams-cache');
+
+    // Visual feedback
+    setStatus('status-teams', '⏳ Sent command to your PC...', 'ok');
+    showToast('✅ Teams cache clear command sent! A window will open shortly.', 'ok');
+  }
+
+  // ══════════════════════════════════════════════════════════
+  //  Action 2 – Restart PC  (with confirmation modal)
+  // ══════════════════════════════════════════════════════════
+  function openRestartModal() {
     document.getElementById('restartOverlay').classList.add('active');
   }
+
   function closeRestartModal() {
     document.getElementById('restartOverlay').classList.remove('active');
   }
 
-  // Close modal on overlay click
+  function runRestart() {
+    closeRestartModal();
+    launchProtocol('restart-pc');
+
+    setStatus('status-restart', '⏳ Restart scheduled in 60 seconds...', 'warn');
+    showToast('🔄 Restart command sent! Save your work now. Cancel: shutdown /a', 'warn');
+  }
+
+  // ── Keyboard / click-outside for modal ────────────────────
   document.getElementById('restartOverlay').addEventListener('click', function(e) {
     if (e.target === this) closeRestartModal();
   });
-
-  // Close modal on Escape
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') closeRestartModal();
   });
