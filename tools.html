@@ -5,342 +5,316 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>IT Control Centre</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:          #07080f;
-      --card:        rgba(255,255,255,0.04);
-      --card-border: rgba(255,255,255,0.08);
-      --text:        #f0f2f8;
-      --muted:       #6b7280;
-      --green:       #22c55e;
-      --amber:       #f59e0b;
+      --bg:    #07080f;
+      --card:  rgba(255,255,255,0.04);
+      --cb:    rgba(255,255,255,0.08);
+      --text:  #f0f2f8;
+      --muted: #6b7280;
+      --green: #22c55e;
+      --amber: #f59e0b;
+      --red2:  #ef4444;
     }
 
     html, body { height: 100%; }
-
     body {
-      background: var(--bg);
-      color: var(--text);
+      background: var(--bg); color: var(--text);
       font-family: 'Inter', -apple-system, sans-serif;
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2rem 1.25rem;
-      overflow-x: hidden;
-      position: relative;
+      min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; padding: 2rem 1.25rem 3rem;
+      overflow-x: hidden; position: relative;
     }
 
-    /* ── Animated background blobs ── */
-    .blob {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(110px);
-      opacity: 0.11;
-      pointer-events: none;
-      z-index: 0;
-      animation: drift 18s ease-in-out infinite alternate;
-    }
-    .blob-1 { width: 700px; height: 700px; background: #6366f1; top: -250px; left: -200px; animation-duration: 20s; }
-    .blob-2 { width: 600px; height: 600px; background: #ef4444; bottom: -200px; right: -150px; animation-duration: 16s; animation-delay: -8s; }
-    .blob-3 { width: 350px; height: 350px; background: #10b981; top: 60%; left: 50%; animation-duration: 22s; animation-delay: -4s; }
-
-    @keyframes drift {
-      from { transform: translate(0, 0) scale(1); }
-      to   { transform: translate(40px, 30px) scale(1.1); }
-    }
+    /* ── Blobs ── */
+    .blob { position: fixed; border-radius: 50%; filter: blur(110px); opacity: .10; pointer-events: none; z-index: 0; animation: drift 18s ease-in-out infinite alternate; }
+    .b1 { width:700px;height:700px;background:#6366f1;top:-250px;left:-200px;animation-duration:20s; }
+    .b2 { width:600px;height:600px;background:#ef4444;bottom:-200px;right:-150px;animation-duration:16s;animation-delay:-8s; }
+    .b3 { width:350px;height:350px;background:#10b981;top:55%;left:52%;animation-duration:22s;animation-delay:-4s; }
+    .b4 { width:300px;height:300px;background:#8b5cf6;top:30%;right:-100px;animation-duration:26s;animation-delay:-12s; }
+    @keyframes drift { from{transform:translate(0,0) scale(1)} to{transform:translate(40px,30px) scale(1.1)} }
 
     /* ── Wrapper ── */
-    .wrapper {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 800px;
-    }
+    .wrap { position:relative;z-index:1;width:100%;max-width:860px; }
 
     /* ── Header ── */
-    .header { text-align: center; margin-bottom: 2.5rem; }
+    .hdr { text-align:center;margin-bottom:2.5rem;padding-top:1rem; }
+    .logo { display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#6366f1,#3b82f6);font-size:2rem;margin-bottom:1.25rem;box-shadow:0 0 40px rgba(99,102,241,.4); }
+    .hdr h1 { font-size:clamp(1.75rem,4vw,2.5rem);font-weight:800;letter-spacing:-.03em;background:linear-gradient(135deg,#fff 30%,#a5b4fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.4rem; }
+    .hdr p { color:var(--muted);font-size:.93rem; }
 
-    .logo {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 72px; height: 72px;
-      border-radius: 20px;
-      background: linear-gradient(135deg, #6366f1, #3b82f6);
-      font-size: 2rem;
-      margin-bottom: 1.25rem;
-      box-shadow: 0 0 40px rgba(99,102,241,0.4);
+    /* ── Section label ── */
+    .section-label { font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem;padding-left:.25rem; }
+
+    /* ── Grids ── */
+    .g2 { display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem; }
+    .g3 { display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1rem; }
+    @media(max-width:600px){ .g2,.g3{grid-template-columns:1fr;} }
+
+    /* ── Card ── */
+    .card {
+      display:flex;flex-direction:column;padding:0;
+      border-radius:18px;border:1px solid var(--cb);
+      background:var(--card);backdrop-filter:blur(20px);
+      cursor:pointer;overflow:hidden;
+      transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
+      text-align:left;outline:none;width:100%;
     }
+    .card:hover  { transform:translateY(-5px); }
+    .card:active { transform:translateY(-2px); }
+    .card.blue:hover  { box-shadow:0 16px 48px rgba(99,102,241,.25);border-color:rgba(99,102,241,.5); }
+    .card.red:hover   { box-shadow:0 16px 48px rgba(239,68,68,.25); border-color:rgba(239,68,68,.5); }
+    .card.teal:hover  { box-shadow:0 16px 48px rgba(16,185,129,.25);border-color:rgba(16,185,129,.5); }
+    .card.violet:hover{ box-shadow:0 16px 48px rgba(139,92,246,.25);border-color:rgba(139,92,246,.5); }
+    .card.orange:hover{ box-shadow:0 16px 48px rgba(249,115,22,.25);border-color:rgba(249,115,22,.5); }
 
-    .header h1 {
-      font-size: clamp(1.75rem, 4vw, 2.5rem);
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      background: linear-gradient(135deg, #fff 30%, #a5b4fc);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-      margin-bottom: 0.5rem;
+    .bar { width:100%;height:3px; }
+    .blue   .bar { background:linear-gradient(90deg,#6366f1,#3b82f6); }
+    .red    .bar { background:linear-gradient(90deg,#ef4444,#f97316); }
+    .teal   .bar { background:linear-gradient(90deg,#10b981,#06b6d4); }
+    .violet .bar { background:linear-gradient(90deg,#8b5cf6,#6366f1); }
+    .orange .bar { background:linear-gradient(90deg,#f97316,#eab308); }
+
+    .cbody { padding:1.4rem 1.5rem 1.5rem;display:flex;flex-direction:column;gap:.85rem;flex:1; }
+
+    .cicon { width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0; }
+    .blue   .cicon { background:rgba(99,102,241,.15); }
+    .red    .cicon { background:rgba(239,68,68,.15); }
+    .teal   .cicon { background:rgba(16,185,129,.15); }
+    .violet .cicon { background:rgba(139,92,246,.15); }
+    .orange .cicon { background:rgba(249,115,22,.15); }
+
+    .ctitle { font-size:.95rem;font-weight:700;letter-spacing:-.01em;margin-bottom:.25rem; }
+    .cdesc  { font-size:.77rem;color:var(--muted);line-height:1.5; }
+
+    .cfoot { display:flex;align-items:center;justify-content:space-between;gap:.75rem; }
+
+    .run-btn { display:inline-flex;align-items:center;gap:.35rem;padding:.45rem 1rem;border-radius:8px;font-size:.78rem;font-weight:600;color:#fff;border:none;cursor:pointer;transition:opacity .15s;flex-shrink:0; }
+    .run-btn:hover { opacity:.85; }
+    .blue   .run-btn { background:linear-gradient(135deg,#6366f1,#3b82f6); }
+    .red    .run-btn { background:linear-gradient(135deg,#ef4444,#f97316); }
+    .teal   .run-btn { background:linear-gradient(135deg,#10b981,#06b6d4); }
+    .violet .run-btn { background:linear-gradient(135deg,#8b5cf6,#6366f1); }
+    .orange .run-btn { background:linear-gradient(135deg,#f97316,#eab308); }
+
+    .cstatus { font-size:.72rem;font-weight:600;opacity:0;transition:opacity .3s;text-align:right; }
+    .cstatus.show { opacity:1; }
+    .cstatus.ok   { color:var(--green); }
+    .cstatus.warn { color:var(--amber); }
+    .cstatus.err  { color:var(--red2); }
+
+    /* ── Divider ── */
+    .divider { height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);margin:1.5rem 0; }
+
+    /* ── Note ── */
+    .note { background:rgba(255,255,255,.03);border:1px solid var(--cb);border-radius:12px;padding:.9rem 1.1rem;display:flex;align-items:flex-start;gap:.65rem;font-size:.77rem;color:var(--muted);line-height:1.6; }
+    .note-icon { flex-shrink:0;margin-top:.1rem; }
+    .note strong { color:rgba(255,255,255,.6); }
+
+    /* ══════════════════════════════════════
+       LIVE CONSOLE PANEL
+    ══════════════════════════════════════ */
+    #console-panel {
+      margin-top:1.5rem;
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--cb);
+      border-radius:18px;
+      overflow:hidden;
+      opacity:0;
+      transform:translateY(12px);
+      transition:opacity .35s ease, transform .35s ease;
+      pointer-events:none;
     }
-    .header p { color: var(--muted); font-size: 0.95rem; }
+    #console-panel.visible { opacity:1;transform:translateY(0);pointer-events:all; }
 
-    /* ── Grid: top row 2 cols, bottom row full width ── */
-    .grid-top {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.25rem;
-      margin-bottom: 1.25rem;
+    .con-header {
+      display:flex;align-items:center;justify-content:space-between;
+      padding:1rem 1.25rem;
+      border-bottom:1px solid var(--cb);
+      background:rgba(255,255,255,.02);
     }
-    @media (max-width: 540px) { .grid-top { grid-template-columns: 1fr; } }
+    .con-title { display:flex;align-items:center;gap:.65rem; }
+    .con-dot { width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);flex-shrink:0; }
+    .con-dot.waiting { background:var(--amber);box-shadow:0 0 8px var(--amber);animation:pulse 1.2s ease-in-out infinite; }
+    .con-dot.done    { background:var(--green);box-shadow:0 0 8px var(--green);animation:none; }
+    .con-dot.error   { background:var(--red2); box-shadow:0 0 8px var(--red2); animation:none; }
+    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.35} }
 
-    /* ── Action card ── */
-    .action-card {
-      position: relative;
-      display: flex;
-      flex-direction: column;
-      padding: 0;
-      border-radius: 20px;
-      border: 1px solid var(--card-border);
-      background: var(--card);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
-      cursor: pointer;
-      overflow: hidden;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-      text-align: left;
-      outline: none;
-      width: 100%;
+    .con-task-name { font-size:.9rem;font-weight:700; }
+    .con-close { background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.1rem;padding:.2rem .4rem;border-radius:6px;transition:color .15s; }
+    .con-close:hover { color:var(--text); }
+
+    /* Stats row */
+    .con-stats {
+      display:grid;grid-template-columns:auto 1fr auto auto;
+      align-items:center;gap:1rem;
+      padding:.85rem 1.25rem;
+      border-bottom:1px solid var(--cb);
     }
-    .action-card:hover  { transform: translateY(-5px); }
-    .action-card:active { transform: translateY(-2px); }
+    .stat-label { font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap; }
+    .stat-val   { font-size:.85rem;font-weight:600; }
+    .stat-eta   { font-size:.85rem;font-weight:600;color:var(--amber); }
+    .stat-elapsed { font-size:.78rem;color:var(--muted);white-space:nowrap; }
 
-    .action-card.blue:hover  { box-shadow: 0 20px 60px rgba(99,102,241,0.25); border-color: rgba(99,102,241,0.5); }
-    .action-card.red:hover   { box-shadow: 0 20px 60px rgba(239,68,68,0.25);  border-color: rgba(239,68,68,0.5); }
-    .action-card.teal:hover  { box-shadow: 0 20px 60px rgba(16,185,129,0.25); border-color: rgba(16,185,129,0.5); }
+    /* Progress bar */
+    .prog-wrap { padding:.1rem 1.25rem .85rem;border-bottom:1px solid var(--cb); }
+    .prog-track { background:rgba(255,255,255,.06);border-radius:99px;height:6px;overflow:hidden; }
+    .prog-fill  { height:100%;border-radius:99px;background:linear-gradient(90deg,#6366f1,#3b82f6);transition:width .6s ease;width:0%; }
+    .prog-fill.done   { background:linear-gradient(90deg,#22c55e,#16a34a); }
+    .prog-fill.error  { background:linear-gradient(90deg,#ef4444,#dc2626); }
+    .prog-pct   { font-size:.72rem;font-weight:700;color:var(--muted);text-align:right;margin-top:.3rem; }
 
-    /* Gradient top bar */
-    .card-bar { width: 100%; height: 4px; }
-    .blue .card-bar { background: linear-gradient(90deg, #6366f1, #3b82f6); }
-    .red  .card-bar { background: linear-gradient(90deg, #ef4444, #f97316); }
-    .teal .card-bar { background: linear-gradient(90deg, #10b981, #06b6d4); }
-
-    /* Card body — horizontal layout for the wide (bottom) card */
-    .card-body {
-      padding: 1.75rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-      width: 100%;
+    /* Terminal output */
+    .con-log {
+      font-family:'JetBrains Mono',monospace;
+      font-size:.73rem;
+      line-height:1.65;
+      color:#94a3b8;
+      background:#050609;
+      padding:.9rem 1.1rem;
+      height:220px;
+      overflow-y:auto;
+      white-space:pre-wrap;
+      word-break:break-all;
     }
-    .card-body.horizontal {
-      flex-direction: row;
-      align-items: center;
-      gap: 1.5rem;
-    }
-    .card-body.horizontal .card-text { flex: 1; }
-    .card-body.horizontal .card-action { margin-top: 0; flex-shrink: 0; }
-
-    .card-icon {
-      width: 52px; height: 52px;
-      border-radius: 14px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.6rem;
-      flex-shrink: 0;
-    }
-    .blue .card-icon { background: rgba(99,102,241,0.15); }
-    .red  .card-icon { background: rgba(239,68,68,0.15); }
-    .teal .card-icon { background: rgba(16,185,129,0.15); }
-
-    .card-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 0.35rem; letter-spacing: -0.01em; color: var(--text); }
-    .card-desc  { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
-
-    .card-action { display: flex; align-items: center; gap: 1rem; margin-top: 0.25rem; }
-
-    .card-btn {
-      display: inline-flex; align-items: center; gap: 0.4rem;
-      padding: 0.55rem 1.2rem;
-      border-radius: 10px;
-      font-size: 0.82rem; font-weight: 600;
-      color: #fff; border: none; cursor: pointer;
-      transition: opacity 0.15s;
-      white-space: nowrap;
-      flex-shrink: 0;
-    }
-    .card-btn:hover { opacity: 0.85; }
-    .blue .card-btn { background: linear-gradient(135deg, #6366f1, #3b82f6); }
-    .red  .card-btn { background: linear-gradient(135deg, #ef4444, #f97316); }
-    .teal .card-btn { background: linear-gradient(135deg, #10b981, #06b6d4); }
-
-    .card-status { font-size: 0.75rem; font-weight: 600; opacity: 0; transition: opacity 0.3s; }
-    .card-status.show { opacity: 1; }
-    .card-status.ok   { color: var(--green); }
-    .card-status.warn { color: var(--amber); }
-
-    /* ── Footer note ── */
-    .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent); margin: 1.5rem 0; }
-
-    .note {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--card-border);
-      border-radius: 14px;
-      padding: 1rem 1.25rem;
-      display: flex; align-items: flex-start; gap: 0.75rem;
-      font-size: 0.8rem; color: var(--muted); line-height: 1.6;
-    }
-    .note-icon { font-size: 1rem; flex-shrink: 0; margin-top: 0.1rem; }
-    .note strong { color: rgba(255,255,255,0.6); }
+    .con-log::-webkit-scrollbar { width:5px; }
+    .con-log::-webkit-scrollbar-track { background:transparent; }
+    .con-log::-webkit-scrollbar-thumb { background:rgba(255,255,255,.1);border-radius:99px; }
+    .con-log .line-new { color:#e2e8f0; }
 
     /* ── Toast ── */
-    #toast {
-      position: fixed; bottom: 2rem; left: 50%;
-      transform: translateX(-50%) translateY(120%);
-      background: rgba(15,17,25,0.95);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 14px; padding: 0.9rem 1.5rem;
-      display: flex; align-items: center; gap: 0.75rem;
-      font-size: 0.875rem; font-weight: 500; color: var(--text);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.6);
-      backdrop-filter: blur(20px);
-      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-      z-index: 1000; max-width: 90vw; white-space: nowrap;
-    }
-    #toast.show { transform: translateX(-50%) translateY(0); }
-    .toast-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-    .toast-dot.green { background: var(--green); box-shadow: 0 0 8px var(--green); }
-    .toast-dot.amber { background: var(--amber); box-shadow: 0 0 8px var(--amber); }
-    .toast-dot.teal  { background: #10b981;       box-shadow: 0 0 8px #10b981; }
+    #toast { position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(120%);background:rgba(15,17,25,.95);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:.85rem 1.4rem;display:flex;align-items:center;gap:.7rem;font-size:.875rem;font-weight:500;color:var(--text);box-shadow:0 12px 40px rgba(0,0,0,.6);backdrop-filter:blur(20px);transition:transform .4s cubic-bezier(.34,1.56,.64,1);z-index:1000;max-width:92vw;white-space:nowrap; }
+    #toast.show { transform:translateX(-50%) translateY(0); }
+    .tdot { width:8px;height:8px;border-radius:50%;flex-shrink:0; }
+    .tdot.g { background:var(--green);box-shadow:0 0 8px var(--green); }
+    .tdot.a { background:var(--amber);box-shadow:0 0 8px var(--amber); }
+    .tdot.t { background:#10b981;     box-shadow:0 0 8px #10b981; }
+    .tdot.v { background:#8b5cf6;     box-shadow:0 0 8px #8b5cf6; }
 
     /* ── Modal ── */
-    .overlay {
-      display: none; position: fixed; inset: 0;
-      background: rgba(0,0,0,0.7); z-index: 900;
-      backdrop-filter: blur(8px);
-      align-items: center; justify-content: center; padding: 1.5rem;
-    }
-    .overlay.active { display: flex; }
-
-    .modal {
-      background: #10121e;
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 20px; padding: 2rem;
-      max-width: 420px; width: 100%;
-      box-shadow: 0 24px 80px rgba(0,0,0,0.8);
-      animation: popIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
-    }
-    @keyframes popIn {
-      from { opacity: 0; transform: scale(0.88); }
-      to   { opacity: 1; transform: scale(1); }
-    }
-    .modal-icon {
-      width: 52px; height: 52px; border-radius: 14px;
-      background: rgba(239,68,68,0.15);
-      display: flex; align-items: center; justify-content: center;
-      font-size: 1.5rem; margin-bottom: 1rem;
-    }
-    .modal h2 { font-size: 1.15rem; font-weight: 700; margin-bottom: 0.6rem; letter-spacing: -0.01em; }
-    .modal p  { color: var(--muted); font-size: 0.875rem; line-height: 1.6; margin-bottom: 1.5rem; }
-    .modal p code { background: rgba(255,255,255,0.08); padding: 0.1em 0.45em; border-radius: 5px; font-family: monospace; font-size: 0.85em; color: #e2e8f0; }
-
-    .modal-actions { display: flex; gap: 0.75rem; justify-content: flex-end; }
-    .btn-cancel {
-      padding: 0.6rem 1.2rem; border-radius: 10px;
-      border: 1px solid rgba(255,255,255,0.1);
-      background: transparent; color: var(--muted);
-      font-size: 0.875rem; font-weight: 600; cursor: pointer;
-      transition: color 0.15s, border-color 0.15s;
-    }
-    .btn-cancel:hover { color: var(--text); border-color: rgba(255,255,255,0.2); }
-    .btn-confirm {
-      padding: 0.6rem 1.2rem; border-radius: 10px; border: none;
-      background: linear-gradient(135deg, #ef4444, #f97316);
-      color: #fff; font-size: 0.875rem; font-weight: 600; cursor: pointer;
-      transition: opacity 0.15s;
-    }
-    .btn-confirm:hover { opacity: 0.85; }
+    .overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:900;backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:1.5rem; }
+    .overlay.active { display:flex; }
+    .modal { background:#10121e;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:2rem;max-width:420px;width:100%;box-shadow:0 24px 80px rgba(0,0,0,.8);animation:popIn .25s cubic-bezier(.34,1.56,.64,1); }
+    @keyframes popIn { from{opacity:0;transform:scale(.88)} to{opacity:1;transform:scale(1)} }
+    .modal-icon { width:52px;height:52px;border-radius:14px;background:rgba(239,68,68,.15);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1rem; }
+    .modal h2 { font-size:1.1rem;font-weight:700;margin-bottom:.5rem; }
+    .modal p  { color:var(--muted);font-size:.875rem;line-height:1.6;margin-bottom:1.5rem; }
+    .modal p code { background:rgba(255,255,255,.08);padding:.1em .4em;border-radius:5px;font-family:monospace;font-size:.85em;color:#e2e8f0; }
+    .modal-actions { display:flex;gap:.75rem;justify-content:flex-end; }
+    .btn-x { padding:.55rem 1.1rem;border-radius:9px;border:1px solid rgba(255,255,255,.1);background:transparent;color:var(--muted);font-size:.875rem;font-weight:600;cursor:pointer;transition:color .15s; }
+    .btn-x:hover { color:var(--text); }
+    .btn-ok { padding:.55rem 1.1rem;border-radius:9px;border:none;background:linear-gradient(135deg,#ef4444,#f97316);color:#fff;font-size:.875rem;font-weight:600;cursor:pointer;transition:opacity .15s; }
+    .btn-ok:hover { opacity:.85; }
   </style>
 </head>
 <body>
 
-<div class="blob blob-1"></div>
-<div class="blob blob-2"></div>
-<div class="blob blob-3"></div>
+<div class="blob b1"></div>
+<div class="blob b2"></div>
+<div class="blob b3"></div>
+<div class="blob b4"></div>
 
-<div class="wrapper">
+<div class="wrap">
 
   <!-- Header -->
-  <div class="header">
+  <div class="hdr">
     <div class="logo">🛠️</div>
     <h1>IT Control Centre</h1>
     <p>Click a button — the action runs instantly on your PC.</p>
   </div>
 
-  <!-- Top row: Teams + Restart -->
-  <div class="grid-top">
-
-    <button class="action-card blue" onclick="runTeams()">
-      <div class="card-bar"></div>
-      <div class="card-body">
-        <div class="card-icon">💬</div>
-        <div class="card-text">
-          <div class="card-title">Clear Teams Cache</div>
-          <div class="card-desc">Stops Teams, wipes cached data, resets the app, then restarts it fresh. Fixes login issues and glitches.</div>
-        </div>
-        <div class="card-action">
-          <span class="card-btn">▶ Run now</span>
-          <span class="card-status" id="status-teams"></span>
-        </div>
+  <!-- Row 1: Quick actions -->
+  <div class="section-label">Quick Actions</div>
+  <div class="g2">
+    <button class="card blue" onclick="go('clear-teams-cache','status-teams','Teams cache clear started — a window will appear.','g')">
+      <div class="bar"></div>
+      <div class="cbody">
+        <div class="cicon">💬</div>
+        <div><div class="ctitle">Clear Teams Cache</div><div class="cdesc">Stops Teams, wipes cache, resets app, restarts fresh. Fixes login issues and glitches.</div></div>
+        <div class="cfoot"><span class="run-btn">▶ Run</span><span class="cstatus" id="status-teams"></span></div>
       </div>
     </button>
 
-    <button class="action-card red" onclick="openModal()">
-      <div class="card-bar"></div>
-      <div class="card-body">
-        <div class="card-icon">⏻</div>
-        <div class="card-text">
-          <div class="card-title">Restart PC</div>
-          <div class="card-desc">Schedules a Windows restart in 60 seconds so you have time to save your work first.</div>
-        </div>
-        <div class="card-action">
-          <span class="card-btn">▶ Run now</span>
-          <span class="card-status" id="status-restart"></span>
-        </div>
+    <button class="card teal" onclick="go('gpupdate','status-gpu','GPUpdate started — a terminal will open shortly.','t')">
+      <div class="bar"></div>
+      <div class="cbody">
+        <div class="cicon">🌐</div>
+        <div><div class="ctitle">Run GPUpdate</div><div class="cdesc">Applies the latest Group Policy settings from your organisation immediately.</div></div>
+        <div class="cfoot"><span class="run-btn">▶ Run</span><span class="cstatus" id="status-gpu"></span></div>
       </div>
     </button>
-
   </div>
 
-  <!-- Bottom row: GPUpdate (full width, horizontal layout) -->
-  <button class="action-card teal" onclick="runGPUpdate()">
-    <div class="card-bar"></div>
-    <div class="card-body horizontal">
-      <div class="card-icon">🖥️</div>
-      <div class="card-text">
-        <div class="card-title">Run GPUpdate</div>
-        <div class="card-desc">Opens a terminal and runs <strong style="color:rgba(255,255,255,0.5)">gpupdate /force</strong> to apply the latest Group Policy settings from your organisation.</div>
+  <!-- Row 2: System scans -->
+  <div class="section-label">System Scans</div>
+  <div class="g2">
+    <button class="card violet" onclick="startScan('sfc-scannow','status-sfc','SFC System File Check','v')">
+      <div class="bar"></div>
+      <div class="cbody">
+        <div class="cicon">🔍</div>
+        <div><div class="ctitle">SFC Scan</div><div class="cdesc">Scans and repairs corrupted Windows system files. Progress shown below in real time.</div></div>
+        <div class="cfoot"><span class="run-btn">▶ Run</span><span class="cstatus" id="status-sfc"></span></div>
       </div>
-      <div class="card-action">
-        <span class="card-btn">▶ Run now</span>
-        <span class="card-status" id="status-gpu"></span>
+    </button>
+
+    <button class="card orange" onclick="startScan('chkdsk','status-chk','CHKDSK Disk Check (C:)','o')">
+      <div class="bar"></div>
+      <div class="cbody">
+        <div class="cicon">💾</div>
+        <div><div class="ctitle">CHKDSK</div><div class="cdesc">Scans your C: drive for file system errors. Progress and ETA shown below in real time.</div></div>
+        <div class="cfoot"><span class="run-btn">▶ Run</span><span class="cstatus" id="status-chk"></span></div>
+      </div>
+    </button>
+  </div>
+
+  <!-- Row 3: Restart -->
+  <div class="section-label">Power</div>
+  <button class="card red" onclick="openModal()" style="margin-bottom:1.5rem">
+    <div class="bar"></div>
+    <div class="cbody" style="flex-direction:row;align-items:center;gap:1.25rem">
+      <div class="cicon">⏻</div>
+      <div style="flex:1"><div class="ctitle">Restart PC</div><div class="cdesc">Schedules a Windows restart in 60 seconds — time to save open files first.</div></div>
+      <div class="cfoot" style="flex-shrink:0;flex-direction:column;align-items:flex-end">
+        <span class="run-btn">▶ Run</span>
+        <span class="cstatus" id="status-rst" style="margin-top:.4rem"></span>
       </div>
     </div>
   </button>
 
-  <div class="divider"></div>
+  <!-- Live Console -->
+  <div id="console-panel">
+    <div class="con-header">
+      <div class="con-title">
+        <div class="con-dot waiting" id="con-dot"></div>
+        <span class="con-task-name" id="con-task">Running...</span>
+      </div>
+      <button class="con-close" onclick="closeConsole()" title="Close">✕</button>
+    </div>
 
-  <!-- Note -->
-  <div class="note">
-    <span class="note-icon">ℹ️</span>
-    <span>
-      <strong>First time?</strong> Run <strong>Start-Here.bat</strong> once to connect this website to your PC.
-      When you click a button your browser may ask <em>"Allow this site to open IT Tools?"</em> — click <strong>Open</strong>.
-    </span>
+    <div class="con-stats">
+      <span class="stat-label">Progress</span>
+      <span class="stat-val" id="con-pct-text">0%</span>
+      <span class="stat-eta" id="con-eta">Calculating...</span>
+      <span class="stat-elapsed" id="con-elapsed">0s elapsed</span>
+    </div>
+
+    <div class="prog-wrap">
+      <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+      <div class="prog-pct" id="con-pct-bar">0%</div>
+    </div>
+
+    <div class="con-log" id="con-log">Waiting for script to start...<br></div>
   </div>
 
+  <div class="divider"></div>
+
+  <div class="note">
+    <span class="note-icon">ℹ️</span>
+    <span><strong>First time?</strong> Run <strong>Start-Here.bat</strong> once to connect this website to your PC. When a button is clicked, your browser may ask <em>"Allow this site to open IT Tools?"</em> — click <strong>Open</strong>. SFC Scan requires administrator rights.</span>
+  </div>
 </div>
 
 <!-- Restart modal -->
@@ -348,72 +322,190 @@
   <div class="modal">
     <div class="modal-icon">⚠️</div>
     <h2>Restart your PC?</h2>
-    <p>
-      Your PC will restart in <strong>60 seconds</strong>. Save all open files now.<br><br>
-      To cancel, open Command Prompt and type <code>shutdown /a</code>
-    </p>
+    <p>Your PC will restart in <strong>60 seconds</strong>. Save all open files now.<br><br>To cancel, open Command Prompt and type <code>shutdown /a</code></p>
     <div class="modal-actions">
-      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
-      <button class="btn-confirm" onclick="runRestart()">Confirm Restart</button>
+      <button class="btn-x" onclick="closeModal()">Cancel</button>
+      <button class="btn-ok" onclick="runRestart()">Confirm Restart</button>
     </div>
   </div>
 </div>
 
-<!-- Toast -->
-<div id="toast">
-  <div class="toast-dot green" id="toastDot"></div>
-  <span id="toastMsg"></span>
-</div>
+<div id="toast"><div class="tdot g" id="tdot"></div><span id="tmsg"></span></div>
 
 <script>
-  function showToast(msg, type) {
+  // ── Toast ──────────────────────────────────────────────
+  function toast(msg, cls) {
+    document.getElementById('tmsg').textContent = msg;
+    document.getElementById('tdot').className = 'tdot ' + cls;
     const t = document.getElementById('toast');
-    document.getElementById('toastMsg').textContent = msg;
-    document.getElementById('toastDot').className = 'toast-dot ' + (type === 'warn' ? 'amber' : type === 'teal' ? 'teal' : 'green');
     t.classList.add('show');
     setTimeout(() => t.classList.remove('show'), 4000);
   }
 
-  function setStatus(id, msg, type) {
+  function setStatus(id, msg, cls) {
     const el = document.getElementById(id);
-    el.textContent = msg;
-    el.className = 'card-status show ' + type;
-    if (type === 'ok') setTimeout(() => el.className = 'card-status', 6000);
+    el.textContent = msg; el.className = 'cstatus show ' + cls;
+    if (cls === 'ok') setTimeout(() => el.className = 'cstatus', 7000);
   }
 
+  // ── Launch custom protocol ─────────────────────────────
   function launch(action) {
-    const frame = document.createElement('iframe');
-    frame.style.display = 'none';
-    document.body.appendChild(frame);
-    try { frame.src = 'ittools://' + action; } catch(e) {}
-    setTimeout(() => document.body.removeChild(frame), 2000);
+    const f = document.createElement('iframe');
+    f.style.display = 'none';
+    document.body.appendChild(f);
+    try { f.src = 'ittools://' + action; } catch(e) {}
+    setTimeout(() => document.body.removeChild(f), 2000);
   }
 
-  function runTeams() {
-    launch('clear-teams-cache');
-    setStatus('status-teams', '⏳ Running...', 'ok');
-    showToast('✅ Teams cache clear started — a window will appear shortly.', 'ok');
+  // ── Simple go (no live console) ───────────────────────
+  function go(action, statusId, toastMsg, dotCls) {
+    launch(action);
+    setStatus(statusId, '⏳ Running...', 'ok');
+    toast(toastMsg, dotCls);
   }
 
+  // ── Restart ───────────────────────────────────────────
   function openModal()  { document.getElementById('overlay').classList.add('active'); }
   function closeModal() { document.getElementById('overlay').classList.remove('active'); }
-
   function runRestart() {
-    closeModal();
-    launch('restart-pc');
-    setStatus('status-restart', '⏳ Restarting in 60s…', 'warn');
-    showToast('⚠️ Restart in 60 seconds. To cancel: shutdown /a', 'warn');
+    closeModal(); launch('restart-pc');
+    setStatus('status-rst', '⏳ Restarting in 60s…', 'warn');
+    toast('⚠️ Restart in 60 seconds. Cancel: shutdown /a', 'a');
   }
 
-  function runGPUpdate() {
-    launch('gpupdate');
-    setStatus('status-gpu', '⏳ Running...', 'ok');
-    showToast('🖥️ GPUpdate started — a terminal window will open shortly.', 'teal');
+  // ════════════════════════════════════════════════════════
+  //  LIVE CONSOLE  (for SFC + CHKDSK)
+  // ════════════════════════════════════════════════════════
+  const PORT = 7779;
+  let pollTimer = null;
+  let pollAttempts = 0;
+  let lastLineCount = 0;
+  let elapsedTimer = null;
+  let startEpoch = null;
+
+  function startScan(action, statusId, taskLabel, dotCls) {
+    launch(action);
+    setStatus(statusId, '⏳ Starting…', 'ok');
+    toast('Script launched — live status loading below.', dotCls === 'v' ? 'v' : 'a');
+    openConsole(taskLabel);
+    pollAttempts = 0;
+    lastLineCount = 0;
+    startEpoch = Date.now();
+    clearInterval(pollTimer);
+    clearInterval(elapsedTimer);
+    pollTimer   = setInterval(pollStatus, 1000);
+    elapsedTimer= setInterval(tickElapsed, 1000);
   }
 
-  document.getElementById('overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
-  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+  function openConsole(label) {
+    const panel = document.getElementById('console-panel');
+    document.getElementById('con-task').textContent = label;
+    document.getElementById('con-dot').className = 'con-dot waiting';
+    document.getElementById('con-log').innerHTML = 'Waiting for script to start...<br>';
+    document.getElementById('prog-fill').style.width = '0%';
+    document.getElementById('prog-fill').className = 'prog-fill';
+    document.getElementById('con-pct-text').textContent = '0%';
+    document.getElementById('con-pct-bar').textContent  = '0%';
+    document.getElementById('con-eta').textContent     = 'Calculating...';
+    document.getElementById('con-elapsed').textContent = '0s elapsed';
+    panel.classList.add('visible');
+    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    lastLineCount = 0;
+  }
+
+  function closeConsole() {
+    document.getElementById('console-panel').classList.remove('visible');
+    clearInterval(pollTimer);
+    clearInterval(elapsedTimer);
+  }
+
+  function tickElapsed() {
+    if (!startEpoch) return;
+    const s = Math.round((Date.now() - startEpoch) / 1000);
+    const txt = s < 60 ? s + 's elapsed' : Math.floor(s/60) + 'm ' + (s%60) + 's elapsed';
+    document.getElementById('con-elapsed').textContent = txt;
+  }
+
+  async function pollStatus() {
+    try {
+      const res = await fetch(`http://localhost:${PORT}/status`, { cache: 'no-store' });
+      if (!res.ok) { handleOffline(); return; }
+      const data = await res.json();
+      pollAttempts = 0;
+      renderStatus(data);
+    } catch {
+      handleOffline();
+    }
+  }
+
+  function handleOffline() {
+    pollAttempts++;
+    // Silently retry for up to 30 seconds before showing "connecting"
+    if (pollAttempts > 8) {
+      document.getElementById('con-eta').textContent = 'Connecting...';
+    }
+    if (pollAttempts > 60) {
+      // Give up
+      clearInterval(pollTimer);
+      clearInterval(elapsedTimer);
+      document.getElementById('con-dot').className = 'con-dot error';
+      document.getElementById('con-eta').textContent = 'Timed out';
+    }
+  }
+
+  function renderStatus(data) {
+    // Update task name
+    if (data.task) document.getElementById('con-task').textContent = data.task;
+
+    // Progress bar
+    const pct = Math.min(100, Math.max(0, data.progress || 0));
+    const fill = document.getElementById('prog-fill');
+    fill.style.width = pct + '%';
+    if (data.status === 'complete') fill.className = 'prog-fill done';
+    else if (data.status === 'error') fill.className = 'prog-fill error';
+    else fill.className = 'prog-fill';
+    document.getElementById('con-pct-text').textContent = pct + '%';
+    document.getElementById('con-pct-bar').textContent  = pct + '%';
+
+    // ETA
+    if (data.eta) document.getElementById('con-eta').textContent = data.eta;
+
+    // Status dot
+    const dot = document.getElementById('con-dot');
+    if (data.status === 'complete')    dot.className = 'con-dot done';
+    else if (data.status === 'error')  dot.className = 'con-dot error';
+    else                               dot.className = 'con-dot waiting';
+
+    // Log lines — only append new lines
+    const lines = data.lines || [];
+    if (lines.length > lastLineCount) {
+      const log = document.getElementById('con-log');
+      const newLines = lines.slice(lastLineCount);
+      newLines.forEach(l => {
+        const div = document.createElement('div');
+        div.className = 'line-new';
+        div.textContent = '> ' + l;
+        log.appendChild(div);
+      });
+      lastLineCount = lines.length;
+      log.scrollTop = log.scrollHeight;
+    }
+
+    // Done
+    if (data.done) {
+      clearInterval(pollTimer);
+      clearInterval(elapsedTimer);
+      if (data.status === 'complete') {
+        toast('✅ ' + (data.task || 'Scan') + ' completed successfully.', 'g');
+      } else {
+        toast('⚠️ ' + (data.task || 'Scan') + ' finished with errors. Check the console.', 'a');
+      }
+    }
+  }
+
+  // Modal helpers
+  document.getElementById('overlay').addEventListener('click', e => { if (e.target===e.currentTarget) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key==='Escape') closeModal(); });
 </script>
-
 </body>
 </html>
