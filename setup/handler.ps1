@@ -10,14 +10,14 @@ param ([string]$Url)
 $action = $Url -replace 'ittools://', '' -replace '/$', '' -replace '/', ''
 
 # ── Always pull latest scripts from GitHub ────────────────────────
-$base = "https://raw.githubusercontent.com/Aniket369/github-slideshow/claude/teams-cache-restart-website-FqEts/setup"
+$base = "https://raw.githubusercontent.com/Aniket369/github-slideshow/gh-pages/setup"
 
 function Run-FromGitHub($scriptName) {
     Write-Host ""
     Write-Host "  Fetching latest script from GitHub..." -ForegroundColor DarkGray
     try {
-        $url    = "$base/$scriptName"
-        $tmp    = [System.IO.Path]::GetTempPath() + $scriptName
+        $url = "$base/$scriptName"
+        $tmp = [System.IO.Path]::GetTempPath() + $scriptName
         Invoke-WebRequest -Uri $url -OutFile $tmp -UseBasicParsing
         Unblock-File -Path $tmp
         & $tmp
@@ -32,6 +32,7 @@ function Run-FromGitHub($scriptName) {
 switch ($action) {
     'clear-teams-cache' { Run-FromGitHub "Clear-TeamsCache.ps1" }
     'restart-pc'        { Run-FromGitHub "Restart-PC.ps1"       }
+    'gpupdate'          { Run-FromGitHub "GPUpdate.ps1"          }
     default {
         Write-Host "Unknown action: $action" -ForegroundColor Red
         Start-Sleep -Seconds 3
