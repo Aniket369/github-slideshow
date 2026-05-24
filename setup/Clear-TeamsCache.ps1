@@ -20,7 +20,7 @@ Start-Sleep -Seconds 3
 # ── Step 2: Clear Cache ───────────────────────────────────────────
 Write-Host "  [2/4] Clearing Teams cache..." -ForegroundColor Yellow
 $cachePath = "$env:USERPROFILE\AppData\Local\Packages\MSTeams_8wekyb3d8bbwe\LocalCache\Microsoft\MSTeams"
-Get-ChildItem -Path $cachePath -Recurse | Remove-Item -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item -Path "$cachePath\*" -Recurse -Force -ErrorAction SilentlyContinue
 Write-Host "        Done." -ForegroundColor Green
 Write-Host ""
 
@@ -29,6 +29,9 @@ Start-Sleep -Seconds 3
 # ── Step 3: Reset Teams App ───────────────────────────────────────
 Write-Host "  [3/4] Resetting Teams app..." -ForegroundColor Yellow
 Get-AppxPackage -Name MSTeams | Reset-AppxPackage
+
+# Clear cache again after reset in case Reset-AppxPackage recreated folders
+Remove-Item -Path "$cachePath\*" -Recurse -Force -ErrorAction SilentlyContinue
 Write-Host "        Done." -ForegroundColor Green
 Write-Host ""
 
