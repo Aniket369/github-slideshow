@@ -285,81 +285,6 @@
     .note-icon { flex-shrink: 0; margin-top: .1rem; }
     .note strong { color: rgba(240,248,255,0.75); }
 
-    /* ══════════════════════════════════════
-       LIVE CONSOLE PANEL
-    ══════════════════════════════════════ */
-    #console-panel {
-      margin-top: 1.5rem;
-      background: rgba(0,20,40,0.8);
-      border: 1px solid rgba(0,174,239,0.2);
-      border-radius: 14px;
-      overflow: hidden;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: opacity .35s ease, transform .35s ease;
-      pointer-events: none;
-    }
-    #console-panel.visible { opacity: 1; transform: translateY(0); pointer-events: all; }
-
-    .con-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: .9rem 1.2rem;
-      border-bottom: 1px solid rgba(0,174,239,0.15);
-      background: rgba(0,174,239,0.05);
-    }
-    .con-title { display: flex; align-items: center; gap: .6rem; }
-    .con-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green); box-shadow: 0 0 7px var(--green); flex-shrink: 0; }
-    .con-dot.waiting { background: var(--amber); box-shadow: 0 0 7px var(--amber); animation: pulse 1.2s ease-in-out infinite; }
-    .con-dot.done    { background: var(--green);  box-shadow: 0 0 7px var(--green); animation: none; }
-    .con-dot.error   { background: var(--red2);   box-shadow: 0 0 7px var(--red2);  animation: none; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
-
-    .con-task-name { font-size: .88rem; font-weight: 700; }
-    .con-close { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1rem; padding: .2rem .4rem; border-radius: 5px; transition: color .15s; }
-    .con-close:hover { color: var(--text); }
-
-    /* Stats row */
-    .con-stats {
-      display: grid;
-      grid-template-columns: auto 1fr auto auto;
-      align-items: center;
-      gap: 1rem;
-      padding: .8rem 1.2rem;
-      border-bottom: 1px solid rgba(0,174,239,0.1);
-    }
-    .stat-label { font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
-    .stat-val   { font-size: .84rem; font-weight: 700; color: var(--blue); }
-    .stat-eta   { font-size: .84rem; font-weight: 600; color: var(--amber); }
-    .stat-elapsed { font-size: .76rem; color: var(--muted); white-space: nowrap; }
-
-    /* Progress bar */
-    .prog-wrap { padding: .1rem 1.2rem .8rem; border-bottom: 1px solid rgba(0,174,239,0.1); }
-    .prog-track { background: rgba(0,174,239,0.1); border-radius: 99px; height: 5px; overflow: hidden; }
-    .prog-fill  { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--blue), var(--blue2)); transition: width .6s ease; width: 0%; }
-    .prog-fill.done  { background: linear-gradient(90deg, #22c55e, #16a34a); }
-    .prog-fill.error { background: linear-gradient(90deg, #ef4444, #dc2626); }
-    .prog-pct { font-size: .7rem; font-weight: 700; color: var(--muted); text-align: right; margin-top: .3rem; }
-
-    /* Terminal */
-    .con-log {
-      font-family: 'JetBrains Mono', monospace;
-      font-size: .71rem;
-      line-height: 1.7;
-      color: #5B8FA8;
-      background: #020C14;
-      padding: .85rem 1.1rem;
-      height: 220px;
-      overflow-y: auto;
-      white-space: pre-wrap;
-      word-break: break-all;
-    }
-    .con-log::-webkit-scrollbar { width: 4px; }
-    .con-log::-webkit-scrollbar-track { background: transparent; }
-    .con-log::-webkit-scrollbar-thumb { background: rgba(0,174,239,0.2); border-radius: 99px; }
-    .con-log .line-new { color: #A8D8F0; }
-
     /* ── Toast ── */
     #toast {
       position: fixed; bottom: 2rem; left: 50%;
@@ -468,40 +393,6 @@
     </button>
   </div>
 
-  <!-- System Scans -->
-  <div class="section-label">System Diagnostics</div>
-  <div class="g2">
-    <button class="card" onclick="startScan('sfc-scannow','status-sfc','SFC System File Check','b')">
-      <div class="bar"></div>
-      <div class="cbody">
-        <div class="cicon">🔍</div>
-        <div>
-          <div class="ctitle">SFC Scan</div>
-          <div class="cdesc">Scans and repairs corrupted Windows system files. Live progress and ETA shown below. Requires admin rights.</div>
-        </div>
-        <div class="cfoot">
-          <span class="run-btn">▶ Run</span>
-          <span class="cstatus" id="status-sfc"></span>
-        </div>
-      </div>
-    </button>
-
-    <button class="card" onclick="startScan('chkdsk','status-chk','CHKDSK Disk Check (C:)','b')">
-      <div class="bar"></div>
-      <div class="cbody">
-        <div class="cicon">💾</div>
-        <div>
-          <div class="ctitle">CHKDSK</div>
-          <div class="cdesc">Scans your C: drive for file system errors online — no reboot required. Progress and ETA shown in real time.</div>
-        </div>
-        <div class="cfoot">
-          <span class="run-btn">▶ Run</span>
-          <span class="cstatus" id="status-chk"></span>
-        </div>
-      </div>
-    </button>
-  </div>
-
   <!-- Power -->
   <div class="section-label">Power Management</div>
   <button class="card danger" onclick="openModal()" style="margin-bottom:1.5rem">
@@ -519,36 +410,11 @@
     </div>
   </button>
 
-  <!-- Live Console -->
-  <div id="console-panel">
-    <div class="con-header">
-      <div class="con-title">
-        <div class="con-dot waiting" id="con-dot"></div>
-        <span class="con-task-name" id="con-task">Running...</span>
-      </div>
-      <button class="con-close" onclick="closeConsole()" title="Close">✕</button>
-    </div>
-
-    <div class="con-stats">
-      <span class="stat-label">Progress</span>
-      <span class="stat-val" id="con-pct-text">0%</span>
-      <span class="stat-eta" id="con-eta">Calculating...</span>
-      <span class="stat-elapsed" id="con-elapsed">0s elapsed</span>
-    </div>
-
-    <div class="prog-wrap">
-      <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
-      <div class="prog-pct" id="con-pct-bar">0%</div>
-    </div>
-
-    <div class="con-log" id="con-log">Waiting for script to start...<br></div>
-  </div>
-
   <div class="divider"></div>
 
   <div class="note">
     <span class="note-icon">ℹ️</span>
-    <span><strong>First time?</strong> Run <strong>Start-Here.bat</strong> once to register this portal on your PC. When prompted, click <em>"Open IT Tools"</em> in your browser. SFC Scan requires administrator privileges.</span>
+    <span><strong>First time?</strong> Run <strong>Start-Here.bat</strong> once to register this portal on your PC. When a button is clicked, your browser may ask <em>"Allow this site to open IT Tools?"</em> — click <strong>Open</strong>.</span>
   </div>
 
 </div><!-- /wrap -->
@@ -611,126 +477,6 @@
     launch('restart-pc');
     setStatus('status-rst', '⏳ Restarting in 60s…', 'warn');
     toast('⚠️ Restart in 60 seconds. Cancel: shutdown /a', 'a');
-  }
-
-  // ════════════════════════════════════════════════════════════
-  //  LIVE CONSOLE  (for SFC + CHKDSK)
-  // ════════════════════════════════════════════════════════════
-  const PORT = 7779;
-  let pollTimer    = null;
-  let pollAttempts = 0;
-  let lastLineCount= 0;
-  let elapsedTimer = null;
-  let startEpoch   = null;
-
-  function startScan(action, statusId, taskLabel, dotCls) {
-    launch(action);
-    setStatus(statusId, '⏳ Starting…', 'ok');
-    toast('Script launched — live status loading below.', 'b');
-    openConsole(taskLabel);
-    pollAttempts  = 0;
-    lastLineCount = 0;
-    startEpoch    = Date.now();
-    clearInterval(pollTimer);
-    clearInterval(elapsedTimer);
-    pollTimer    = setInterval(pollStatus, 1000);
-    elapsedTimer = setInterval(tickElapsed, 1000);
-  }
-
-  function openConsole(label) {
-    const panel = document.getElementById('console-panel');
-    document.getElementById('con-task').textContent = label;
-    document.getElementById('con-dot').className = 'con-dot waiting';
-    document.getElementById('con-log').innerHTML = 'Waiting for script to start...<br>';
-    document.getElementById('prog-fill').style.width = '0%';
-    document.getElementById('prog-fill').className = 'prog-fill';
-    document.getElementById('con-pct-text').textContent = '0%';
-    document.getElementById('con-pct-bar').textContent  = '0%';
-    document.getElementById('con-eta').textContent      = 'Calculating...';
-    document.getElementById('con-elapsed').textContent  = '0s elapsed';
-    panel.classList.add('visible');
-    panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-    lastLineCount = 0;
-  }
-
-  function closeConsole() {
-    document.getElementById('console-panel').classList.remove('visible');
-    clearInterval(pollTimer);
-    clearInterval(elapsedTimer);
-  }
-
-  function tickElapsed() {
-    if (!startEpoch) return;
-    const s   = Math.round((Date.now() - startEpoch) / 1000);
-    const txt = s < 60 ? s + 's elapsed' : Math.floor(s/60) + 'm ' + (s%60) + 's elapsed';
-    document.getElementById('con-elapsed').textContent = txt;
-  }
-
-  async function pollStatus() {
-    try {
-      const res = await fetch(`http://localhost:${PORT}/status`, { cache: 'no-store' });
-      if (!res.ok) { handleOffline(); return; }
-      const data = await res.json();
-      pollAttempts = 0;
-      renderStatus(data);
-    } catch {
-      handleOffline();
-    }
-  }
-
-  function handleOffline() {
-    pollAttempts++;
-    if (pollAttempts > 8)  document.getElementById('con-eta').textContent = 'Connecting...';
-    if (pollAttempts > 60) {
-      clearInterval(pollTimer);
-      clearInterval(elapsedTimer);
-      document.getElementById('con-dot').className = 'con-dot error';
-      document.getElementById('con-eta').textContent = 'Timed out';
-    }
-  }
-
-  function renderStatus(data) {
-    if (data.task) document.getElementById('con-task').textContent = data.task;
-
-    const pct  = Math.min(100, Math.max(0, data.progress || 0));
-    const fill = document.getElementById('prog-fill');
-    fill.style.width = pct + '%';
-    if      (data.status === 'complete') fill.className = 'prog-fill done';
-    else if (data.status === 'error')    fill.className = 'prog-fill error';
-    else                                 fill.className = 'prog-fill';
-    document.getElementById('con-pct-text').textContent = pct + '%';
-    document.getElementById('con-pct-bar').textContent  = pct + '%';
-
-    if (data.eta) document.getElementById('con-eta').textContent = data.eta;
-
-    const dot = document.getElementById('con-dot');
-    if      (data.status === 'complete') dot.className = 'con-dot done';
-    else if (data.status === 'error')    dot.className = 'con-dot error';
-    else                                 dot.className = 'con-dot waiting';
-
-    const lines = data.lines || [];
-    if (lines.length > lastLineCount) {
-      const log      = document.getElementById('con-log');
-      const newLines = lines.slice(lastLineCount);
-      newLines.forEach(l => {
-        const div = document.createElement('div');
-        div.className   = 'line-new';
-        div.textContent = '> ' + l;
-        log.appendChild(div);
-      });
-      lastLineCount = lines.length;
-      log.scrollTop = log.scrollHeight;
-    }
-
-    if (data.done) {
-      clearInterval(pollTimer);
-      clearInterval(elapsedTimer);
-      if (data.status === 'complete') {
-        toast('✅ ' + (data.task || 'Scan') + ' completed successfully.', 'g');
-      } else {
-        toast('⚠️ ' + (data.task || 'Scan') + ' finished with errors. Check the console.', 'a');
-      }
-    }
   }
 
   // Modal helpers
