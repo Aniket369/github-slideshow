@@ -40,7 +40,6 @@
       position: relative;
     }
 
-    /* ── Background texture ── */
     body::before {
       content: '';
       position: fixed;
@@ -52,7 +51,6 @@
       z-index: 0;
     }
 
-    /* ── Top nav bar ── */
     .topbar {
       width: 100%;
       background: #001428;
@@ -65,193 +63,91 @@
       z-index: 10;
       box-shadow: 0 2px 20px rgba(0,174,239,0.15);
     }
-    .topbar-eagle {
-      font-size: 1.7rem;
-      line-height: 1;
-    }
-    .topbar-brand {
-      display: flex;
-      flex-direction: column;
-    }
-    .topbar-brand .bname {
-      font-size: .75rem;
-      font-weight: 800;
-      letter-spacing: .18em;
-      text-transform: uppercase;
-      color: var(--blue);
-    }
-    .topbar-brand .bsub {
-      font-size: .67rem;
-      color: var(--muted);
-      letter-spacing: .06em;
-    }
-    .topbar-divider {
-      width: 1px;
-      height: 28px;
-      background: rgba(0,174,239,0.25);
-      margin: 0 .5rem;
-    }
-    .topbar-title {
-      font-size: .82rem;
-      font-weight: 600;
-      color: rgba(240,248,255,0.7);
-    }
-    .topbar-right {
-      margin-left: auto;
-      font-size: .7rem;
-      color: var(--muted);
-      display: flex;
-      align-items: center;
-      gap: .4rem;
-    }
-    .topbar-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 6px var(--green);
-    }
+    .topbar-eagle { font-size: 1.7rem; line-height: 1; }
+    .topbar-brand { display: flex; flex-direction: column; }
+    .topbar-brand .bname { font-size: .75rem; font-weight: 800; letter-spacing: .18em; text-transform: uppercase; color: var(--blue); }
+    .topbar-brand .bsub  { font-size: .67rem; color: var(--muted); letter-spacing: .06em; }
+    .topbar-divider { width: 1px; height: 28px; background: rgba(0,174,239,0.25); margin: 0 .5rem; }
+    .topbar-title { font-size: .82rem; font-weight: 600; color: rgba(240,248,255,0.7); }
+    .topbar-right { margin-left: auto; font-size: .7rem; color: var(--muted); display: flex; align-items: center; gap: .4rem; }
+    .topbar-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
 
-    /* ── Wrapper ── */
-    .wrap {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 860px;
-      padding: 2rem 1.25rem 0;
-    }
+    .wrap { position: relative; z-index: 1; width: 100%; max-width: 860px; padding: 2rem 1.25rem 0; }
 
-    /* ── Header ── */
-    .hdr {
-      text-align: center;
-      margin-bottom: 2.5rem;
-    }
+    .hdr { text-align: center; margin-bottom: 2.5rem; }
     .hdr-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: .5rem;
-      background: rgba(0,174,239,0.12);
-      border: 1px solid rgba(0,174,239,0.25);
-      border-radius: 99px;
-      padding: .3rem .9rem;
-      font-size: .7rem;
-      font-weight: 600;
-      letter-spacing: .08em;
-      text-transform: uppercase;
-      color: var(--blue);
-      margin-bottom: 1.1rem;
+      display: inline-flex; align-items: center; gap: .5rem;
+      background: rgba(0,174,239,0.12); border: 1px solid rgba(0,174,239,0.25);
+      border-radius: 99px; padding: .3rem .9rem;
+      font-size: .7rem; font-weight: 600; letter-spacing: .08em;
+      text-transform: uppercase; color: var(--blue); margin-bottom: 1.1rem;
     }
-    .hdr-badge-dot {
-      width: 6px; height: 6px;
-      border-radius: 50%;
-      background: var(--blue);
-      animation: blink 2s ease-in-out infinite;
-    }
+    .hdr-badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--blue); animation: blink 2s ease-in-out infinite; }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
-
-    .hdr h1 {
-      font-size: clamp(1.6rem,4vw,2.3rem);
-      font-weight: 800;
-      letter-spacing: -.02em;
-      color: #fff;
-      margin-bottom: .45rem;
-      line-height: 1.15;
-    }
+    .hdr h1 { font-size: clamp(1.6rem,4vw,2.3rem); font-weight: 800; letter-spacing: -.02em; color: #fff; margin-bottom: .45rem; line-height: 1.15; }
     .hdr h1 span { color: var(--blue); }
     .hdr p { color: var(--muted); font-size: .9rem; }
 
-    /* ── Section label ── */
     .section-label {
-      font-size: .68rem;
-      font-weight: 700;
-      letter-spacing: .14em;
-      text-transform: uppercase;
-      color: var(--blue);
-      margin-bottom: .75rem;
-      padding-left: .25rem;
-      display: flex;
-      align-items: center;
-      gap: .5rem;
+      font-size: .68rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase;
+      color: var(--blue); margin-bottom: .75rem; padding-left: .25rem;
+      display: flex; align-items: center; gap: .5rem;
     }
-    .section-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: linear-gradient(90deg, rgba(0,174,239,0.2), transparent);
-    }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, rgba(0,174,239,0.2), transparent); }
 
-    /* ── Grids ── */
     .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
     @media(max-width:600px){ .g2 { grid-template-columns:1fr; } }
 
-    /* ── Card ── */
     .card {
-      display: flex;
-      flex-direction: column;
-      padding: 0;
-      border-radius: 14px;
-      border: 1px solid var(--cb2);
-      background: var(--card);
-      backdrop-filter: blur(20px);
-      cursor: pointer;
-      overflow: hidden;
-      transition: transform .2s ease, box-shadow .2s ease, border-color .25s ease;
-      text-align: left;
-      outline: none;
-      width: 100%;
+      display: flex; flex-direction: column; padding: 0;
+      border-radius: 14px; border: 1px solid var(--cb2);
+      background: var(--card); backdrop-filter: blur(20px);
+      overflow: hidden; transition: transform .2s ease, box-shadow .2s ease, border-color .25s ease;
+      text-align: left; width: 100%;
     }
-    .card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 12px 40px rgba(0,174,239,0.18);
-      border-color: rgba(0,174,239,0.4);
-    }
-    .card:active { transform: translateY(-1px); }
+    .card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(0,174,239,0.18); border-color: rgba(0,174,239,0.4); }
+    .card.danger:hover { box-shadow: 0 12px 40px rgba(239,68,68,0.2); border-color: rgba(239,68,68,0.4); }
 
-    /* danger card (restart) */
-    .card.danger:hover {
-      box-shadow: 0 12px 40px rgba(239,68,68,0.2);
-      border-color: rgba(239,68,68,0.4);
-    }
-
-    /* top accent line */
     .bar { width: 100%; height: 3px; background: linear-gradient(90deg, var(--blue), var(--blue2)); }
     .card.danger .bar { background: linear-gradient(90deg, #ef4444, #dc2626); }
 
     .cbody { padding: 1.35rem 1.4rem 1.4rem; display: flex; flex-direction: column; gap: .8rem; flex: 1; }
 
     .cicon {
-      width: 42px; height: 42px;
-      border-radius: 10px;
+      width: 42px; height: 42px; border-radius: 10px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.3rem;
-      background: rgba(0,174,239,0.12);
-      border: 1px solid rgba(0,174,239,0.2);
-      flex-shrink: 0;
+      font-size: 1.3rem; background: rgba(0,174,239,0.12);
+      border: 1px solid rgba(0,174,239,0.2); flex-shrink: 0;
     }
-    .card.danger .cicon {
-      background: rgba(239,68,68,0.1);
-      border-color: rgba(239,68,68,0.2);
-    }
+    .card.danger .cicon { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.2); }
 
     .ctitle { font-size: .92rem; font-weight: 700; margin-bottom: .2rem; color: #fff; }
     .cdesc  { font-size: .76rem; color: var(--muted); line-height: 1.55; }
 
-    .cfoot { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
+    .cfoot { display: flex; align-items: center; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
+
+    .btn-pair { display: flex; align-items: center; gap: .45rem; flex-shrink: 0; }
+
+    .load-btn {
+      display: inline-flex; align-items: center; gap: .32rem;
+      padding: .42rem .9rem; border-radius: 7px;
+      font-size: .76rem; font-weight: 700;
+      color: var(--blue); border: 1px solid rgba(0,174,239,0.35);
+      cursor: pointer; background: transparent;
+      transition: background .15s, color .15s, border-color .15s;
+      flex-shrink: 0; letter-spacing: .02em;
+      text-decoration: none; font-family: inherit;
+    }
+    .load-btn:hover { background: rgba(0,174,239,0.1); color: #fff; border-color: rgba(0,174,239,0.6); }
+    .load-btn.loaded { color: var(--green); border-color: rgba(34,197,94,0.4); background: rgba(34,197,94,0.06); }
 
     .run-btn {
-      display: inline-flex;
-      align-items: center;
-      gap: .35rem;
-      padding: .42rem .95rem;
-      border-radius: 7px;
-      font-size: .76rem;
-      font-weight: 700;
-      color: #fff;
-      border: none;
-      cursor: pointer;
-      background: linear-gradient(135deg, var(--blue), var(--blue2));
-      transition: opacity .15s, transform .1s;
-      flex-shrink: 0;
-      letter-spacing: .02em;
+      display: inline-flex; align-items: center; gap: .35rem;
+      padding: .42rem .95rem; border-radius: 7px;
+      font-size: .76rem; font-weight: 700; color: #fff; border: none;
+      cursor: pointer; background: linear-gradient(135deg, var(--blue), var(--blue2));
+      transition: opacity .15s, transform .1s; flex-shrink: 0;
+      letter-spacing: .02em; font-family: inherit;
     }
     .run-btn:hover { opacity: .88; }
     .card.danger .run-btn { background: linear-gradient(135deg, #ef4444, #dc2626); }
@@ -262,37 +158,43 @@
     .cstatus.warn { color: var(--amber); }
     .cstatus.err  { color: var(--red2); }
 
-    /* ── Divider ── */
-    .divider {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(0,174,239,0.15), transparent);
-      margin: 1.5rem 0;
+    .legend {
+      display: flex; align-items: center; gap: 1.2rem; flex-wrap: wrap;
+      padding: .6rem .9rem;
+      background: rgba(0,174,239,0.04); border: 1px solid rgba(0,174,239,0.1);
+      border-radius: 8px; margin-bottom: 1rem;
+      font-size: .7rem; color: var(--muted);
+    }
+    .legend-item { display: flex; align-items: center; gap: .4rem; }
+    .legend-load {
+      display: inline-flex; align-items: center; gap: .2rem;
+      padding: .15rem .5rem; border-radius: 5px;
+      border: 1px solid rgba(0,174,239,0.35); color: var(--blue);
+      font-size: .68rem; font-weight: 700;
+    }
+    .legend-run {
+      display: inline-flex; align-items: center; gap: .2rem;
+      padding: .15rem .5rem; border-radius: 5px;
+      background: linear-gradient(135deg, var(--blue), var(--blue2));
+      color: #fff; font-size: .68rem; font-weight: 700;
     }
 
-    /* ── Note ── */
+    .divider { height: 1px; background: linear-gradient(90deg, transparent, rgba(0,174,239,0.15), transparent); margin: 1.5rem 0; }
+
     .note {
-      background: rgba(0,174,239,0.05);
-      border: 1px solid rgba(0,174,239,0.15);
-      border-radius: 10px;
-      padding: .85rem 1.1rem;
-      display: flex;
-      align-items: flex-start;
-      gap: .65rem;
-      font-size: .76rem;
-      color: var(--muted);
-      line-height: 1.6;
+      background: rgba(0,174,239,0.05); border: 1px solid rgba(0,174,239,0.15);
+      border-radius: 10px; padding: .85rem 1.1rem;
+      display: flex; align-items: flex-start; gap: .65rem;
+      font-size: .76rem; color: var(--muted); line-height: 1.6;
     }
     .note-icon { flex-shrink: 0; margin-top: .1rem; }
     .note strong { color: rgba(240,248,255,0.75); }
 
-    /* ── Toast ── */
     #toast {
       position: fixed; bottom: 2rem; left: 50%;
       transform: translateX(-50%) translateY(120%);
-      background: #001428;
-      border: 1px solid rgba(0,174,239,0.3);
-      border-radius: 10px;
-      padding: .8rem 1.3rem;
+      background: #001428; border: 1px solid rgba(0,174,239,0.3);
+      border-radius: 10px; padding: .8rem 1.3rem;
       display: flex; align-items: center; gap: .65rem;
       font-size: .85rem; font-weight: 500; color: var(--text);
       box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,174,239,0.1);
@@ -306,7 +208,6 @@
     .tdot.a { background: var(--amber); box-shadow: 0 0 7px var(--amber); }
     .tdot.b { background: var(--blue);  box-shadow: 0 0 7px var(--blue); }
 
-    /* ── Modal ── */
     .overlay { display: none; position: fixed; inset: 0; background: rgba(0,10,20,.8); z-index: 900; backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 1.5rem; }
     .overlay.active { display: flex; }
     .modal { background: #001B2E; border: 1px solid rgba(239,68,68,0.3); border-radius: 16px; padding: 1.75rem; max-width: 400px; width: 100%; box-shadow: 0 20px 70px rgba(0,0,0,.7); animation: popIn .22s cubic-bezier(.34,1.56,.64,1); }
@@ -321,21 +222,11 @@
     .btn-ok { padding: .5rem 1rem; border-radius: 8px; border: none; background: linear-gradient(135deg,#ef4444,#dc2626); color: #fff; font-size: .84rem; font-weight: 700; cursor: pointer; transition: opacity .15s; }
     .btn-ok:hover { opacity: .85; }
 
-    /* ── Footer ── */
-    .footer {
-      width: 100%;
-      text-align: center;
-      padding: 2rem 1rem 1rem;
-      font-size: .68rem;
-      color: rgba(123,174,200,0.4);
-      position: relative;
-      z-index: 1;
-    }
+    .footer { width: 100%; text-align: center; padding: 2rem 1rem 1rem; font-size: .68rem; color: rgba(123,174,200,0.4); position: relative; z-index: 1; }
   </style>
 </head>
 <body>
 
-<!-- Top navigation bar -->
 <div class="topbar">
   <span class="topbar-eagle">🦅</span>
   <div class="topbar-brand">
@@ -352,17 +243,27 @@
 
 <div class="wrap">
 
-  <!-- Header -->
   <div class="hdr">
     <div class="hdr-badge"><span class="hdr-badge-dot"></span>Internal Use Only</div>
     <h1>IT <span>Self-Service</span> Tools</h1>
-    <p>Click a button — the action runs instantly on your machine.</p>
+    <p>Load a script to inspect it, then Run it on your machine.</p>
   </div>
 
-  <!-- Quick Actions -->
+  <div class="legend">
+    <div class="legend-item">
+      <span class="legend-load">📥 Load</span>
+      <span>Downloads the script to your PC — no setup needed, inspect before running</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-run">▶ Run</span>
+      <span>Executes the script instantly — requires one-time Start-Here.bat setup</span>
+    </div>
+  </div>
+
   <div class="section-label">Quick Actions</div>
   <div class="g2">
-    <button class="card" onclick="go('clear-teams-cache','status-teams','Teams cache clear started — a window will open.','b')">
+
+    <div class="card">
       <div class="bar"></div>
       <div class="cbody">
         <div class="cicon">💬</div>
@@ -371,13 +272,16 @@
           <div class="cdesc">Stops Teams, wipes the local cache, resets the app and restarts it fresh. Resolves login issues and display glitches.</div>
         </div>
         <div class="cfoot">
-          <span class="run-btn">▶ Run</span>
+          <div class="btn-pair">
+            <a href="setup/Clear-TeamsCache.ps1" download="Clear-TeamsCache.ps1" class="load-btn" onclick="markLoaded(this)">📥 Load</a>
+            <button class="run-btn" onclick="go('clear-teams-cache','status-teams','Teams cache clear started — a window will open.','b')">▶ Run</button>
+          </div>
           <span class="cstatus" id="status-teams"></span>
         </div>
       </div>
-    </button>
+    </div>
 
-    <button class="card" onclick="go('gpupdate','status-gpu','GPUpdate started — a terminal window will appear shortly.','b')">
+    <div class="card">
       <div class="bar"></div>
       <div class="cbody">
         <div class="cicon">🔄</div>
@@ -386,16 +290,19 @@
           <div class="cdesc">Forces an immediate refresh of your Group Policy settings from the Barclays domain. No reboot needed.</div>
         </div>
         <div class="cfoot">
-          <span class="run-btn">▶ Run</span>
+          <div class="btn-pair">
+            <a href="setup/GPUpdate.ps1" download="GPUpdate.ps1" class="load-btn" onclick="markLoaded(this)">📥 Load</a>
+            <button class="run-btn" onclick="go('gpupdate','status-gpu','GPUpdate started — a terminal window will appear shortly.','b')">▶ Run</button>
+          </div>
           <span class="cstatus" id="status-gpu"></span>
         </div>
       </div>
-    </button>
+    </div>
+
   </div>
 
-  <!-- Power -->
   <div class="section-label">Power Management</div>
-  <button class="card danger" onclick="openModal()" style="margin-bottom:1.5rem">
+  <div class="card danger" style="margin-bottom:1.5rem">
     <div class="bar"></div>
     <div class="cbody" style="flex-direction:row;align-items:center;gap:1.25rem">
       <div class="cicon">⏻</div>
@@ -403,23 +310,29 @@
         <div class="ctitle">Restart PC</div>
         <div class="cdesc">Schedules a Windows restart in 60 seconds. Save all open work before confirming.</div>
       </div>
-      <div class="cfoot" style="flex-shrink:0;flex-direction:column;align-items:flex-end">
-        <span class="run-btn">▶ Run</span>
-        <span class="cstatus" id="status-rst" style="margin-top:.4rem"></span>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.5rem;flex-shrink:0">
+        <div class="btn-pair">
+          <a href="setup/Restart-PC.ps1" download="Restart-PC.ps1" class="load-btn" style="color:#ef4444;border-color:rgba(239,68,68,0.35)" onclick="markLoaded(this)">📥 Load</a>
+          <button class="run-btn" onclick="openModal()">▶ Run</button>
+        </div>
+        <span class="cstatus" id="status-rst"></span>
       </div>
     </div>
-  </button>
+  </div>
 
   <div class="divider"></div>
 
   <div class="note">
     <span class="note-icon">ℹ️</span>
-    <span><strong>First time?</strong> Run <strong>Start-Here.bat</strong> once to register this portal on your PC. When a button is clicked, your browser may ask <em>"Allow this site to open IT Tools?"</em> — click <strong>Open</strong>.</span>
+    <span>
+      <strong>📥 Load</strong> works on any PC right away — it downloads the script so you can open and inspect it in Notepad.
+      <strong>▶ Run</strong> requires a one-time setup: run <strong>Start-Here.bat</strong> once to register this portal on your PC.
+      Your browser may ask <em>"Allow this site to open IT Tools?"</em> — click <strong>Open</strong>.
+    </span>
   </div>
 
-</div><!-- /wrap -->
+</div>
 
-<!-- Restart modal -->
 <div class="overlay" id="overlay">
   <div class="modal">
     <div class="modal-icon">⚠️</div>
@@ -437,7 +350,6 @@
 <div class="footer">Barclays Internal — IT Self-Service Portal &nbsp;·&nbsp; Not for external distribution</div>
 
 <script>
-  // ── Toast ──────────────────────────────────────────────
   function toast(msg, cls) {
     document.getElementById('tmsg').textContent = msg;
     document.getElementById('tdot').className = 'tdot ' + cls;
@@ -453,7 +365,13 @@
     if (cls === 'ok') setTimeout(() => el.className = 'cstatus', 7000);
   }
 
-  // ── Launch custom URL protocol ─────────────────────────
+  function markLoaded(el) {
+    setTimeout(() => {
+      el.textContent = '✅ Loaded';
+      el.classList.add('loaded');
+    }, 600);
+  }
+
   function launch(action) {
     const f = document.createElement('iframe');
     f.style.display = 'none';
@@ -462,14 +380,12 @@
     setTimeout(() => document.body.removeChild(f), 2000);
   }
 
-  // ── Simple go (no live console) ───────────────────────
   function go(action, statusId, toastMsg, dotCls) {
     launch(action);
     setStatus(statusId, '⏳ Running...', 'ok');
     toast(toastMsg, dotCls);
   }
 
-  // ── Restart ───────────────────────────────────────────
   function openModal()  { document.getElementById('overlay').classList.add('active'); }
   function closeModal() { document.getElementById('overlay').classList.remove('active'); }
   function runRestart() {
@@ -479,7 +395,6 @@
     toast('⚠️ Restart in 60 seconds. Cancel: shutdown /a', 'a');
   }
 
-  // Modal helpers
   document.getElementById('overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 </script>
