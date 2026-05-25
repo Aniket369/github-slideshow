@@ -192,11 +192,9 @@
       border: 1px solid var(--cb2);
       background: var(--card);
       backdrop-filter: blur(20px);
-      cursor: pointer;
       overflow: hidden;
       transition: transform .2s ease, box-shadow .2s ease, border-color .25s ease;
       text-align: left;
-      outline: none;
       width: 100%;
     }
     .card:hover {
@@ -204,7 +202,6 @@
       box-shadow: 0 12px 40px rgba(0,174,239,0.18);
       border-color: rgba(0,174,239,0.4);
     }
-    .card:active { transform: translateY(-1px); }
 
     /* danger card (restart) */
     .card.danger:hover {
@@ -235,8 +232,53 @@
     .ctitle { font-size: .92rem; font-weight: 700; margin-bottom: .2rem; color: #fff; }
     .cdesc  { font-size: .76rem; color: var(--muted); line-height: 1.55; }
 
-    .cfoot { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
+    .cfoot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: .75rem;
+      flex-wrap: wrap;
+    }
 
+    /* ── Button pair ── */
+    .btn-pair {
+      display: flex;
+      align-items: center;
+      gap: .45rem;
+      flex-shrink: 0;
+    }
+
+    /* ── Load button (outlined, secondary) ── */
+    .load-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .32rem;
+      padding: .42rem .9rem;
+      border-radius: 7px;
+      font-size: .76rem;
+      font-weight: 700;
+      color: var(--blue);
+      border: 1px solid rgba(0,174,239,0.35);
+      cursor: pointer;
+      background: transparent;
+      transition: background .15s, color .15s, border-color .15s;
+      flex-shrink: 0;
+      letter-spacing: .02em;
+      text-decoration: none;
+      font-family: inherit;
+    }
+    .load-btn:hover {
+      background: rgba(0,174,239,0.1);
+      color: #fff;
+      border-color: rgba(0,174,239,0.6);
+    }
+    .load-btn.loaded {
+      color: var(--green);
+      border-color: rgba(34,197,94,0.4);
+      background: rgba(34,197,94,0.06);
+    }
+
+    /* ── Run button (filled, primary) ── */
     .run-btn {
       display: inline-flex;
       align-items: center;
@@ -252,6 +294,7 @@
       transition: opacity .15s, transform .1s;
       flex-shrink: 0;
       letter-spacing: .02em;
+      font-family: inherit;
     }
     .run-btn:hover { opacity: .88; }
     .card.danger .run-btn { background: linear-gradient(135deg, #ef4444, #dc2626); }
@@ -261,6 +304,38 @@
     .cstatus.ok   { color: var(--green); }
     .cstatus.warn { color: var(--amber); }
     .cstatus.err  { color: var(--red2); }
+
+    /* ── How it works legend ── */
+    .legend {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+      flex-wrap: wrap;
+      padding: .6rem .9rem;
+      background: rgba(0,174,239,0.04);
+      border: 1px solid rgba(0,174,239,0.1);
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      font-size: .7rem;
+      color: var(--muted);
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+    }
+    .legend-load {
+      display: inline-flex; align-items: center; gap: .2rem;
+      padding: .15rem .5rem; border-radius: 5px;
+      border: 1px solid rgba(0,174,239,0.35); color: var(--blue);
+      font-size: .68rem; font-weight: 700;
+    }
+    .legend-run {
+      display: inline-flex; align-items: center; gap: .2rem;
+      padding: .15rem .5rem; border-radius: 5px;
+      background: linear-gradient(135deg, var(--blue), var(--blue2));
+      color: #fff; font-size: .68rem; font-weight: 700;
+    }
 
     /* ── Divider ── */
     .divider {
@@ -356,13 +431,27 @@
   <div class="hdr">
     <div class="hdr-badge"><span class="hdr-badge-dot"></span>Internal Use Only</div>
     <h1>IT <span>Self-Service</span> Tools</h1>
-    <p>Click a button — the action runs instantly on your machine.</p>
+    <p>Load a script to inspect it, then Run it on your machine.</p>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div class="legend-item">
+      <span class="legend-load">📥 Load</span>
+      <span>Downloads the script to your PC — no setup needed, inspect before running</span>
+    </div>
+    <div class="legend-item">
+      <span class="legend-run">▶ Run</span>
+      <span>Executes the script instantly — requires one-time Start-Here.bat setup</span>
+    </div>
   </div>
 
   <!-- Quick Actions -->
   <div class="section-label">Quick Actions</div>
   <div class="g2">
-    <button class="card" onclick="go('clear-teams-cache','status-teams','Teams cache clear started — a window will open.','b')">
+
+    <!-- Teams Cache card -->
+    <div class="card">
       <div class="bar"></div>
       <div class="cbody">
         <div class="cicon">💬</div>
@@ -371,13 +460,21 @@
           <div class="cdesc">Stops Teams, wipes the local cache, resets the app and restarts it fresh. Resolves login issues and display glitches.</div>
         </div>
         <div class="cfoot">
-          <span class="run-btn">▶ Run</span>
+          <div class="btn-pair">
+            <a href="setup/Clear-TeamsCache.ps1"
+               download="Clear-TeamsCache.ps1"
+               class="load-btn"
+               onclick="markLoaded(this)">📥 Load</a>
+            <button class="run-btn"
+                    onclick="go('clear-teams-cache','status-teams','Teams cache clear started — a window will open.','b')">▶ Run</button>
+          </div>
           <span class="cstatus" id="status-teams"></span>
         </div>
       </div>
-    </button>
+    </div>
 
-    <button class="card" onclick="go('gpupdate','status-gpu','GPUpdate started — a terminal window will appear shortly.','b')">
+    <!-- GPUpdate card -->
+    <div class="card">
       <div class="bar"></div>
       <div class="cbody">
         <div class="cicon">🔄</div>
@@ -386,16 +483,24 @@
           <div class="cdesc">Forces an immediate refresh of your Group Policy settings from the Barclays domain. No reboot needed.</div>
         </div>
         <div class="cfoot">
-          <span class="run-btn">▶ Run</span>
+          <div class="btn-pair">
+            <a href="setup/GPUpdate.ps1"
+               download="GPUpdate.ps1"
+               class="load-btn"
+               onclick="markLoaded(this)">📥 Load</a>
+            <button class="run-btn"
+                    onclick="go('gpupdate','status-gpu','GPUpdate started — a terminal window will appear shortly.','b')">▶ Run</button>
+          </div>
           <span class="cstatus" id="status-gpu"></span>
         </div>
       </div>
-    </button>
+    </div>
+
   </div>
 
   <!-- Power -->
   <div class="section-label">Power Management</div>
-  <button class="card danger" onclick="openModal()" style="margin-bottom:1.5rem">
+  <div class="card danger" style="margin-bottom:1.5rem">
     <div class="bar"></div>
     <div class="cbody" style="flex-direction:row;align-items:center;gap:1.25rem">
       <div class="cicon">⏻</div>
@@ -403,18 +508,29 @@
         <div class="ctitle">Restart PC</div>
         <div class="cdesc">Schedules a Windows restart in 60 seconds. Save all open work before confirming.</div>
       </div>
-      <div class="cfoot" style="flex-shrink:0;flex-direction:column;align-items:flex-end">
-        <span class="run-btn">▶ Run</span>
-        <span class="cstatus" id="status-rst" style="margin-top:.4rem"></span>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.5rem;flex-shrink:0">
+        <div class="btn-pair">
+          <a href="setup/Restart-PC.ps1"
+             download="Restart-PC.ps1"
+             class="load-btn"
+             style="color:#ef4444;border-color:rgba(239,68,68,0.35)"
+             onclick="markLoaded(this)">📥 Load</a>
+          <button class="run-btn" onclick="openModal()">▶ Run</button>
+        </div>
+        <span class="cstatus" id="status-rst"></span>
       </div>
     </div>
-  </button>
+  </div>
 
   <div class="divider"></div>
 
   <div class="note">
     <span class="note-icon">ℹ️</span>
-    <span><strong>First time?</strong> Run <strong>Start-Here.bat</strong> once to register this portal on your PC. When a button is clicked, your browser may ask <em>"Allow this site to open IT Tools?"</em> — click <strong>Open</strong>.</span>
+    <span>
+      <strong>📥 Load</strong> works on any PC right away — it downloads the script so you can open and inspect it in Notepad.
+      <strong>▶ Run</strong> requires a one-time setup: run <strong>Start-Here.bat</strong> once to register this portal on your PC.
+      Your browser may ask <em>"Allow this site to open IT Tools?"</em> — click <strong>Open</strong>.
+    </span>
   </div>
 
 </div><!-- /wrap -->
@@ -451,6 +567,15 @@
     el.textContent = msg;
     el.className = 'cstatus show ' + cls;
     if (cls === 'ok') setTimeout(() => el.className = 'cstatus', 7000);
+  }
+
+  // ── Mark Load button as completed ─────────────────────────
+  function markLoaded(el) {
+    // Small delay so download starts first, then update button
+    setTimeout(() => {
+      el.textContent = '✅ Loaded';
+      el.classList.add('loaded');
+    }, 600);
   }
 
   // ── Launch custom URL protocol ─────────────────────────────
