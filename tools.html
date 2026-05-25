@@ -3,280 +3,515 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IT Control Centre</title>
+  <title>Barclays IT Self-Service</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:    #07080f;
-      --card:  rgba(255,255,255,0.04);
-      --cb:    rgba(255,255,255,0.08);
-      --text:  #f0f2f8;
-      --muted: #6b7280;
-      --green: #22c55e;
-      --amber: #f59e0b;
-      --red2:  #ef4444;
+      --navy:   #00263D;
+      --navy2:  #001B2E;
+      --navy3:  #00395D;
+      --blue:   #00AEEF;
+      --blue2:  #0072BC;
+      --blue3:  #005A96;
+      --card:   rgba(0,38,61,0.7);
+      --cb:     rgba(0,174,239,0.15);
+      --cb2:    rgba(0,174,239,0.08);
+      --text:   #F0F8FF;
+      --muted:  #7BAEC8;
+      --green:  #22c55e;
+      --amber:  #f59e0b;
+      --red2:   #ef4444;
     }
 
     html, body { height: 100%; }
     body {
-      background: var(--bg); color: var(--text);
+      background: var(--navy2);
+      color: var(--text);
       font-family: 'Inter', -apple-system, sans-serif;
-      min-height: 100vh; display: flex; flex-direction: column;
-      align-items: center; padding: 2rem 1.25rem 3rem;
-      overflow-x: hidden; position: relative;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 0 3rem;
+      overflow-x: hidden;
+      position: relative;
     }
 
-    /* ── Blobs ── */
-    .blob { position: fixed; border-radius: 50%; filter: blur(110px); opacity: .10; pointer-events: none; z-index: 0; animation: drift 18s ease-in-out infinite alternate; }
-    .b1 { width:700px;height:700px;background:#6366f1;top:-250px;left:-200px;animation-duration:20s; }
-    .b2 { width:600px;height:600px;background:#ef4444;bottom:-200px;right:-150px;animation-duration:16s;animation-delay:-8s; }
-    .b3 { width:350px;height:350px;background:#10b981;top:55%;left:52%;animation-duration:22s;animation-delay:-4s; }
-    .b4 { width:300px;height:300px;background:#8b5cf6;top:30%;right:-100px;animation-duration:26s;animation-delay:-12s; }
-    @keyframes drift { from{transform:translate(0,0) scale(1)} to{transform:translate(40px,30px) scale(1.1)} }
+    /* ── Background texture ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 10% 0%, rgba(0,174,239,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 50% at 90% 100%, rgba(0,114,188,0.07) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Top nav bar ── */
+    .topbar {
+      width: 100%;
+      background: #001428;
+      border-bottom: 2px solid var(--blue);
+      padding: .85rem 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      position: relative;
+      z-index: 10;
+      box-shadow: 0 2px 20px rgba(0,174,239,0.15);
+    }
+    .topbar-eagle {
+      font-size: 1.7rem;
+      line-height: 1;
+    }
+    .topbar-brand {
+      display: flex;
+      flex-direction: column;
+    }
+    .topbar-brand .bname {
+      font-size: .75rem;
+      font-weight: 800;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      color: var(--blue);
+    }
+    .topbar-brand .bsub {
+      font-size: .67rem;
+      color: var(--muted);
+      letter-spacing: .06em;
+    }
+    .topbar-divider {
+      width: 1px;
+      height: 28px;
+      background: rgba(0,174,239,0.25);
+      margin: 0 .5rem;
+    }
+    .topbar-title {
+      font-size: .82rem;
+      font-weight: 600;
+      color: rgba(240,248,255,0.7);
+    }
+    .topbar-right {
+      margin-left: auto;
+      font-size: .7rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+    }
+    .topbar-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      box-shadow: 0 0 6px var(--green);
+    }
 
     /* ── Wrapper ── */
-    .wrap { position:relative;z-index:1;width:100%;max-width:860px; }
+    .wrap {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 860px;
+      padding: 2rem 1.25rem 0;
+    }
 
     /* ── Header ── */
-    .hdr { text-align:center;margin-bottom:2.5rem;padding-top:1rem; }
-    .logo { display:inline-flex;align-items:center;justify-content:center;width:72px;height:72px;border-radius:20px;background:linear-gradient(135deg,#6366f1,#3b82f6);font-size:2rem;margin-bottom:1.25rem;box-shadow:0 0 40px rgba(99,102,241,.4); }
-    .hdr h1 { font-size:clamp(1.75rem,4vw,2.5rem);font-weight:800;letter-spacing:-.03em;background:linear-gradient(135deg,#fff 30%,#a5b4fc);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:.4rem; }
-    .hdr p { color:var(--muted);font-size:.93rem; }
+    .hdr {
+      text-align: center;
+      margin-bottom: 2.5rem;
+    }
+    .hdr-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .5rem;
+      background: rgba(0,174,239,0.12);
+      border: 1px solid rgba(0,174,239,0.25);
+      border-radius: 99px;
+      padding: .3rem .9rem;
+      font-size: .7rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 1.1rem;
+    }
+    .hdr-badge-dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--blue);
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+
+    .hdr h1 {
+      font-size: clamp(1.6rem,4vw,2.3rem);
+      font-weight: 800;
+      letter-spacing: -.02em;
+      color: #fff;
+      margin-bottom: .45rem;
+      line-height: 1.15;
+    }
+    .hdr h1 span { color: var(--blue); }
+    .hdr p { color: var(--muted); font-size: .9rem; }
 
     /* ── Section label ── */
-    .section-label { font-size:.7rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:.75rem;padding-left:.25rem; }
+    .section-label {
+      font-size: .68rem;
+      font-weight: 700;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: .75rem;
+      padding-left: .25rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+    .section-label::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: linear-gradient(90deg, rgba(0,174,239,0.2), transparent);
+    }
 
     /* ── Grids ── */
-    .g2 { display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem; }
-    .g3 { display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-bottom:1rem; }
-    @media(max-width:600px){ .g2,.g3{grid-template-columns:1fr;} }
+    .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+    @media(max-width:600px){ .g2 { grid-template-columns:1fr; } }
 
     /* ── Card ── */
     .card {
-      display:flex;flex-direction:column;padding:0;
-      border-radius:18px;border:1px solid var(--cb);
-      background:var(--card);backdrop-filter:blur(20px);
-      cursor:pointer;overflow:hidden;
-      transition:transform .2s ease,box-shadow .2s ease,border-color .2s ease;
-      text-align:left;outline:none;width:100%;
+      display: flex;
+      flex-direction: column;
+      padding: 0;
+      border-radius: 14px;
+      border: 1px solid var(--cb2);
+      background: var(--card);
+      backdrop-filter: blur(20px);
+      cursor: pointer;
+      overflow: hidden;
+      transition: transform .2s ease, box-shadow .2s ease, border-color .25s ease;
+      text-align: left;
+      outline: none;
+      width: 100%;
     }
-    .card:hover  { transform:translateY(-5px); }
-    .card:active { transform:translateY(-2px); }
-    .card.blue:hover  { box-shadow:0 16px 48px rgba(99,102,241,.25);border-color:rgba(99,102,241,.5); }
-    .card.red:hover   { box-shadow:0 16px 48px rgba(239,68,68,.25); border-color:rgba(239,68,68,.5); }
-    .card.teal:hover  { box-shadow:0 16px 48px rgba(16,185,129,.25);border-color:rgba(16,185,129,.5); }
-    .card.violet:hover{ box-shadow:0 16px 48px rgba(139,92,246,.25);border-color:rgba(139,92,246,.5); }
-    .card.orange:hover{ box-shadow:0 16px 48px rgba(249,115,22,.25);border-color:rgba(249,115,22,.5); }
+    .card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,174,239,0.18);
+      border-color: rgba(0,174,239,0.4);
+    }
+    .card:active { transform: translateY(-1px); }
 
-    .bar { width:100%;height:3px; }
-    .blue   .bar { background:linear-gradient(90deg,#6366f1,#3b82f6); }
-    .red    .bar { background:linear-gradient(90deg,#ef4444,#f97316); }
-    .teal   .bar { background:linear-gradient(90deg,#10b981,#06b6d4); }
-    .violet .bar { background:linear-gradient(90deg,#8b5cf6,#6366f1); }
-    .orange .bar { background:linear-gradient(90deg,#f97316,#eab308); }
+    /* danger card (restart) */
+    .card.danger:hover {
+      box-shadow: 0 12px 40px rgba(239,68,68,0.2);
+      border-color: rgba(239,68,68,0.4);
+    }
 
-    .cbody { padding:1.4rem 1.5rem 1.5rem;display:flex;flex-direction:column;gap:.85rem;flex:1; }
+    /* top accent line */
+    .bar { width: 100%; height: 3px; background: linear-gradient(90deg, var(--blue), var(--blue2)); }
+    .card.danger .bar { background: linear-gradient(90deg, #ef4444, #dc2626); }
 
-    .cicon { width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:1.4rem;flex-shrink:0; }
-    .blue   .cicon { background:rgba(99,102,241,.15); }
-    .red    .cicon { background:rgba(239,68,68,.15); }
-    .teal   .cicon { background:rgba(16,185,129,.15); }
-    .violet .cicon { background:rgba(139,92,246,.15); }
-    .orange .cicon { background:rgba(249,115,22,.15); }
+    .cbody { padding: 1.35rem 1.4rem 1.4rem; display: flex; flex-direction: column; gap: .8rem; flex: 1; }
 
-    .ctitle { font-size:.95rem;font-weight:700;letter-spacing:-.01em;margin-bottom:.25rem; }
-    .cdesc  { font-size:.77rem;color:var(--muted);line-height:1.5; }
+    .cicon {
+      width: 42px; height: 42px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      background: rgba(0,174,239,0.12);
+      border: 1px solid rgba(0,174,239,0.2);
+      flex-shrink: 0;
+    }
+    .card.danger .cicon {
+      background: rgba(239,68,68,0.1);
+      border-color: rgba(239,68,68,0.2);
+    }
 
-    .cfoot { display:flex;align-items:center;justify-content:space-between;gap:.75rem; }
+    .ctitle { font-size: .92rem; font-weight: 700; margin-bottom: .2rem; color: #fff; }
+    .cdesc  { font-size: .76rem; color: var(--muted); line-height: 1.55; }
 
-    .run-btn { display:inline-flex;align-items:center;gap:.35rem;padding:.45rem 1rem;border-radius:8px;font-size:.78rem;font-weight:600;color:#fff;border:none;cursor:pointer;transition:opacity .15s;flex-shrink:0; }
-    .run-btn:hover { opacity:.85; }
-    .blue   .run-btn { background:linear-gradient(135deg,#6366f1,#3b82f6); }
-    .red    .run-btn { background:linear-gradient(135deg,#ef4444,#f97316); }
-    .teal   .run-btn { background:linear-gradient(135deg,#10b981,#06b6d4); }
-    .violet .run-btn { background:linear-gradient(135deg,#8b5cf6,#6366f1); }
-    .orange .run-btn { background:linear-gradient(135deg,#f97316,#eab308); }
+    .cfoot { display: flex; align-items: center; justify-content: space-between; gap: .75rem; }
 
-    .cstatus { font-size:.72rem;font-weight:600;opacity:0;transition:opacity .3s;text-align:right; }
-    .cstatus.show { opacity:1; }
-    .cstatus.ok   { color:var(--green); }
-    .cstatus.warn { color:var(--amber); }
-    .cstatus.err  { color:var(--red2); }
+    .run-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: .35rem;
+      padding: .42rem .95rem;
+      border-radius: 7px;
+      font-size: .76rem;
+      font-weight: 700;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--blue), var(--blue2));
+      transition: opacity .15s, transform .1s;
+      flex-shrink: 0;
+      letter-spacing: .02em;
+    }
+    .run-btn:hover { opacity: .88; }
+    .card.danger .run-btn { background: linear-gradient(135deg, #ef4444, #dc2626); }
+
+    .cstatus { font-size: .71rem; font-weight: 600; opacity: 0; transition: opacity .3s; text-align: right; }
+    .cstatus.show { opacity: 1; }
+    .cstatus.ok   { color: var(--green); }
+    .cstatus.warn { color: var(--amber); }
+    .cstatus.err  { color: var(--red2); }
 
     /* ── Divider ── */
-    .divider { height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.06),transparent);margin:1.5rem 0; }
+    .divider {
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(0,174,239,0.15), transparent);
+      margin: 1.5rem 0;
+    }
 
     /* ── Note ── */
-    .note { background:rgba(255,255,255,.03);border:1px solid var(--cb);border-radius:12px;padding:.9rem 1.1rem;display:flex;align-items:flex-start;gap:.65rem;font-size:.77rem;color:var(--muted);line-height:1.6; }
-    .note-icon { flex-shrink:0;margin-top:.1rem; }
-    .note strong { color:rgba(255,255,255,.6); }
+    .note {
+      background: rgba(0,174,239,0.05);
+      border: 1px solid rgba(0,174,239,0.15);
+      border-radius: 10px;
+      padding: .85rem 1.1rem;
+      display: flex;
+      align-items: flex-start;
+      gap: .65rem;
+      font-size: .76rem;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+    .note-icon { flex-shrink: 0; margin-top: .1rem; }
+    .note strong { color: rgba(240,248,255,0.75); }
 
     /* ══════════════════════════════════════
        LIVE CONSOLE PANEL
     ══════════════════════════════════════ */
     #console-panel {
-      margin-top:1.5rem;
-      background:rgba(255,255,255,.03);
-      border:1px solid var(--cb);
-      border-radius:18px;
-      overflow:hidden;
-      opacity:0;
-      transform:translateY(12px);
-      transition:opacity .35s ease, transform .35s ease;
-      pointer-events:none;
+      margin-top: 1.5rem;
+      background: rgba(0,20,40,0.8);
+      border: 1px solid rgba(0,174,239,0.2);
+      border-radius: 14px;
+      overflow: hidden;
+      opacity: 0;
+      transform: translateY(10px);
+      transition: opacity .35s ease, transform .35s ease;
+      pointer-events: none;
     }
-    #console-panel.visible { opacity:1;transform:translateY(0);pointer-events:all; }
+    #console-panel.visible { opacity: 1; transform: translateY(0); pointer-events: all; }
 
     .con-header {
-      display:flex;align-items:center;justify-content:space-between;
-      padding:1rem 1.25rem;
-      border-bottom:1px solid var(--cb);
-      background:rgba(255,255,255,.02);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .9rem 1.2rem;
+      border-bottom: 1px solid rgba(0,174,239,0.15);
+      background: rgba(0,174,239,0.05);
     }
-    .con-title { display:flex;align-items:center;gap:.65rem; }
-    .con-dot { width:10px;height:10px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);flex-shrink:0; }
-    .con-dot.waiting { background:var(--amber);box-shadow:0 0 8px var(--amber);animation:pulse 1.2s ease-in-out infinite; }
-    .con-dot.done    { background:var(--green);box-shadow:0 0 8px var(--green);animation:none; }
-    .con-dot.error   { background:var(--red2); box-shadow:0 0 8px var(--red2); animation:none; }
-    @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.35} }
+    .con-title { display: flex; align-items: center; gap: .6rem; }
+    .con-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--green); box-shadow: 0 0 7px var(--green); flex-shrink: 0; }
+    .con-dot.waiting { background: var(--amber); box-shadow: 0 0 7px var(--amber); animation: pulse 1.2s ease-in-out infinite; }
+    .con-dot.done    { background: var(--green);  box-shadow: 0 0 7px var(--green); animation: none; }
+    .con-dot.error   { background: var(--red2);   box-shadow: 0 0 7px var(--red2);  animation: none; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
 
-    .con-task-name { font-size:.9rem;font-weight:700; }
-    .con-close { background:none;border:none;color:var(--muted);cursor:pointer;font-size:1.1rem;padding:.2rem .4rem;border-radius:6px;transition:color .15s; }
-    .con-close:hover { color:var(--text); }
+    .con-task-name { font-size: .88rem; font-weight: 700; }
+    .con-close { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1rem; padding: .2rem .4rem; border-radius: 5px; transition: color .15s; }
+    .con-close:hover { color: var(--text); }
 
     /* Stats row */
     .con-stats {
-      display:grid;grid-template-columns:auto 1fr auto auto;
-      align-items:center;gap:1rem;
-      padding:.85rem 1.25rem;
-      border-bottom:1px solid var(--cb);
+      display: grid;
+      grid-template-columns: auto 1fr auto auto;
+      align-items: center;
+      gap: 1rem;
+      padding: .8rem 1.2rem;
+      border-bottom: 1px solid rgba(0,174,239,0.1);
     }
-    .stat-label { font-size:.7rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);white-space:nowrap; }
-    .stat-val   { font-size:.85rem;font-weight:600; }
-    .stat-eta   { font-size:.85rem;font-weight:600;color:var(--amber); }
-    .stat-elapsed { font-size:.78rem;color:var(--muted);white-space:nowrap; }
+    .stat-label { font-size: .68rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+    .stat-val   { font-size: .84rem; font-weight: 700; color: var(--blue); }
+    .stat-eta   { font-size: .84rem; font-weight: 600; color: var(--amber); }
+    .stat-elapsed { font-size: .76rem; color: var(--muted); white-space: nowrap; }
 
     /* Progress bar */
-    .prog-wrap { padding:.1rem 1.25rem .85rem;border-bottom:1px solid var(--cb); }
-    .prog-track { background:rgba(255,255,255,.06);border-radius:99px;height:6px;overflow:hidden; }
-    .prog-fill  { height:100%;border-radius:99px;background:linear-gradient(90deg,#6366f1,#3b82f6);transition:width .6s ease;width:0%; }
-    .prog-fill.done   { background:linear-gradient(90deg,#22c55e,#16a34a); }
-    .prog-fill.error  { background:linear-gradient(90deg,#ef4444,#dc2626); }
-    .prog-pct   { font-size:.72rem;font-weight:700;color:var(--muted);text-align:right;margin-top:.3rem; }
+    .prog-wrap { padding: .1rem 1.2rem .8rem; border-bottom: 1px solid rgba(0,174,239,0.1); }
+    .prog-track { background: rgba(0,174,239,0.1); border-radius: 99px; height: 5px; overflow: hidden; }
+    .prog-fill  { height: 100%; border-radius: 99px; background: linear-gradient(90deg, var(--blue), var(--blue2)); transition: width .6s ease; width: 0%; }
+    .prog-fill.done  { background: linear-gradient(90deg, #22c55e, #16a34a); }
+    .prog-fill.error { background: linear-gradient(90deg, #ef4444, #dc2626); }
+    .prog-pct { font-size: .7rem; font-weight: 700; color: var(--muted); text-align: right; margin-top: .3rem; }
 
-    /* Terminal output */
+    /* Terminal */
     .con-log {
-      font-family:'JetBrains Mono',monospace;
-      font-size:.73rem;
-      line-height:1.65;
-      color:#94a3b8;
-      background:#050609;
-      padding:.9rem 1.1rem;
-      height:220px;
-      overflow-y:auto;
-      white-space:pre-wrap;
-      word-break:break-all;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .71rem;
+      line-height: 1.7;
+      color: #5B8FA8;
+      background: #020C14;
+      padding: .85rem 1.1rem;
+      height: 220px;
+      overflow-y: auto;
+      white-space: pre-wrap;
+      word-break: break-all;
     }
-    .con-log::-webkit-scrollbar { width:5px; }
-    .con-log::-webkit-scrollbar-track { background:transparent; }
-    .con-log::-webkit-scrollbar-thumb { background:rgba(255,255,255,.1);border-radius:99px; }
-    .con-log .line-new { color:#e2e8f0; }
+    .con-log::-webkit-scrollbar { width: 4px; }
+    .con-log::-webkit-scrollbar-track { background: transparent; }
+    .con-log::-webkit-scrollbar-thumb { background: rgba(0,174,239,0.2); border-radius: 99px; }
+    .con-log .line-new { color: #A8D8F0; }
 
     /* ── Toast ── */
-    #toast { position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(120%);background:rgba(15,17,25,.95);border:1px solid rgba(255,255,255,.1);border-radius:14px;padding:.85rem 1.4rem;display:flex;align-items:center;gap:.7rem;font-size:.875rem;font-weight:500;color:var(--text);box-shadow:0 12px 40px rgba(0,0,0,.6);backdrop-filter:blur(20px);transition:transform .4s cubic-bezier(.34,1.56,.64,1);z-index:1000;max-width:92vw;white-space:nowrap; }
-    #toast.show { transform:translateX(-50%) translateY(0); }
-    .tdot { width:8px;height:8px;border-radius:50%;flex-shrink:0; }
-    .tdot.g { background:var(--green);box-shadow:0 0 8px var(--green); }
-    .tdot.a { background:var(--amber);box-shadow:0 0 8px var(--amber); }
-    .tdot.t { background:#10b981;     box-shadow:0 0 8px #10b981; }
-    .tdot.v { background:#8b5cf6;     box-shadow:0 0 8px #8b5cf6; }
+    #toast {
+      position: fixed; bottom: 2rem; left: 50%;
+      transform: translateX(-50%) translateY(120%);
+      background: #001428;
+      border: 1px solid rgba(0,174,239,0.3);
+      border-radius: 10px;
+      padding: .8rem 1.3rem;
+      display: flex; align-items: center; gap: .65rem;
+      font-size: .85rem; font-weight: 500; color: var(--text);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(0,174,239,0.1);
+      backdrop-filter: blur(20px);
+      transition: transform .4s cubic-bezier(.34,1.56,.64,1);
+      z-index: 1000; max-width: 92vw; white-space: nowrap;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+    .tdot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+    .tdot.g { background: var(--green); box-shadow: 0 0 7px var(--green); }
+    .tdot.a { background: var(--amber); box-shadow: 0 0 7px var(--amber); }
+    .tdot.b { background: var(--blue);  box-shadow: 0 0 7px var(--blue); }
 
     /* ── Modal ── */
-    .overlay { display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:900;backdrop-filter:blur(8px);align-items:center;justify-content:center;padding:1.5rem; }
-    .overlay.active { display:flex; }
-    .modal { background:#10121e;border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:2rem;max-width:420px;width:100%;box-shadow:0 24px 80px rgba(0,0,0,.8);animation:popIn .25s cubic-bezier(.34,1.56,.64,1); }
-    @keyframes popIn { from{opacity:0;transform:scale(.88)} to{opacity:1;transform:scale(1)} }
-    .modal-icon { width:52px;height:52px;border-radius:14px;background:rgba(239,68,68,.15);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:1rem; }
-    .modal h2 { font-size:1.1rem;font-weight:700;margin-bottom:.5rem; }
-    .modal p  { color:var(--muted);font-size:.875rem;line-height:1.6;margin-bottom:1.5rem; }
-    .modal p code { background:rgba(255,255,255,.08);padding:.1em .4em;border-radius:5px;font-family:monospace;font-size:.85em;color:#e2e8f0; }
-    .modal-actions { display:flex;gap:.75rem;justify-content:flex-end; }
-    .btn-x { padding:.55rem 1.1rem;border-radius:9px;border:1px solid rgba(255,255,255,.1);background:transparent;color:var(--muted);font-size:.875rem;font-weight:600;cursor:pointer;transition:color .15s; }
-    .btn-x:hover { color:var(--text); }
-    .btn-ok { padding:.55rem 1.1rem;border-radius:9px;border:none;background:linear-gradient(135deg,#ef4444,#f97316);color:#fff;font-size:.875rem;font-weight:600;cursor:pointer;transition:opacity .15s; }
-    .btn-ok:hover { opacity:.85; }
+    .overlay { display: none; position: fixed; inset: 0; background: rgba(0,10,20,.8); z-index: 900; backdrop-filter: blur(8px); align-items: center; justify-content: center; padding: 1.5rem; }
+    .overlay.active { display: flex; }
+    .modal { background: #001B2E; border: 1px solid rgba(239,68,68,0.3); border-radius: 16px; padding: 1.75rem; max-width: 400px; width: 100%; box-shadow: 0 20px 70px rgba(0,0,0,.7); animation: popIn .22s cubic-bezier(.34,1.56,.64,1); }
+    @keyframes popIn { from{opacity:0;transform:scale(.9)} to{opacity:1;transform:scale(1)} }
+    .modal-icon { width: 48px; height: 48px; border-radius: 12px; background: rgba(239,68,68,0.12); border: 1px solid rgba(239,68,68,0.25); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-bottom: .9rem; }
+    .modal h2 { font-size: 1.05rem; font-weight: 700; margin-bottom: .45rem; }
+    .modal p  { color: var(--muted); font-size: .845rem; line-height: 1.65; margin-bottom: 1.4rem; }
+    .modal p code { background: rgba(0,174,239,0.1); border: 1px solid rgba(0,174,239,0.2); padding: .1em .4em; border-radius: 4px; font-family: monospace; font-size: .85em; color: var(--blue); }
+    .modal-actions { display: flex; gap: .65rem; justify-content: flex-end; }
+    .btn-x { padding: .5rem 1rem; border-radius: 8px; border: 1px solid rgba(0,174,239,0.2); background: transparent; color: var(--muted); font-size: .84rem; font-weight: 600; cursor: pointer; transition: color .15s, border-color .15s; }
+    .btn-x:hover { color: var(--text); border-color: rgba(0,174,239,0.4); }
+    .btn-ok { padding: .5rem 1rem; border-radius: 8px; border: none; background: linear-gradient(135deg,#ef4444,#dc2626); color: #fff; font-size: .84rem; font-weight: 700; cursor: pointer; transition: opacity .15s; }
+    .btn-ok:hover { opacity: .85; }
+
+    /* ── Footer ── */
+    .footer {
+      width: 100%;
+      text-align: center;
+      padding: 2rem 1rem 1rem;
+      font-size: .68rem;
+      color: rgba(123,174,200,0.4);
+      position: relative;
+      z-index: 1;
+    }
   </style>
 </head>
 <body>
 
-<div class="blob b1"></div>
-<div class="blob b2"></div>
-<div class="blob b3"></div>
-<div class="blob b4"></div>
+<!-- Top navigation bar -->
+<div class="topbar">
+  <span class="topbar-eagle">🦅</span>
+  <div class="topbar-brand">
+    <span class="bname">Barclays</span>
+    <span class="bsub">Technology &amp; Operations</span>
+  </div>
+  <div class="topbar-divider"></div>
+  <span class="topbar-title">IT Self-Service Portal</span>
+  <div class="topbar-right">
+    <div class="topbar-dot"></div>
+    Connected
+  </div>
+</div>
 
 <div class="wrap">
 
   <!-- Header -->
   <div class="hdr">
-    <div class="logo">🛠️</div>
-    <h1>IT Control Centre</h1>
-    <p>Click a button — the action runs instantly on your PC.</p>
+    <div class="hdr-badge"><span class="hdr-badge-dot"></span>Internal Use Only</div>
+    <h1>IT <span>Self-Service</span> Tools</h1>
+    <p>Click a button — the action runs instantly on your machine.</p>
   </div>
 
-  <!-- Row 1: Quick actions -->
+  <!-- Quick Actions -->
   <div class="section-label">Quick Actions</div>
   <div class="g2">
-    <button class="card blue" onclick="go('clear-teams-cache','status-teams','Teams cache clear started — a window will appear.','g')">
+    <button class="card" onclick="go('clear-teams-cache','status-teams','Teams cache clear started — a window will open.','b')">
       <div class="bar"></div>
       <div class="cbody">
         <div class="cicon">💬</div>
-        <div><div class="ctitle">Clear Teams Cache</div><div class="cdesc">Stops Teams, wipes cache, resets app, restarts fresh. Fixes login issues and glitches.</div></div>
-        <div class="cfoot"><span class="run-btn">▶ Run</span><span class="cstatus" id="status-teams"></span></div>
+        <div>
+          <div class="ctitle">Clear Teams Cache</div>
+          <div class="cdesc">Stops Teams, wipes the local cache, resets the app and restarts it fresh. Resolves login issues and display glitches.</div>
+        </div>
+        <div class="cfoot">
+          <span class="run-btn">▶ Run</span>
+          <span class="cstatus" id="status-teams"></span>
+        </div>
       </div>
     </button>
 
-    <button class="card teal" onclick="go('gpupdate','status-gpu','GPUpdate started — a terminal will open shortly.','t')">
+    <button class="card" onclick="go('gpupdate','status-gpu','GPUpdate started — a terminal window will appear shortly.','b')">
       <div class="bar"></div>
       <div class="cbody">
-        <div class="cicon">🌐</div>
-        <div><div class="ctitle">Run GPUpdate</div><div class="cdesc">Applies the latest Group Policy settings from your organisation immediately.</div></div>
-        <div class="cfoot"><span class="run-btn">▶ Run</span><span class="cstatus" id="status-gpu"></span></div>
+        <div class="cicon">🔄</div>
+        <div>
+          <div class="ctitle">Run GPUpdate</div>
+          <div class="cdesc">Forces an immediate refresh of your Group Policy settings from the Barclays domain. No reboot needed.</div>
+        </div>
+        <div class="cfoot">
+          <span class="run-btn">▶ Run</span>
+          <span class="cstatus" id="status-gpu"></span>
+        </div>
       </div>
     </button>
   </div>
 
-  <!-- Row 2: System scans -->
-  <div class="section-label">System Scans</div>
+  <!-- System Scans -->
+  <div class="section-label">System Diagnostics</div>
   <div class="g2">
-    <button class="card violet" onclick="startScan('sfc-scannow','status-sfc','SFC System File Check','v')">
+    <button class="card" onclick="startScan('sfc-scannow','status-sfc','SFC System File Check','b')">
       <div class="bar"></div>
       <div class="cbody">
         <div class="cicon">🔍</div>
-        <div><div class="ctitle">SFC Scan</div><div class="cdesc">Scans and repairs corrupted Windows system files. Progress shown below in real time.</div></div>
-        <div class="cfoot"><span class="run-btn">▶ Run</span><span class="cstatus" id="status-sfc"></span></div>
+        <div>
+          <div class="ctitle">SFC Scan</div>
+          <div class="cdesc">Scans and repairs corrupted Windows system files. Live progress and ETA shown below. Requires admin rights.</div>
+        </div>
+        <div class="cfoot">
+          <span class="run-btn">▶ Run</span>
+          <span class="cstatus" id="status-sfc"></span>
+        </div>
       </div>
     </button>
 
-    <button class="card orange" onclick="startScan('chkdsk','status-chk','CHKDSK Disk Check (C:)','o')">
+    <button class="card" onclick="startScan('chkdsk','status-chk','CHKDSK Disk Check (C:)','b')">
       <div class="bar"></div>
       <div class="cbody">
         <div class="cicon">💾</div>
-        <div><div class="ctitle">CHKDSK</div><div class="cdesc">Scans your C: drive for file system errors. Progress and ETA shown below in real time.</div></div>
-        <div class="cfoot"><span class="run-btn">▶ Run</span><span class="cstatus" id="status-chk"></span></div>
+        <div>
+          <div class="ctitle">CHKDSK</div>
+          <div class="cdesc">Scans your C: drive for file system errors online — no reboot required. Progress and ETA shown in real time.</div>
+        </div>
+        <div class="cfoot">
+          <span class="run-btn">▶ Run</span>
+          <span class="cstatus" id="status-chk"></span>
+        </div>
       </div>
     </button>
   </div>
 
-  <!-- Row 3: Restart -->
-  <div class="section-label">Power</div>
-  <button class="card red" onclick="openModal()" style="margin-bottom:1.5rem">
+  <!-- Power -->
+  <div class="section-label">Power Management</div>
+  <button class="card danger" onclick="openModal()" style="margin-bottom:1.5rem">
     <div class="bar"></div>
     <div class="cbody" style="flex-direction:row;align-items:center;gap:1.25rem">
       <div class="cicon">⏻</div>
-      <div style="flex:1"><div class="ctitle">Restart PC</div><div class="cdesc">Schedules a Windows restart in 60 seconds — time to save open files first.</div></div>
+      <div style="flex:1">
+        <div class="ctitle">Restart PC</div>
+        <div class="cdesc">Schedules a Windows restart in 60 seconds. Save all open work before confirming.</div>
+      </div>
       <div class="cfoot" style="flex-shrink:0;flex-direction:column;align-items:flex-end">
         <span class="run-btn">▶ Run</span>
         <span class="cstatus" id="status-rst" style="margin-top:.4rem"></span>
@@ -313,16 +548,17 @@
 
   <div class="note">
     <span class="note-icon">ℹ️</span>
-    <span><strong>First time?</strong> Run <strong>Start-Here.bat</strong> once to connect this website to your PC. When a button is clicked, your browser may ask <em>"Allow this site to open IT Tools?"</em> — click <strong>Open</strong>. SFC Scan requires administrator rights.</span>
+    <span><strong>First time?</strong> Run <strong>Start-Here.bat</strong> once to register this portal on your PC. When prompted, click <em>"Open IT Tools"</em> in your browser. SFC Scan requires administrator privileges.</span>
   </div>
-</div>
+
+</div><!-- /wrap -->
 
 <!-- Restart modal -->
 <div class="overlay" id="overlay">
   <div class="modal">
     <div class="modal-icon">⚠️</div>
     <h2>Restart your PC?</h2>
-    <p>Your PC will restart in <strong>60 seconds</strong>. Save all open files now.<br><br>To cancel, open Command Prompt and type <code>shutdown /a</code></p>
+    <p>Your PC will restart in <strong>60 seconds</strong>. Please save all open files before proceeding.<br><br>To cancel after confirming, open Command Prompt and run <code>shutdown /a</code></p>
     <div class="modal-actions">
       <button class="btn-x" onclick="closeModal()">Cancel</button>
       <button class="btn-ok" onclick="runRestart()">Confirm Restart</button>
@@ -330,10 +566,12 @@
   </div>
 </div>
 
-<div id="toast"><div class="tdot g" id="tdot"></div><span id="tmsg"></span></div>
+<div id="toast"><div class="tdot b" id="tdot"></div><span id="tmsg"></span></div>
+
+<div class="footer">Barclays Internal — IT Self-Service Portal &nbsp;·&nbsp; Not for external distribution</div>
 
 <script>
-  // ── Toast ──────────────────────────────────────────────
+  // ── Toast ──────────────────────────────────────────────────
   function toast(msg, cls) {
     document.getElementById('tmsg').textContent = msg;
     document.getElementById('tdot').className = 'tdot ' + cls;
@@ -344,11 +582,12 @@
 
   function setStatus(id, msg, cls) {
     const el = document.getElementById(id);
-    el.textContent = msg; el.className = 'cstatus show ' + cls;
+    el.textContent = msg;
+    el.className = 'cstatus show ' + cls;
     if (cls === 'ok') setTimeout(() => el.className = 'cstatus', 7000);
   }
 
-  // ── Launch custom protocol ─────────────────────────────
+  // ── Launch custom URL protocol ─────────────────────────────
   function launch(action) {
     const f = document.createElement('iframe');
     f.style.display = 'none';
@@ -357,44 +596,45 @@
     setTimeout(() => document.body.removeChild(f), 2000);
   }
 
-  // ── Simple go (no live console) ───────────────────────
+  // ── Simple go (no live console) ───────────────────────────
   function go(action, statusId, toastMsg, dotCls) {
     launch(action);
     setStatus(statusId, '⏳ Running...', 'ok');
     toast(toastMsg, dotCls);
   }
 
-  // ── Restart ───────────────────────────────────────────
+  // ── Restart ───────────────────────────────────────────────
   function openModal()  { document.getElementById('overlay').classList.add('active'); }
   function closeModal() { document.getElementById('overlay').classList.remove('active'); }
   function runRestart() {
-    closeModal(); launch('restart-pc');
+    closeModal();
+    launch('restart-pc');
     setStatus('status-rst', '⏳ Restarting in 60s…', 'warn');
     toast('⚠️ Restart in 60 seconds. Cancel: shutdown /a', 'a');
   }
 
-  // ════════════════════════════════════════════════════════
+  // ════════════════════════════════════════════════════════════
   //  LIVE CONSOLE  (for SFC + CHKDSK)
-  // ════════════════════════════════════════════════════════
+  // ════════════════════════════════════════════════════════════
   const PORT = 7779;
-  let pollTimer = null;
+  let pollTimer    = null;
   let pollAttempts = 0;
-  let lastLineCount = 0;
+  let lastLineCount= 0;
   let elapsedTimer = null;
-  let startEpoch = null;
+  let startEpoch   = null;
 
   function startScan(action, statusId, taskLabel, dotCls) {
     launch(action);
     setStatus(statusId, '⏳ Starting…', 'ok');
-    toast('Script launched — live status loading below.', dotCls === 'v' ? 'v' : 'a');
+    toast('Script launched — live status loading below.', 'b');
     openConsole(taskLabel);
-    pollAttempts = 0;
+    pollAttempts  = 0;
     lastLineCount = 0;
-    startEpoch = Date.now();
+    startEpoch    = Date.now();
     clearInterval(pollTimer);
     clearInterval(elapsedTimer);
-    pollTimer   = setInterval(pollStatus, 1000);
-    elapsedTimer= setInterval(tickElapsed, 1000);
+    pollTimer    = setInterval(pollStatus, 1000);
+    elapsedTimer = setInterval(tickElapsed, 1000);
   }
 
   function openConsole(label) {
@@ -406,8 +646,8 @@
     document.getElementById('prog-fill').className = 'prog-fill';
     document.getElementById('con-pct-text').textContent = '0%';
     document.getElementById('con-pct-bar').textContent  = '0%';
-    document.getElementById('con-eta').textContent     = 'Calculating...';
-    document.getElementById('con-elapsed').textContent = '0s elapsed';
+    document.getElementById('con-eta').textContent      = 'Calculating...';
+    document.getElementById('con-elapsed').textContent  = '0s elapsed';
     panel.classList.add('visible');
     panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     lastLineCount = 0;
@@ -421,7 +661,7 @@
 
   function tickElapsed() {
     if (!startEpoch) return;
-    const s = Math.round((Date.now() - startEpoch) / 1000);
+    const s   = Math.round((Date.now() - startEpoch) / 1000);
     const txt = s < 60 ? s + 's elapsed' : Math.floor(s/60) + 'm ' + (s%60) + 's elapsed';
     document.getElementById('con-elapsed').textContent = txt;
   }
@@ -440,12 +680,8 @@
 
   function handleOffline() {
     pollAttempts++;
-    // Silently retry for up to 30 seconds before showing "connecting"
-    if (pollAttempts > 8) {
-      document.getElementById('con-eta').textContent = 'Connecting...';
-    }
+    if (pollAttempts > 8)  document.getElementById('con-eta').textContent = 'Connecting...';
     if (pollAttempts > 60) {
-      // Give up
       clearInterval(pollTimer);
       clearInterval(elapsedTimer);
       document.getElementById('con-dot').className = 'con-dot error';
@@ -454,36 +690,31 @@
   }
 
   function renderStatus(data) {
-    // Update task name
     if (data.task) document.getElementById('con-task').textContent = data.task;
 
-    // Progress bar
-    const pct = Math.min(100, Math.max(0, data.progress || 0));
+    const pct  = Math.min(100, Math.max(0, data.progress || 0));
     const fill = document.getElementById('prog-fill');
     fill.style.width = pct + '%';
-    if (data.status === 'complete') fill.className = 'prog-fill done';
-    else if (data.status === 'error') fill.className = 'prog-fill error';
-    else fill.className = 'prog-fill';
+    if      (data.status === 'complete') fill.className = 'prog-fill done';
+    else if (data.status === 'error')    fill.className = 'prog-fill error';
+    else                                 fill.className = 'prog-fill';
     document.getElementById('con-pct-text').textContent = pct + '%';
     document.getElementById('con-pct-bar').textContent  = pct + '%';
 
-    // ETA
     if (data.eta) document.getElementById('con-eta').textContent = data.eta;
 
-    // Status dot
     const dot = document.getElementById('con-dot');
-    if (data.status === 'complete')    dot.className = 'con-dot done';
-    else if (data.status === 'error')  dot.className = 'con-dot error';
-    else                               dot.className = 'con-dot waiting';
+    if      (data.status === 'complete') dot.className = 'con-dot done';
+    else if (data.status === 'error')    dot.className = 'con-dot error';
+    else                                 dot.className = 'con-dot waiting';
 
-    // Log lines — only append new lines
     const lines = data.lines || [];
     if (lines.length > lastLineCount) {
-      const log = document.getElementById('con-log');
+      const log      = document.getElementById('con-log');
       const newLines = lines.slice(lastLineCount);
       newLines.forEach(l => {
         const div = document.createElement('div');
-        div.className = 'line-new';
+        div.className   = 'line-new';
         div.textContent = '> ' + l;
         log.appendChild(div);
       });
@@ -491,7 +722,6 @@
       log.scrollTop = log.scrollHeight;
     }
 
-    // Done
     if (data.done) {
       clearInterval(pollTimer);
       clearInterval(elapsedTimer);
@@ -504,8 +734,8 @@
   }
 
   // Modal helpers
-  document.getElementById('overlay').addEventListener('click', e => { if (e.target===e.currentTarget) closeModal(); });
-  document.addEventListener('keydown', e => { if (e.key==='Escape') closeModal(); });
+  document.getElementById('overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 </script>
 </body>
 </html>
