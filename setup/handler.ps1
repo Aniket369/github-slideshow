@@ -50,11 +50,12 @@ function Run-Script($scriptName) {
 }
 
 switch ($action) {
-    'clear-teams-cache' { Run-Script "Clear-TeamsCache.ps1" }
-    'restart-pc'        { Run-Script "Restart-PC.ps1"       }
-    'gpupdate'          { Run-Script "GPUpdate.ps1"          }
-    'sfc-scannow'       { Run-Script "SFC-Scan.ps1"          }
-    'chkdsk'            { Run-Script "ChkDsk.ps1"            }
+    'clear-teams-cache'   { Run-Script "Clear-TeamsCache.ps1"          }
+    'restart-pc'          { Run-Script "Restart-PC.ps1"                }
+    'gpupdate'            { Run-Script "GPUpdate.ps1"                   }
+    'sfc-scannow'         { Run-Script "SFC-Scan.ps1"                   }
+    'chkdsk'              { Run-Script "ChkDsk.ps1"                     }
+    'outlook-teams-addin' { Run-Script "Outlook-TeamsMeetingAddin.ps1"  }
     default {
         Write-Host "Unknown action: $action" -ForegroundColor Red
         Start-Sleep -Seconds 3
