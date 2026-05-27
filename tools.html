@@ -56,34 +56,15 @@
     }
 
     .topbar {
-      width: 100%;
-      background: var(--white);
-      border-bottom: 1px solid var(--border);
-      padding: 0 2rem;
-      display: flex;
-      align-items: stretch;
-      height: 52px;
-      position: relative;
-      z-index: 100;
-      box-shadow: 0 1px 6px rgba(0,0,0,0.07);
+      width: 100%; background: var(--white); border-bottom: 1px solid var(--border);
+      padding: 0 2rem; display: flex; align-items: stretch; height: 52px;
+      position: relative; z-index: 100; box-shadow: 0 1px 6px rgba(0,0,0,0.07);
     }
-    .topbar-logo {
-      display: flex; align-items: center; gap: .55rem;
-      padding-right: 1.5rem; border-right: 1px solid var(--border); margin-right: 1rem;
-    }
-    .logo-mark {
-      width: 28px; height: 28px; background: var(--blue); border-radius: 5px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 13px; font-weight: 900; color: #fff; letter-spacing: -.5px; flex-shrink: 0;
-    }
+    .topbar-logo { display: flex; align-items: center; gap: .55rem; padding-right: 1.5rem; border-right: 1px solid var(--border); margin-right: 1rem; }
+    .logo-mark { width: 28px; height: 28px; background: var(--blue); border-radius: 5px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; color: #fff; letter-spacing: -.5px; flex-shrink: 0; }
     .logo-text { font-size: .72rem; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: var(--navy); }
-    .topbar-nav { display: flex; align-items: stretch; }
-    .nav-link {
-      display: flex; align-items: center; padding: 0 1rem;
-      font-size: .78rem; font-weight: 500; color: var(--text2);
-      text-decoration: none; border-bottom: 2px solid transparent;
-      transition: color .15s, border-color .15s; cursor: pointer; white-space: nowrap;
-    }
+    .topbar-nav { display: flex; align-items: stretch; gap: 0; }
+    .nav-link { display: flex; align-items: center; padding: 0 1rem; font-size: .78rem; font-weight: 500; color: var(--text2); text-decoration: none; border-bottom: 2px solid transparent; transition: color .15s, border-color .15s; cursor: pointer; white-space: nowrap; }
     .nav-link:hover { color: var(--blue); }
     .nav-link.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
     .topbar-right { margin-left: auto; display: flex; align-items: center; gap: .75rem; }
@@ -91,58 +72,26 @@
     .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 5px var(--green); }
     .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--blue2); color: #fff; font-size: .7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
 
-    .hero {
-      width: 100%; background: var(--navy);
-      position: relative; z-index: 1; overflow: hidden;
-      padding: 2rem 2rem 1.8rem;
-    }
-    .hero::before {
-      content: ''; position: absolute; inset: 0;
-      background:
-        radial-gradient(ellipse 60% 80% at 100% 50%, rgba(0,174,239,0.12) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 60% at 0% 50%,   rgba(0,114,188,0.1)  0%, transparent 60%);
-      pointer-events: none;
-    }
+    .hero { width: 100%; background: var(--navy); position: relative; z-index: 1; overflow: hidden; padding: 2rem 2rem 1.8rem; }
+    .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse 60% 80% at 100% 50%, rgba(0,174,239,0.12) 0%, transparent 60%), radial-gradient(ellipse 40% 60% at 0% 50%, rgba(0,114,188,0.1) 0%, transparent 60%); pointer-events: none; }
     .hero-inner { max-width: 860px; margin: 0 auto; position: relative; z-index: 1; }
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: .4rem;
-      background: rgba(0,174,239,0.15); border: 1px solid rgba(0,174,239,0.25);
-      border-radius: 99px; padding: .25rem .75rem;
-      font-size: .65rem; font-weight: 700; letter-spacing: .1em;
-      text-transform: uppercase; color: var(--blue); margin-bottom: .85rem;
-    }
+    .hero-badge { display: inline-flex; align-items: center; gap: .4rem; background: rgba(0,174,239,0.15); border: 1px solid rgba(0,174,239,0.25); border-radius: 99px; padding: .25rem .75rem; font-size: .65rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--blue); margin-bottom: .85rem; }
     .hero-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--blue); animation: pulse 2s ease-in-out infinite; }
     @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.8)} }
     .hero h1 { font-size: clamp(1.4rem,3.5vw,2rem); font-weight: 800; color: #fff; letter-spacing: -.02em; margin-bottom: .4rem; line-height: 1.2; }
     .hero h1 span { color: var(--blue); }
     .hero p { color: rgba(255,255,255,0.55); font-size: .85rem; max-width: 480px; }
 
-    .announce {
-      width: 100%; background: rgba(0,174,239,0.07);
-      border-bottom: 1px solid rgba(0,174,239,0.15);
-      padding: .55rem 2rem; display: flex; align-items: center; gap: .6rem;
-      font-size: .74rem; color: var(--blue2);
-      position: relative; z-index: 1;
-    }
+    .announce { width: 100%; background: rgba(0,174,239,0.08); border-bottom: 1px solid rgba(0,174,239,0.18); padding: .55rem 2rem; display: flex; align-items: center; gap: .6rem; font-size: .74rem; color: var(--blue2); position: relative; z-index: 1; }
     .announce-icon { font-size: .9rem; flex-shrink: 0; }
     .announce strong { font-weight: 600; color: var(--navy); }
 
     .wrap { position: relative; z-index: 1; width: 100%; max-width: 860px; padding: 1.75rem 1.25rem 3rem; }
 
-    .section-label {
-      font-size: .65rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase;
-      color: var(--muted); margin-bottom: .75rem; padding-left: .1rem;
-      display: flex; align-items: center; gap: .6rem;
-    }
+    .section-label { font-size: .65rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase; color: var(--muted); margin-bottom: .75rem; padding-left: .1rem; display: flex; align-items: center; gap: .6rem; }
     .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-    .legend {
-      display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;
-      padding: .55rem 1rem; background: var(--white);
-      border: 1px solid var(--border); border-radius: 8px;
-      margin-bottom: 1.25rem; font-size: .72rem; color: var(--muted);
-      box-shadow: var(--shadow);
-    }
+    .legend { display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap; padding: .55rem 1rem; background: var(--white); border: 1px solid var(--border); border-radius: 8px; margin-bottom: 1.25rem; font-size: .72rem; color: var(--muted); box-shadow: var(--shadow); }
     .legend-item { display: flex; align-items: center; gap: .4rem; }
     .leg-load { display: inline-flex; align-items: center; gap: .2rem; padding: .12rem .5rem; border-radius: 4px; border: 1px solid rgba(0,114,188,0.4); color: var(--blue2); font-size: .65rem; font-weight: 700; }
     .leg-run  { display: inline-flex; align-items: center; gap: .2rem; padding: .12rem .5rem; border-radius: 4px; background: var(--blue); color: #fff; font-size: .65rem; font-weight: 700; }
@@ -150,17 +99,11 @@
     .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
     @media(max-width:600px){ .g2 { grid-template-columns:1fr; } }
 
-    .card {
-      display: flex; flex-direction: column;
-      border-radius: 10px; border: 1px solid var(--border);
-      background: var(--card); overflow: hidden;
-      transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
-      width: 100%;
-    }
+    .card { display: flex; flex-direction: column; border-radius: 10px; border: 1px solid var(--border); background: var(--card); overflow: hidden; transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; width: 100%; }
     .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-h); border-color: rgba(0,174,239,0.3); }
     .card.danger:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.08), 0 12px 32px rgba(220,38,38,0.12); border-color: rgba(220,38,38,0.3); }
 
-    .bar { width: 100%; height: 3px; background: linear-gradient(90deg, var(--blue), var(--blue2)); }
+    .bar  { width: 100%; height: 3px; background: linear-gradient(90deg, var(--blue), var(--blue2)); }
     .card.danger .bar { background: linear-gradient(90deg, #ef4444, #dc2626); }
 
     .cbody { padding: 1.2rem 1.3rem 1.3rem; display: flex; flex-direction: column; gap: .75rem; flex: 1; }
@@ -171,26 +114,13 @@
     .cfoot { display: flex; align-items: center; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
     .btn-pair { display: flex; align-items: center; gap: .4rem; flex-shrink: 0; }
 
-    .load-btn {
-      display: inline-flex; align-items: center; gap: .3rem;
-      padding: .38rem .85rem; border-radius: 6px;
-      font-size: .74rem; font-weight: 600; color: var(--blue2);
-      border: 1px solid rgba(0,114,188,0.35); background: transparent;
-      transition: background .15s, border-color .15s, color .15s;
-      text-decoration: none; font-family: inherit; cursor: pointer; flex-shrink: 0;
-    }
-    .load-btn:hover { background: rgba(0,114,188,0.06); border-color: var(--blue2); }
+    .load-btn { display: inline-flex; align-items: center; gap: .3rem; padding: .38rem .85rem; border-radius: 6px; font-size: .74rem; font-weight: 600; color: var(--blue2); border: 1px solid rgba(0,114,188,0.35); background: transparent; transition: background .15s, border-color .15s, color .15s; text-decoration: none; font-family: inherit; cursor: pointer; flex-shrink: 0; letter-spacing: .01em; }
+    .load-btn:hover { background: rgba(0,114,188,0.06); border-color: var(--blue2); color: var(--blue2); }
     .load-btn.loaded { color: var(--green); border-color: rgba(22,163,74,0.35); background: rgba(22,163,74,0.05); }
     .card.danger .load-btn { color: var(--red); border-color: rgba(220,38,38,0.3); }
     .card.danger .load-btn:hover { background: rgba(220,38,38,0.05); border-color: var(--red); }
 
-    .run-btn {
-      display: inline-flex; align-items: center; gap: .3rem;
-      padding: .38rem .9rem; border-radius: 6px;
-      font-size: .74rem; font-weight: 700; color: #fff; border: none;
-      cursor: pointer; background: linear-gradient(135deg, var(--blue), var(--blue2));
-      transition: opacity .15s, box-shadow .15s; font-family: inherit; flex-shrink: 0;
-    }
+    .run-btn { display: inline-flex; align-items: center; gap: .3rem; padding: .38rem .9rem; border-radius: 6px; font-size: .74rem; font-weight: 700; color: #fff; border: none; cursor: pointer; background: linear-gradient(135deg, var(--blue), var(--blue2)); transition: opacity .15s, box-shadow .15s; font-family: inherit; flex-shrink: 0; letter-spacing: .01em; }
     .run-btn:hover { opacity: .9; box-shadow: 0 2px 10px rgba(0,114,188,0.35); }
     .card.danger .run-btn { background: linear-gradient(135deg, #ef4444, #dc2626); }
     .card.danger .run-btn:hover { box-shadow: 0 2px 10px rgba(220,38,38,0.35); }
@@ -203,26 +133,11 @@
 
     .divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
 
-    .note {
-      display: flex; align-items: flex-start; gap: .6rem;
-      background: rgba(0,174,239,0.04); border: 1px solid rgba(0,174,239,0.15);
-      border-left: 3px solid var(--blue); border-radius: 0 8px 8px 0;
-      padding: .85rem 1rem; font-size: .75rem; color: var(--text2); line-height: 1.6;
-    }
+    .note { display: flex; align-items: flex-start; gap: .6rem; background: rgba(0,174,239,0.04); border: 1px solid rgba(0,174,239,0.15); border-left: 3px solid var(--blue); border-radius: 0 8px 8px 0; padding: .85rem 1rem; font-size: .75rem; color: var(--text2); line-height: 1.6; }
     .note-icon { flex-shrink: 0; font-size: 1rem; margin-top: .05rem; }
     .note strong { color: var(--navy); }
 
-    #toast {
-      position: fixed; bottom: 1.75rem; left: 50%;
-      transform: translateX(-50%) translateY(120%);
-      background: var(--navy); border: 1px solid rgba(0,174,239,0.25);
-      border-radius: 8px; padding: .75rem 1.2rem;
-      display: flex; align-items: center; gap: .6rem;
-      font-size: .82rem; font-weight: 500; color: #fff;
-      box-shadow: 0 8px 30px rgba(0,0,0,0.2);
-      transition: transform .4s cubic-bezier(.34,1.56,.64,1);
-      z-index: 1000; max-width: 92vw; white-space: nowrap;
-    }
+    #toast { position: fixed; bottom: 1.75rem; left: 50%; transform: translateX(-50%) translateY(120%); background: var(--navy); border: 1px solid rgba(0,174,239,0.25); border-radius: 8px; padding: .75rem 1.2rem; display: flex; align-items: center; gap: .6rem; font-size: .82rem; font-weight: 500; color: #fff; box-shadow: 0 8px 30px rgba(0,0,0,0.2); transition: transform .4s cubic-bezier(.34,1.56,.64,1); z-index: 1000; max-width: 92vw; white-space: nowrap; }
     #toast.show { transform: translateX(-50%) translateY(0); }
     .tdot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
     .tdot.g { background: var(--green); box-shadow: 0 0 6px var(--green); }
@@ -322,6 +237,24 @@
       </div>
     </div>
 
+    <div class="card">
+      <div class="bar"></div>
+      <div class="cbody">
+        <div class="cicon">📅</div>
+        <div>
+          <div class="ctitle">Outlook – Teams Meeting Add-in</div>
+          <div class="cdesc">Fixes the missing “New Teams Meeting” button in Outlook. Stops both apps, clears the Teams cache, resets the Teams package, then restarts Outlook &amp; Teams.</div>
+        </div>
+        <div class="cfoot">
+          <div class="btn-pair">
+            <a href="setup/Outlook-TeamsMeetingAddin.ps1" download="Outlook-TeamsMeetingAddin.ps1" class="load-btn" onclick="markLoaded(this)">📥 Load</a>
+            <button class="run-btn" onclick="go('outlook-teams-addin','status-addin','Add-in fix started — Outlook &amp; Teams will restart.','b')">▶ Run</button>
+          </div>
+          <span class="cstatus" id="status-addin"></span>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <div class="section-label">Power Management</div>
@@ -350,7 +283,7 @@
     <span>
       <strong>📥 Load</strong> works on any PC immediately — downloads the script so you can inspect it in Notepad first.
       <strong>▶ Run</strong> requires a one-time setup: run <strong>Start-Here.bat</strong> once to register this portal on your PC.
-      Your browser may ask <em>"Allow this site to open IT Tools?"</em> — click <strong>Open</strong>.
+      Your browser may ask <em>“Allow this site to open IT Tools?”</em> — click <strong>Open</strong>.
     </span>
   </div>
 
