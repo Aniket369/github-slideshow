@@ -358,6 +358,13 @@
     .cstatus.warn { color: var(--amber); }
     .cstatus.err  { color: var(--red);   }
 
+    /* ── View-script link ── */
+    .view-link { display: inline-flex; align-items: center; gap: .25rem; font-size: .72rem; font-weight: 600; color: var(--blue2); text-decoration: none; padding: .2rem 0; border-bottom: 1px dashed rgba(0,114,188,0.35); transition: border-color .15s, color .15s; flex-shrink: 0; }
+    .view-link:hover { color: var(--blue); border-bottom-color: var(--blue); }
+
+    /* ── Admin chip on card ── */
+    .admin-chip { display: inline-flex; align-items: center; gap: .3rem; font-size: .68rem; font-weight: 600; color: var(--red); background: rgba(220,38,38,0.06); border: 1px solid rgba(220,38,38,0.18); border-radius: 4px; padding: .15rem .5rem; flex-shrink: 0; }
+
     /* ── Divider ── */
     .divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
 
@@ -568,6 +575,39 @@
                     onclick="go('outlook-teams-addin','status-addin','Add-in fix started — Outlook &amp; Teams will restart.','b')">▶ Run</button>
           </div>
           <span class="cstatus" id="status-addin"></span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Diagnostics & Remediation -->
+  <div class="section-label">Diagnostics &amp; Remediation</div>
+  <div class="g2" style="margin-bottom:1.5rem">
+
+    <!-- WebView2 card -->
+    <div class="card">
+      <div class="bar"></div>
+      <div class="cbody">
+        <div class="cicon">🌐</div>
+        <div>
+          <div class="ctitle">WebView2 Version Check for MS Teams</div>
+          <div class="cdesc">Checks WebView2 Runtime against the Teams minimum (<strong style="color:var(--text2)">128.0.2739.67</strong>). Silently installs or updates if missing or outdated.</div>
+        </div>
+        <div class="cfoot">
+          <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap">
+            <div class="btn-pair">
+              <a href="setup/Check-WebView2ForTeams.ps1" download="Check-WebView2ForTeams.ps1"
+                 class="load-btn" onclick="markLoaded(this)">📥 Load</a>
+              <button class="run-btn"
+                      onclick="go('webview2-check','status-wv2','WebView2 check started — approve the UAC prompt.','b')">▶ Run</button>
+            </div>
+            <span class="admin-chip">⚠️ Admin required</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;margin-top:.1rem">
+            <span class="cstatus" id="status-wv2"></span>
+            <a href="webview2.html" class="view-link">View script →</a>
+          </div>
         </div>
       </div>
     </div>
