@@ -3,7 +3,7 @@
     Checks WebView2 Runtime version for Microsoft Teams compatibility and installs/updates as needed.
 
 .DESCRIPTION
-    Microsoft Teams (new) requires WebView2 Runtime version 86.0.622.38 or later.
+    Microsoft Teams (new) requires WebView2 Runtime version 128.0.2739.67 or later.
     This script:
       - Detects the installed WebView2 version from the Windows registry
       - Compares it against the minimum version required by MS Teams
@@ -23,7 +23,7 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 # ── Configuration ───────────────────────────────────────────────────────────────
-$MinTeamsVersion  = [Version]'86.0.622.38'          # Minimum WebView2 version for MS Teams
+$MinTeamsVersion  = [Version]'128.0.2739.67'        # Minimum WebView2 version for MS Teams (from Teams AppxManifest)
 $DownloadUrl      = 'https://go.microsoft.com/fwlink/p/?LinkId=2124703'  # Evergreen Bootstrapper
 $DownloadFolder   = "$env:TEMP\WebView2Runtime"
 $BootstrapperPath = Join-Path $DownloadFolder 'MicrosoftEdgeWebview2Setup.exe'
