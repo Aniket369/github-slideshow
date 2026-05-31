@@ -49,44 +49,13 @@ function Run-Script($scriptName) {
     }
 }
 
-# ── Run a script elevated (UAC prompt) ───────────────────────────
-function Run-ElevatedScript($scriptName) {
-    $downloadsPath = "$env:USERPROFILE\Downloads\$scriptName"
-    $scriptPath    = $downloadsPath
-
-    if (-not (Test-Path $downloadsPath)) {
-        # Fetch to temp if not already downloaded
-        Write-Host ""
-        Write-Host "  Fetching latest script from GitHub..." -ForegroundColor DarkGray
-        Write-Host ""
-        try {
-            $tmp = [System.IO.Path]::GetTempPath() + $scriptName
-            Invoke-WebRequest -Uri "$base/$scriptName" -OutFile $tmp -UseBasicParsing
-            Unblock-File -Path $tmp
-            $scriptPath = $tmp
-        } catch {
-            Write-Host "  ERROR: $($_.Exception.Message)" -ForegroundColor Red
-            Start-Sleep -Seconds 5
-            return
-        }
-    } else {
-        Unblock-File -Path $scriptPath -ErrorAction SilentlyContinue
-    }
-
-    # Launch a new elevated PowerShell window
-    Start-Process powershell.exe `
-        -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$scriptPath`"" `
-        -Verb RunAs
-}
-
 switch ($action) {
     'clear-teams-cache'   { Run-Script "Clear-TeamsCache.ps1"          }
     'restart-pc'          { Run-Script "Restart-PC.ps1"                }
     'gpupdate'            { Run-Script "GPUpdate.ps1"                   }
     'sfc-scannow'         { Run-Script "SFC-Scan.ps1"                   }
     'chkdsk'              { Run-Script "ChkDsk.ps1"                     }
-    'outlook-teams-addin' { Run-Script         "Outlook-TeamsMeetingAddin.ps1"   }
-    'webview2-check'      { Run-ElevatedScript "Check-WebView2ForTeams.ps1"      }
+    'outlook-teams-addin' { Run-Script "Outlook-TeamsMeetingAddin.ps1" }
     default {
         Write-Host "Unknown action: $action" -ForegroundColor Red
         Start-Sleep -Seconds 3

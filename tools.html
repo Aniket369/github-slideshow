@@ -358,12 +358,26 @@
     .cstatus.warn { color: var(--amber); }
     .cstatus.err  { color: var(--red);   }
 
-    /* ── View-script link ── */
-    .view-link { display: inline-flex; align-items: center; gap: .25rem; font-size: .72rem; font-weight: 600; color: var(--blue2); text-decoration: none; padding: .2rem 0; border-bottom: 1px dashed rgba(0,114,188,0.35); transition: border-color .15s, color .15s; flex-shrink: 0; }
-    .view-link:hover { color: var(--blue); border-bottom-color: var(--blue); }
-
-    /* ── Admin chip on card ── */
-    .admin-chip { display: inline-flex; align-items: center; gap: .3rem; font-size: .68rem; font-weight: 600; color: var(--red); background: rgba(220,38,38,0.06); border: 1px solid rgba(220,38,38,0.18); border-radius: 4px; padding: .15rem .5rem; flex-shrink: 0; }
+    /* ── Feedback bar ── */
+    .feedback-bar { width: 100%; background: var(--white); border-top: 1px solid var(--border); position: relative; z-index: 1; padding: .9rem 2rem; }
+    .feedback-inner { max-width: 860px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; gap: 1.25rem; flex-wrap: wrap; }
+    .stat-block { display: flex; align-items: center; gap: .5rem; }
+    .stat-num { font-size: 1.05rem; font-weight: 800; color: var(--text); font-variant-numeric: tabular-nums; }
+    .stat-label { font-size: .7rem; color: var(--muted); font-weight: 500; }
+    .upvote-wrap { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
+    .upvote-prompt { font-size: .75rem; color: var(--muted); font-weight: 500; white-space: nowrap; }
+    .upvote-tally { display: flex; align-items: center; gap: .3rem; }
+    .upvote-btn {
+      display: inline-flex; align-items: center; gap: .4rem;
+      padding: .4rem 1.05rem; border-radius: 99px;
+      font-size: .78rem; font-weight: 700; color: var(--blue2);
+      border: 1.5px solid rgba(0,114,188,0.3); background: transparent;
+      cursor: pointer; font-family: inherit; white-space: nowrap;
+      transition: background .15s, border-color .15s, transform .2s cubic-bezier(.34,1.56,.64,1), color .15s;
+    }
+    .upvote-btn:hover:not(.voted) { background: rgba(0,114,188,0.08); border-color: var(--blue2); transform: scale(1.06); }
+    .upvote-btn.voted { color: var(--green); border-color: rgba(22,163,74,0.4); background: rgba(22,163,74,0.06); cursor: default; transform: none; }
+    .feedback-sep { width: 1px; height: 22px; background: var(--border); flex-shrink: 0; }
 
     /* ── Divider ── */
     .divider { height: 1px; background: var(--border); margin: 1.5rem 0; }
@@ -581,39 +595,6 @@
 
   </div>
 
-  <!-- Diagnostics & Remediation -->
-  <div class="section-label">Diagnostics &amp; Remediation</div>
-  <div class="g2" style="margin-bottom:1.5rem">
-
-    <!-- WebView2 card -->
-    <div class="card">
-      <div class="bar"></div>
-      <div class="cbody">
-        <div class="cicon">🌐</div>
-        <div>
-          <div class="ctitle">WebView2 Version Check for MS Teams</div>
-          <div class="cdesc">Checks WebView2 Runtime against the Teams minimum (<strong style="color:var(--text2)">128.0.2739.67</strong>). Silently installs or updates if missing or outdated.</div>
-        </div>
-        <div class="cfoot">
-          <div style="display:flex;align-items:center;gap:.6rem;flex-wrap:wrap">
-            <div class="btn-pair">
-              <a href="setup/Check-WebView2ForTeams.ps1" download="Check-WebView2ForTeams.ps1"
-                 class="load-btn" onclick="markLoaded(this)">📥 Load</a>
-              <button class="run-btn"
-                      onclick="go('webview2-check','status-wv2','WebView2 check started — approve the UAC prompt.','b')">▶ Run</button>
-            </div>
-            <span class="admin-chip">⚠️ Admin required</span>
-          </div>
-          <div style="display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;margin-top:.1rem">
-            <span class="cstatus" id="status-wv2"></span>
-            <a href="webview2.html" class="view-link">View script →</a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
   <!-- Power Management -->
   <div class="section-label">Power Management</div>
   <div class="card danger" style="margin-bottom:1.5rem">
@@ -647,6 +628,26 @@
   </div>
 
 </div><!-- /wrap -->
+
+<!-- ── Feedback bar ── -->
+<div class="feedback-bar">
+  <div class="feedback-inner">
+    <div class="stat-block">
+      <span style="font-size:1.1rem">👥</span>
+      <span class="stat-num" id="visitor-count">—</span>
+      <span class="stat-label">visitors</span>
+    </div>
+    <div class="feedback-sep"></div>
+    <div class="upvote-wrap">
+      <span class="upvote-prompt">Was this helpful?</span>
+      <div class="upvote-tally">
+        <span class="stat-num" id="upvote-count">—</span>
+        <span class="stat-label">upvotes</span>
+      </div>
+      <button class="upvote-btn" id="upvoteBtn" onclick="handleUpvote()">👍 Upvote</button>
+    </div>
+  </div>
+</div>
 
 <!-- ── Restart confirmation modal ── -->
 <div class="overlay" id="overlay">
@@ -722,6 +723,57 @@
     if (e.target === e.currentTarget) closeModal();
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+  // ── Visitor counter & upvote (countapi.xyz) ──────────────────
+  const _API = 'https://api.countapi.xyz';
+  const _NS  = 'barclays-it-selfservice-2026';
+
+  (async function initStats() {
+    // Increment visitor count on every load
+    try {
+      const r = await fetch(`${_API}/hit/${_NS}/visits`);
+      if (r.ok) {
+        const d = await r.json();
+        document.getElementById('visitor-count').textContent = Number(d.value).toLocaleString();
+      }
+    } catch {}
+
+    // Read upvote count without incrementing
+    try {
+      const r = await fetch(`${_API}/get/${_NS}/upvotes`);
+      if (r.ok) {
+        const d = await r.json();
+        document.getElementById('upvote-count').textContent = Number(d.value || 0).toLocaleString();
+      }
+    } catch {}
+
+    // Restore upvoted state for returning users
+    if (localStorage.getItem('it-portal-upvoted')) markUpvoted(false);
+  })();
+
+  async function handleUpvote() {
+    if (localStorage.getItem('it-portal-upvoted')) return;
+    try {
+      const r = await fetch(`${_API}/hit/${_NS}/upvotes`);
+      if (r.ok) {
+        const d = await r.json();
+        document.getElementById('upvote-count').textContent = Number(d.value).toLocaleString();
+      }
+    } catch {}
+    localStorage.setItem('it-portal-upvoted', '1');
+    markUpvoted(true);
+  }
+
+  function markUpvoted(animate) {
+    const btn = document.getElementById('upvoteBtn');
+    if (!btn) return;
+    btn.innerHTML = '✅ Upvoted';
+    btn.classList.add('voted');
+    if (animate) {
+      btn.style.transform = 'scale(1.15)';
+      setTimeout(() => btn.style.transform = '', 300);
+    }
+  }
 </script>
 </body>
 </html>
