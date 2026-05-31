@@ -394,6 +394,7 @@
     }
     .note-icon { flex-shrink: 0; font-size: 1rem; margin-top: .05rem; }
     .note strong { color: var(--navy); }
+    .note code { background: rgba(0,174,239,0.07); border: 1px solid rgba(0,174,239,0.15); padding: .1em .35em; border-radius: 4px; font-size: .88em; color: var(--blue2); font-family: monospace; }
 
     /* ── Toast ── */
     #toast {
@@ -522,7 +523,7 @@
     </div>
     <div class="legend-item">
       <span class="leg-run">▶ Run</span>
-      <span>Executes the script — requires one-time Start-Here.bat setup</span>
+      <span>Downloads a .bat launcher — double-click it to run with PowerShell</span>
     </div>
   </div>
 
@@ -543,8 +544,8 @@
           <div class="btn-pair">
             <a href="setup/Clear-TeamsCache.ps1" download="Clear-TeamsCache.ps1"
                class="load-btn" onclick="markLoaded(this)">📥 Load</a>
-            <button class="run-btn"
-                    onclick="go('clear-teams-cache','status-teams','Teams reset started — a window will open.','b')">▶ Run</button>
+            <a href="setup/Run-TeamsCache.bat" download="Run-TeamsCache.bat"
+               class="run-btn" onclick="markRun(this,'status-teams')">▶ Run</a>
           </div>
           <span class="cstatus" id="status-teams"></span>
         </div>
@@ -564,8 +565,8 @@
           <div class="btn-pair">
             <a href="setup/GPUpdate.ps1" download="GPUpdate.ps1"
                class="load-btn" onclick="markLoaded(this)">📥 Load</a>
-            <button class="run-btn"
-                    onclick="go('gpupdate','status-gpu','GPUpdate started — a terminal window will appear.','b')">▶ Run</button>
+            <a href="setup/Run-GPUpdate.bat" download="Run-GPUpdate.bat"
+               class="run-btn" onclick="markRun(this,'status-gpu')">▶ Run</a>
           </div>
           <span class="cstatus" id="status-gpu"></span>
         </div>
@@ -585,8 +586,8 @@
           <div class="btn-pair">
             <a href="setup/Outlook-TeamsMeetingAddin.ps1" download="Outlook-TeamsMeetingAddin.ps1"
                class="load-btn" onclick="markLoaded(this)">📥 Load</a>
-            <button class="run-btn"
-                    onclick="go('outlook-teams-addin','status-addin','Add-in fix started — Outlook &amp; Teams will restart.','b')">▶ Run</button>
+            <a href="setup/Run-OutlookTeamsAddin.bat" download="Run-OutlookTeamsAddin.bat"
+               class="run-btn" onclick="markRun(this,'status-addin')">▶ Run</a>
           </div>
           <span class="cstatus" id="status-addin"></span>
         </div>
@@ -621,9 +622,8 @@
   <div class="note">
     <span class="note-icon">ℹ️</span>
     <span>
-      <strong>📥 Load</strong> works on any PC immediately — downloads the script so you can inspect it in Notepad first.
-      <strong>▶ Run</strong> requires a one-time setup: run <strong>Start-Here.bat</strong> once to register this portal on your PC.
-      Your browser may ask <em>"Allow this site to open IT Tools?"</em> — click <strong>Open</strong>.
+      <strong>📥 Load</strong> downloads the PowerShell script — open it in Notepad to inspect it first.
+      <strong>▶ Run</strong> downloads a <code>.bat</code> launcher — double-click it from your Downloads folder to run the script with PowerShell. No setup required.
     </span>
   </div>
 
@@ -694,19 +694,11 @@
     }, 600);
   }
 
-  // ── URL protocol launcher ─────────────────────────────────────
-  function launch(action) {
-    const f = document.createElement('iframe');
-    f.style.display = 'none';
-    document.body.appendChild(f);
-    try { f.src = 'ittools://' + action; } catch(e) {}
-    setTimeout(() => document.body.removeChild(f), 2000);
-  }
-
-  function go(action, statusId, toastMsg, dotCls) {
-    launch(action);
-    setStatus(statusId, '⏳ Running…', 'ok');
-    toast(toastMsg, dotCls);
+  // ── Run button: download .bat launcher ───────────────────────
+  function markRun(el, statusId) {
+    setTimeout(() => { el.innerHTML = '📥 Saved'; }, 400);
+    if (statusId) setStatus(statusId, '📥 Saved — double-click to run', 'ok');
+    toast('Launcher saved — double-click the .bat file to run', 'b');
   }
 
   // ── Restart modal ─────────────────────────────────────────────
@@ -714,9 +706,14 @@
   function closeModal() { document.getElementById('overlay').classList.remove('active'); }
   function runRestart() {
     closeModal();
-    launch('restart-pc');
-    setStatus('status-rst', '⏳ Restarting in 60s…', 'warn');
-    toast('⚠️ Restart in 60 seconds. Cancel: shutdown /a', 'a');
+    const a = document.createElement('a');
+    a.href = 'setup/Run-RestartPC.bat';
+    a.download = 'Run-RestartPC.bat';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setStatus('status-rst', '📥 Saved — double-click to restart', 'warn');
+    toast('Run-RestartPC.bat saved — double-click to execute', 'a');
   }
 
   document.getElementById('overlay').addEventListener('click', e => {
