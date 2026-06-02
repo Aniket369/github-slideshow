@@ -91,11 +91,7 @@
       text-transform: uppercase;
       color: var(--navy);
     }
-    .topbar-nav {
-      display: flex;
-      align-items: stretch;
-      gap: 0;
-    }
+    .topbar-nav { display: flex; align-items: stretch; gap: 0; }
     .nav-link {
       display: flex;
       align-items: center;
@@ -110,151 +106,64 @@
       white-space: nowrap;
     }
     .nav-link:hover { color: var(--blue); }
-    .nav-link.active {
-      color: var(--blue);
-      border-bottom-color: var(--blue);
-      font-weight: 600;
-    }
-    .topbar-right {
-      margin-left: auto;
-      display: flex;
-      align-items: center;
-      gap: .75rem;
-    }
-    .topbar-live {
-      display: flex; align-items: center; gap: .35rem;
-      font-size: .7rem; color: var(--muted);
-    }
-    .live-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--green);
-      box-shadow: 0 0 5px var(--green);
-    }
-    .avatar {
-      width: 30px; height: 30px; border-radius: 50%;
-      background: var(--blue2);
-      color: #fff; font-size: .7rem; font-weight: 700;
-      display: flex; align-items: center; justify-content: center;
-    }
+    .nav-link.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 600; }
+    .topbar-right { margin-left: auto; display: flex; align-items: center; gap: .75rem; }
+    .topbar-live { display: flex; align-items: center; gap: .35rem; font-size: .7rem; color: var(--muted); }
+    .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 5px var(--green); }
+    .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--blue2); color: #fff; font-size: .7rem; font-weight: 700; display: flex; align-items: center; justify-content: center; }
 
     .hero {
-      width: 100%;
-      background: var(--navy);
-      position: relative;
-      z-index: 1;
-      overflow: hidden;
+      width: 100%; background: var(--navy);
+      position: relative; z-index: 1; overflow: hidden;
       padding: 2rem 2rem 1.8rem;
     }
     .hero::before {
-      content: '';
-      position: absolute;
-      inset: 0;
+      content: ''; position: absolute; inset: 0;
       background:
         radial-gradient(ellipse 60% 80% at 100% 50%, rgba(0,174,239,0.12) 0%, transparent 60%),
         radial-gradient(ellipse 40% 60% at 0%   50%, rgba(0,114,188,0.1)  0%, transparent 60%);
       pointer-events: none;
     }
-    .hero-inner {
-      max-width: 860px;
-      margin: 0 auto;
-      position: relative;
-      z-index: 1;
-    }
+    .hero-inner { max-width: 860px; margin: 0 auto; position: relative; z-index: 1; }
     .hero-badge {
       display: inline-flex; align-items: center; gap: .4rem;
-      background: rgba(0,174,239,0.15);
-      border: 1px solid rgba(0,174,239,0.25);
-      border-radius: 99px;
-      padding: .25rem .75rem;
+      background: rgba(0,174,239,0.15); border: 1px solid rgba(0,174,239,0.25);
+      border-radius: 99px; padding: .25rem .75rem;
       font-size: .65rem; font-weight: 700; letter-spacing: .1em;
-      text-transform: uppercase; color: var(--blue);
-      margin-bottom: .85rem;
+      text-transform: uppercase; color: var(--blue); margin-bottom: .85rem;
     }
-    .hero-badge-dot {
-      width: 5px; height: 5px; border-radius: 50%;
-      background: var(--blue);
-      animation: pulse 2s ease-in-out infinite;
-    }
+    .hero-badge-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--blue); animation: pulse 2s ease-in-out infinite; }
     @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(.8)} }
-    .hero h1 {
-      font-size: clamp(1.4rem, 3.5vw, 2rem);
-      font-weight: 800;
-      color: #fff;
-      letter-spacing: -.02em;
-      margin-bottom: .4rem;
-      line-height: 1.2;
-    }
+    .hero h1 { font-size: clamp(1.4rem, 3.5vw, 2rem); font-weight: 800; color: #fff; letter-spacing: -.02em; margin-bottom: .4rem; line-height: 1.2; }
     .hero h1 span { color: var(--blue); }
-    .hero p {
-      color: rgba(255,255,255,0.55);
-      font-size: .85rem;
-      max-width: 480px;
-    }
+    .hero p { color: rgba(255,255,255,0.55); font-size: .85rem; max-width: 480px; }
 
     .announce {
-      width: 100%;
-      background: rgba(0,174,239,0.08);
+      width: 100%; background: rgba(0,174,239,0.08);
       border-bottom: 1px solid rgba(0,174,239,0.18);
-      padding: .55rem 2rem;
-      display: flex;
-      align-items: center;
-      gap: .6rem;
-      font-size: .74rem;
-      color: var(--blue2);
-      position: relative;
-      z-index: 1;
+      padding: .55rem 2rem; display: flex; align-items: center; gap: .6rem;
+      font-size: .74rem; color: var(--blue2); position: relative; z-index: 1;
     }
     .announce-icon { font-size: .9rem; flex-shrink: 0; }
     .announce strong { font-weight: 600; color: var(--navy); }
 
-    .wrap {
-      position: relative;
-      z-index: 1;
-      width: 100%;
-      max-width: 860px;
-      padding: 1.75rem 1.25rem 3rem;
-    }
+    .wrap { position: relative; z-index: 1; width: 100%; max-width: 860px; padding: 1.75rem 1.25rem 3rem; }
 
     .section-label {
-      font-size: .65rem;
-      font-weight: 700;
-      letter-spacing: .15em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: .75rem;
-      padding-left: .1rem;
-      display: flex;
-      align-items: center;
-      gap: .6rem;
+      font-size: .65rem; font-weight: 700; letter-spacing: .15em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: .75rem; padding-left: .1rem;
+      display: flex; align-items: center; gap: .6rem;
     }
-    .section-label::after {
-      content: '';
-      flex: 1;
-      height: 1px;
-      background: var(--border);
-    }
+    .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
     .legend {
-      display: flex;
-      align-items: center;
-      gap: 1.5rem;
-      flex-wrap: wrap;
-      padding: .55rem 1rem;
-      background: var(--white);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      margin-bottom: 1.25rem;
-      font-size: .72rem;
-      color: var(--muted);
+      display: flex; align-items: center; gap: 1.5rem; flex-wrap: wrap;
+      padding: .55rem 1rem; background: var(--white);
+      border: 1px solid var(--border); border-radius: 8px;
+      margin-bottom: 1.25rem; font-size: .72rem; color: var(--muted);
       box-shadow: var(--shadow);
     }
     .legend-item { display: flex; align-items: center; gap: .4rem; }
-    .leg-load {
-      display: inline-flex; align-items: center; gap: .2rem;
-      padding: .12rem .5rem; border-radius: 4px;
-      border: 1px solid rgba(0,114,188,0.4); color: var(--blue2);
-      font-size: .65rem; font-weight: 700;
-    }
     .leg-run {
       display: inline-flex; align-items: center; gap: .2rem;
       padding: .12rem .5rem; border-radius: 4px;
@@ -266,66 +175,30 @@
     @media(max-width:600px){ .g2 { grid-template-columns:1fr; } }
 
     .card {
-      display: flex;
-      flex-direction: column;
-      border-radius: 10px;
-      border: 1px solid var(--border);
-      background: var(--card);
-      overflow: hidden;
+      display: flex; flex-direction: column;
+      border-radius: 10px; border: 1px solid var(--border);
+      background: var(--card); overflow: hidden;
       transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease;
       width: 100%;
     }
-    .card:hover {
-      transform: translateY(-3px);
-      box-shadow: var(--shadow-h);
-      border-color: rgba(0,174,239,0.3);
-    }
-    .card.danger:hover {
-      box-shadow: 0 4px 8px rgba(0,0,0,0.08), 0 12px 32px rgba(220,38,38,0.12);
-      border-color: rgba(220,38,38,0.3);
-    }
+    .card:hover { transform: translateY(-3px); box-shadow: var(--shadow-h); border-color: rgba(0,174,239,0.3); }
+    .card.danger:hover { box-shadow: 0 4px 8px rgba(0,0,0,0.08), 0 12px 32px rgba(220,38,38,0.12); border-color: rgba(220,38,38,0.3); }
 
     .bar  { width: 100%; height: 3px; background: linear-gradient(90deg, var(--blue), var(--blue2)); }
     .card.danger .bar { background: linear-gradient(90deg, #ef4444, #dc2626); }
 
     .cbody { padding: 1.2rem 1.3rem 1.3rem; display: flex; flex-direction: column; gap: .75rem; flex: 1; }
-
     .cicon {
       width: 40px; height: 40px; border-radius: 9px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 1.2rem;
-      background: rgba(0,174,239,0.08);
-      border: 1px solid rgba(0,174,239,0.15);
-      flex-shrink: 0;
+      font-size: 1.2rem; background: rgba(0,174,239,0.08);
+      border: 1px solid rgba(0,174,239,0.15); flex-shrink: 0;
     }
-    .card.danger .cicon {
-      background: rgba(220,38,38,0.06);
-      border-color: rgba(220,38,38,0.15);
-    }
-
+    .card.danger .cicon { background: rgba(220,38,38,0.06); border-color: rgba(220,38,38,0.15); }
     .ctitle { font-size: .88rem; font-weight: 700; color: var(--text); margin-bottom: .18rem; }
     .cdesc  { font-size: .74rem; color: var(--muted); line-height: 1.55; }
-
-    .cfoot {
-      display: flex; align-items: center;
-      justify-content: space-between; gap: .75rem; flex-wrap: wrap;
-    }
+    .cfoot { display: flex; align-items: center; justify-content: space-between; gap: .75rem; flex-wrap: wrap; }
     .btn-pair { display: flex; align-items: center; gap: .4rem; flex-shrink: 0; }
-
-    .load-btn {
-      display: inline-flex; align-items: center; gap: .3rem;
-      padding: .38rem .85rem; border-radius: 6px;
-      font-size: .74rem; font-weight: 600;
-      color: var(--blue2); border: 1px solid rgba(0,114,188,0.35);
-      background: transparent;
-      transition: background .15s, border-color .15s, color .15s;
-      text-decoration: none; font-family: inherit; cursor: pointer;
-      flex-shrink: 0; letter-spacing: .01em;
-    }
-    .load-btn:hover { background: rgba(0,114,188,0.06); border-color: var(--blue2); color: var(--blue2); }
-    .load-btn.loaded { color: var(--green); border-color: rgba(22,163,74,0.35); background: rgba(22,163,74,0.05); }
-    .card.danger .load-btn { color: var(--red); border-color: rgba(220,38,38,0.3); }
-    .card.danger .load-btn:hover { background: rgba(220,38,38,0.05); border-color: var(--red); }
 
     .run-btn {
       display: inline-flex; align-items: center; gap: .3rem;
@@ -385,8 +258,7 @@
     #toast {
       position: fixed; bottom: 1.75rem; left: 50%;
       transform: translateX(-50%) translateY(120%);
-      background: var(--navy);
-      border: 1px solid rgba(0,174,239,0.25);
+      background: var(--navy); border: 1px solid rgba(0,174,239,0.25);
       border-radius: 8px; padding: .75rem 1.2rem;
       display: flex; align-items: center; gap: .6rem;
       font-size: .82rem; font-weight: 500; color: #fff;
@@ -408,8 +280,7 @@
     }
     .overlay.active { display: flex; }
     .modal {
-      background: var(--white);
-      border: 1px solid var(--border);
+      background: var(--white); border: 1px solid var(--border);
       border-radius: 12px; padding: 1.75rem;
       max-width: 400px; width: 100%;
       box-shadow: 0 20px 60px rgba(0,0,0,0.18);
@@ -418,26 +289,19 @@
     @keyframes popIn { from{opacity:0;transform:scale(.92)} to{opacity:1;transform:scale(1)} }
     .modal-icon {
       width: 46px; height: 46px; border-radius: 10px;
-      background: rgba(220,38,38,0.08);
-      border: 1px solid rgba(220,38,38,0.2);
+      background: rgba(220,38,38,0.08); border: 1px solid rgba(220,38,38,0.2);
       display: flex; align-items: center; justify-content: center;
       font-size: 1.3rem; margin-bottom: .85rem;
     }
     .modal h2 { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: .4rem; }
     .modal p  { color: var(--muted); font-size: .82rem; line-height: 1.65; margin-bottom: 1.3rem; }
-    .modal p code {
-      background: rgba(0,174,239,0.07);
-      border: 1px solid rgba(0,174,239,0.15);
-      padding: .1em .4em; border-radius: 4px;
-      font-family: monospace; font-size: .85em; color: var(--blue2);
-    }
+    .modal p code { background: rgba(0,174,239,0.07); border: 1px solid rgba(0,174,239,0.15); padding: .1em .4em; border-radius: 4px; font-family: monospace; font-size: .85em; color: var(--blue2); }
     .modal-actions { display: flex; gap: .6rem; justify-content: flex-end; }
     .btn-cancel {
       padding: .45rem .95rem; border-radius: 7px;
       border: 1px solid var(--border); background: transparent;
       color: var(--text2); font-size: .82rem; font-weight: 600;
-      cursor: pointer; font-family: inherit;
-      transition: border-color .15s, background .15s;
+      cursor: pointer; font-family: inherit; transition: border-color .15s, background .15s;
     }
     .btn-cancel:hover { border-color: var(--muted); background: var(--bg); }
     .btn-confirm {
@@ -449,12 +313,10 @@
     .btn-confirm:hover { opacity: .87; }
 
     .footer {
-      width: 100%; text-align: center;
-      padding: 1.5rem 1rem;
+      width: 100%; text-align: center; padding: 1.5rem 1rem;
       font-size: .68rem; color: var(--muted);
       border-top: 1px solid var(--border);
-      position: relative; z-index: 1;
-      background: var(--white);
+      position: relative; z-index: 1; background: var(--white);
     }
     .footer a { color: var(--blue2); text-decoration: none; }
   </style>
@@ -471,10 +333,7 @@
     <span class="nav-link">Help &amp; Support</span>
   </div>
   <div class="topbar-right">
-    <div class="topbar-live">
-      <div class="live-dot"></div>
-      Connected
-    </div>
+    <div class="topbar-live"><div class="live-dot"></div>Connected</div>
     <div class="avatar">AK</div>
   </div>
 </nav>
@@ -488,7 +347,7 @@
   <div class="hero-inner">
     <div class="hero-badge"><span class="hero-badge-dot"></span>Internal Use Only</div>
     <h1>IT <span>Self-Service</span> Tools</h1>
-    <p>Load a script to inspect it, then run it directly on your machine — no IT ticket required.</p>
+    <p>Click Run to download a launcher, then double-click it to run the fix with PowerShell — no IT ticket required.</p>
   </div>
 </div>
 
@@ -496,12 +355,8 @@
 
   <div class="legend">
     <div class="legend-item">
-      <span class="leg-load">📥 Load</span>
-      <span>Downloads the script — no setup needed, inspect it before running</span>
-    </div>
-    <div class="legend-item">
       <span class="leg-run">▶ Run</span>
-      <span>Downloads a .bat launcher — double-click it to run with PowerShell</span>
+      <span>Downloads a launcher — double-click it to run the script with PowerShell. No setup required.</span>
     </div>
   </div>
 
@@ -518,8 +373,6 @@
         </div>
         <div class="cfoot">
           <div class="btn-pair">
-            <a href="setup/Clear-TeamsCache.ps1" download="Clear-TeamsCache.ps1"
-               class="load-btn" onclick="markLoaded(this)">📥 Load</a>
             <a href="setup/Run-TeamsCache.bat" download="Run-TeamsCache.bat"
                class="run-btn" onclick="markRun(this,'status-teams')">▶ Run</a>
           </div>
@@ -538,8 +391,6 @@
         </div>
         <div class="cfoot">
           <div class="btn-pair">
-            <a href="setup/GPUpdate.ps1" download="GPUpdate.ps1"
-               class="load-btn" onclick="markLoaded(this)">📥 Load</a>
             <a href="setup/Run-GPUpdate.bat" download="Run-GPUpdate.bat"
                class="run-btn" onclick="markRun(this,'status-gpu')">▶ Run</a>
           </div>
@@ -558,8 +409,6 @@
         </div>
         <div class="cfoot">
           <div class="btn-pair">
-            <a href="setup/Outlook-TeamsMeetingAddin.ps1" download="Outlook-TeamsMeetingAddin.ps1"
-               class="load-btn" onclick="markLoaded(this)">📥 Load</a>
             <a href="setup/Run-OutlookTeamsAddin.bat" download="Run-OutlookTeamsAddin.bat"
                class="run-btn" onclick="markRun(this,'status-addin')">▶ Run</a>
           </div>
@@ -581,8 +430,6 @@
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.4rem;flex-shrink:0">
         <div class="btn-pair">
-          <a href="setup/Restart-PC.ps1" download="Restart-PC.ps1"
-             class="load-btn" onclick="markLoaded(this)">📥 Load</a>
           <button class="run-btn" onclick="openModal()">▶ Run</button>
         </div>
         <span class="cstatus" id="status-rst"></span>
@@ -595,8 +442,7 @@
   <div class="note">
     <span class="note-icon">ℹ️</span>
     <span>
-      <strong>📥 Load</strong> downloads the PowerShell script — open it in Notepad to inspect it first.
-      <strong>▶ Run</strong> downloads a <code>.bat</code> launcher — double-click it from your Downloads folder to run the script with PowerShell. No setup required.
+      Click <strong>▶ Run</strong> to download a <code>.bat</code> launcher, then double-click it from your Downloads folder. PowerShell will open and run the fix automatically. No setup required.
     </span>
   </div>
 
@@ -656,13 +502,6 @@
     if (cls === 'ok') setTimeout(() => el.className = 'cstatus', 7000);
   }
 
-  function markLoaded(el) {
-    setTimeout(() => {
-      el.textContent = '✅ Loaded';
-      el.classList.add('loaded');
-    }, 600);
-  }
-
   function markRun(el, statusId) {
     setTimeout(() => { el.innerHTML = '📥 Saved'; }, 400);
     if (statusId) setStatus(statusId, '📥 Saved — double-click to run', 'ok');
@@ -694,20 +533,12 @@
   (async function initStats() {
     try {
       const r = await fetch(`${_API}/hit/${_NS}/visits`);
-      if (r.ok) {
-        const d = await r.json();
-        document.getElementById('visitor-count').textContent = Number(d.value).toLocaleString();
-      }
+      if (r.ok) { const d = await r.json(); document.getElementById('visitor-count').textContent = Number(d.value).toLocaleString(); }
     } catch {}
-
     try {
       const r = await fetch(`${_API}/get/${_NS}/upvotes`);
-      if (r.ok) {
-        const d = await r.json();
-        document.getElementById('upvote-count').textContent = Number(d.value || 0).toLocaleString();
-      }
+      if (r.ok) { const d = await r.json(); document.getElementById('upvote-count').textContent = Number(d.value || 0).toLocaleString(); }
     } catch {}
-
     if (localStorage.getItem('it-portal-upvoted')) markUpvoted(false);
   })();
 
@@ -715,10 +546,7 @@
     if (localStorage.getItem('it-portal-upvoted')) return;
     try {
       const r = await fetch(`${_API}/hit/${_NS}/upvotes`);
-      if (r.ok) {
-        const d = await r.json();
-        document.getElementById('upvote-count').textContent = Number(d.value).toLocaleString();
-      }
+      if (r.ok) { const d = await r.json(); document.getElementById('upvote-count').textContent = Number(d.value).toLocaleString(); }
     } catch {}
     localStorage.setItem('it-portal-upvoted', '1');
     markUpvoted(true);
@@ -729,10 +557,7 @@
     if (!btn) return;
     btn.innerHTML = '✅ Upvoted';
     btn.classList.add('voted');
-    if (animate) {
-      btn.style.transform = 'scale(1.15)';
-      setTimeout(() => btn.style.transform = '', 300);
-    }
+    if (animate) { btn.style.transform = 'scale(1.15)'; setTimeout(() => btn.style.transform = '', 300); }
   }
 </script>
 </body>
