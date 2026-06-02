@@ -256,12 +256,6 @@
       box-shadow: var(--shadow);
     }
     .legend-item { display: flex; align-items: center; gap: .4rem; }
-    .leg-load {
-      display: inline-flex; align-items: center; gap: .2rem;
-      padding: .12rem .5rem; border-radius: 4px;
-      border: 1px solid rgba(0,114,188,0.4); color: var(--blue2);
-      font-size: .65rem; font-weight: 700;
-    }
     .leg-run {
       display: inline-flex; align-items: center; gap: .2rem;
       padding: .12rem .5rem; border-radius: 4px;
@@ -323,21 +317,6 @@
     .btn-pair { display: flex; align-items: center; gap: .4rem; flex-shrink: 0; }
 
     /* ── Load button ── */
-    .load-btn {
-      display: inline-flex; align-items: center; gap: .3rem;
-      padding: .38rem .85rem; border-radius: 6px;
-      font-size: .74rem; font-weight: 600;
-      color: var(--blue2); border: 1px solid rgba(0,114,188,0.35);
-      background: transparent;
-      transition: background .15s, border-color .15s, color .15s;
-      text-decoration: none; font-family: inherit; cursor: pointer;
-      flex-shrink: 0; letter-spacing: .01em;
-    }
-    .load-btn:hover { background: rgba(0,114,188,0.06); border-color: var(--blue2); color: var(--blue2); }
-    .load-btn.loaded { color: var(--green); border-color: rgba(22,163,74,0.35); background: rgba(22,163,74,0.05); }
-    .card.danger .load-btn { color: var(--red); border-color: rgba(220,38,38,0.3); }
-    .card.danger .load-btn:hover { background: rgba(220,38,38,0.05); border-color: var(--red); }
-
     /* ── Run button ── */
     .run-btn {
       display: inline-flex; align-items: center; gap: .3rem;
@@ -519,12 +498,8 @@
   <!-- Legend -->
   <div class="legend">
     <div class="legend-item">
-      <span class="leg-load">📥 Load</span>
-      <span>Downloads the script — no setup needed, inspect it before running</span>
-    </div>
-    <div class="legend-item">
       <span class="leg-run">▶ Run</span>
-      <span>Downloads a .bat launcher — double-click it to run with PowerShell</span>
+      <span>Downloads a launcher — double-click it to run the script with PowerShell. No setup required.</span>
     </div>
   </div>
 
@@ -543,8 +518,6 @@
         </div>
         <div class="cfoot">
           <div class="btn-pair">
-            <a href="setup/Clear-TeamsCache.ps1" download="Clear-TeamsCache.ps1"
-               class="load-btn" onclick="markLoaded(this)">📥 Load</a>
             <a href="setup/Run-TeamsCache.bat" download="Run-TeamsCache.bat"
                class="run-btn" onclick="markRun(this,'status-teams')">▶ Run</a>
           </div>
@@ -564,8 +537,6 @@
         </div>
         <div class="cfoot">
           <div class="btn-pair">
-            <a href="setup/GPUpdate.ps1" download="GPUpdate.ps1"
-               class="load-btn" onclick="markLoaded(this)">📥 Load</a>
             <a href="setup/Run-GPUpdate.bat" download="Run-GPUpdate.bat"
                class="run-btn" onclick="markRun(this,'status-gpu')">▶ Run</a>
           </div>
@@ -585,8 +556,6 @@
         </div>
         <div class="cfoot">
           <div class="btn-pair">
-            <a href="setup/Outlook-TeamsMeetingAddin.ps1" download="Outlook-TeamsMeetingAddin.ps1"
-               class="load-btn" onclick="markLoaded(this)">📥 Load</a>
             <a href="setup/Run-OutlookTeamsAddin.bat" download="Run-OutlookTeamsAddin.bat"
                class="run-btn" onclick="markRun(this,'status-addin')">▶ Run</a>
           </div>
@@ -609,8 +578,6 @@
       </div>
       <div style="display:flex;flex-direction:column;align-items:flex-end;gap:.4rem;flex-shrink:0">
         <div class="btn-pair">
-          <a href="setup/Restart-PC.ps1" download="Restart-PC.ps1"
-             class="load-btn" onclick="markLoaded(this)">📥 Load</a>
           <button class="run-btn" onclick="openModal()">▶ Run</button>
         </div>
         <span class="cstatus" id="status-rst"></span>
@@ -623,8 +590,7 @@
   <div class="note">
     <span class="note-icon">ℹ️</span>
     <span>
-      <strong>📥 Load</strong> downloads the PowerShell script — open it in Notepad to inspect it first.
-      <strong>▶ Run</strong> downloads a <code>.bat</code> launcher — double-click it from your Downloads folder to run the script with PowerShell. No setup required.
+      Click <strong>▶ Run</strong> to download a <code>.bat</code> launcher, then double-click it from your Downloads folder. PowerShell will open and run the fix automatically. No setup required.
     </span>
   </div>
 
@@ -685,14 +651,6 @@
     el.textContent = msg;
     el.className = 'cstatus show ' + cls;
     if (cls === 'ok') setTimeout(() => el.className = 'cstatus', 7000);
-  }
-
-  // ── Mark Load button as completed ─────────────────────────────
-  function markLoaded(el) {
-    setTimeout(() => {
-      el.textContent = '✅ Loaded';
-      el.classList.add('loaded');
-    }, 600);
   }
 
   // ── Run button: download .bat launcher ───────────────────────
