@@ -498,7 +498,7 @@
   <div class="legend">
     <div class="legend-item">
       <span class="leg-run">▶ Run</span>
-      <span>Downloads a launcher — double-click it to run the script with PowerShell. No setup required.</span>
+      <span>Sends the request to the server — PowerShell runs the script instantly.</span>
     </div>
   </div>
 
@@ -517,8 +517,7 @@
         </div>
         <div class="cfoot">
           <div class="btn-pair">
-            <a href="setup/Run-TeamsCache.bat" download="Run-TeamsCache.bat"
-               class="run-btn" onclick="markRun(this,'status-teams')">▶ Run</a>
+            <button class="run-btn" onclick="runScript('clear-teams-cache','status-teams',this)">▶ Run</button>
           </div>
           <span class="cstatus" id="status-teams"></span>
         </div>
@@ -536,8 +535,7 @@
         </div>
         <div class="cfoot">
           <div class="btn-pair">
-            <a href="setup/Run-GPUpdate.bat" download="Run-GPUpdate.bat"
-               class="run-btn" onclick="markRun(this,'status-gpu')">▶ Run</a>
+            <button class="run-btn" onclick="runScript('gpupdate','status-gpu',this)">▶ Run</button>
           </div>
           <span class="cstatus" id="status-gpu"></span>
         </div>
@@ -555,8 +553,7 @@
         </div>
         <div class="cfoot">
           <div class="btn-pair">
-            <a href="setup/Run-OutlookTeamsAddin.bat" download="Run-OutlookTeamsAddin.bat"
-               class="run-btn" onclick="markRun(this,'status-addin')">▶ Run</a>
+            <button class="run-btn" onclick="runScript('outlook-teams-addin','status-addin',this)">▶ Run</button>
           </div>
           <span class="cstatus" id="status-addin"></span>
         </div>
@@ -589,7 +586,7 @@
   <div class="note">
     <span class="note-icon">ℹ️</span>
     <span>
-      Click <strong>▶ Run</strong> to download a <code>.bat</code> launcher, then double-click it from your Downloads folder. PowerShell will open and run the fix automatically. No setup required.
+      Click <strong>▶ Run</strong> — the server runs the PowerShell script immediately. Make sure the Node.js server is running on this machine first (<code>npm start</code>).
     </span>
   </div>
 
@@ -652,11 +649,24 @@
     if (cls === 'ok') setTimeout(() => el.className = 'cstatus', 7000);
   }
 
-  // ── Run button: download .bat launcher ───────────────────────
-  function markRun(el, statusId) {
-    setTimeout(() => { el.innerHTML = '📥 Saved'; }, 400);
-    if (statusId) setStatus(statusId, '📥 Saved — double-click to run', 'ok');
-    toast('Launcher saved — double-click the .bat file to run', 'b');
+  // ── Run script via Node.js API ────────────────────────────────
+  async function runScript(action, statusId, btn) {
+    if (btn) btn.disabled = true;
+    setStatus(statusId, '⏳ Running…', 'ok');
+    try {
+      const r = await fetch('/api/run/' + action, { method: 'POST' });
+      if (r.ok) {
+        setStatus(statusId, '✅ Done', 'ok');
+        toast('Script completed successfully', 'g');
+      } else {
+        setStatus(statusId, '❌ Failed', 'err');
+        toast('Script failed — check the server window', 'a');
+      }
+    } catch {
+      setStatus(statusId, '❌ Server unreachable', 'err');
+      toast('Cannot reach server — is it running?', 'a');
+    }
+    if (btn) btn.disabled = false;
   }
 
   // ── Restart modal ─────────────────────────────────────────────
@@ -664,14 +674,9 @@
   function closeModal() { document.getElementById('overlay').classList.remove('active'); }
   function runRestart() {
     closeModal();
-    const a = document.createElement('a');
-    a.href = 'setup/Run-RestartPC.bat';
-    a.download = 'Run-RestartPC.bat';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    setStatus('status-rst', '📥 Saved — double-click to restart', 'warn');
-    toast('Run-RestartPC.bat saved — double-click to execute', 'a');
+    runScript('restart-pc', 'status-rst', null);
+    setStatus('status-rst', '⏳ Running…', 'warn');
+    toast('Restart scheduled — save your work!', 'a');
   }
 
   document.getElementById('overlay').addEventListener('click', e => {
