@@ -15,7 +15,7 @@
       --navy:    #001B2E;
       --navy2:   #00263D;
       --white:   #ffffff;
-      --bg:      #f4f6f8;
+      --bg:      #ffffff;
       --card:    #ffffff;
       --text:    #1a2332;
       --text2:   #3d4f63;
@@ -41,20 +41,6 @@
       position: relative;
     }
 
-    /* ── Barclays iridescent wave background ── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background:
-        radial-gradient(ellipse 160% 80% at 5%  20%,  rgba(0,174,239,0.09)  0%, transparent 55%),
-        radial-gradient(ellipse 100% 100% at 95% 5%,  rgba(139,92,246,0.06) 0%, transparent 55%),
-        radial-gradient(ellipse 80%  130% at 55% 95%, rgba(16,185,129,0.05)  0%, transparent 55%),
-        radial-gradient(ellipse 70%  70%  at 85% 75%, rgba(251,191,36,0.04)  0%, transparent 50%),
-        radial-gradient(ellipse 120% 60% at 15%  85%, rgba(236,72,153,0.04)  0%, transparent 50%);
-      pointer-events: none;
-      z-index: 0;
-    }
 
     /* ── Top navigation bar ── */
     .topbar {
