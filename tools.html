@@ -331,6 +331,10 @@
     .card.danger .run-btn { background: linear-gradient(135deg, #ef4444, #dc2626); }
     .card.danger .run-btn:hover { box-shadow: 0 2px 10px rgba(220,38,38,0.35); }
 
+    .uptime-display { display: none; align-items: center; gap: .6rem; padding: .5rem .7rem; border-radius: 7px; font-size: .78rem; font-weight: 600; }
+    .uptime-display.ok   { display: flex; background: rgba(22,163,74,0.07);  color: var(--green); border: 1px solid rgba(22,163,74,0.2); }
+    .uptime-display.warn { display: flex; background: rgba(217,119,6,0.07);  color: var(--amber); border: 1px solid rgba(217,119,6,0.2); }
+
     .cstatus { font-size: .7rem; font-weight: 600; opacity: 0; transition: opacity .3s; }
     .cstatus.show { opacity: 1; }
     .cstatus.ok   { color: var(--green); }
@@ -560,6 +564,25 @@
       </div>
     </div>
 
+    <!-- System Uptime card -->
+    <div class="card">
+      <div class="bar"></div>
+      <div class="cbody">
+        <div class="cicon">⏱️</div>
+        <div>
+          <div class="ctitle">System Uptime</div>
+          <div class="cdesc">Shows how long your PC has been running. If uptime exceeds 1 day, a restart is recommended to improve performance and apply pending updates.</div>
+        </div>
+        <div id="uptime-display" class="uptime-display"></div>
+        <div class="cfoot">
+          <div class="btn-pair">
+            <button class="run-btn" onclick="runScript('check-uptime','status-uptime',this)">▶ Check</button>
+          </div>
+          <span class="cstatus" id="status-uptime"></span>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <!-- Power Management -->
@@ -678,6 +701,24 @@
     setStatus('status-rst', '⏳ Running…', 'warn');
     toast('Restart scheduled — save your work!', 'a');
   }
+
+  // ── Live uptime display (Node.js server mode) ────────────────
+  (async function loadUptime() {
+    try {
+      const r = await fetch('/api/uptime');
+      if (!r.ok) return;
+      const d = await r.json();
+      const el = document.getElementById('uptime-display');
+      if (!el) return;
+      const label = d.days > 0
+        ? `${d.days}d ${d.hours}h ${d.mins}m`
+        : `${d.hours}h ${d.mins}m`;
+      el.textContent = d.warn
+        ? `⚠️ ${label} — restart recommended`
+        : `✅ ${label} — healthy`;
+      el.className = 'uptime-display ' + (d.warn ? 'warn' : 'ok');
+    } catch {}
+  })();
 
   document.getElementById('overlay').addEventListener('click', e => {
     if (e.target === e.currentTarget) closeModal();

@@ -1,6 +1,7 @@
 const express = require('express');
 const { spawn } = require('child_process');
 const path    = require('path');
+const os      = require('os');
 
 const app  = express();
 const PORT = process.env.PORT || 3000;
@@ -10,11 +11,21 @@ const ACTIONS = {
   'gpupdate':            'setup/GPUpdate.ps1',
   'outlook-teams-addin': 'setup/Outlook-TeamsMeetingAddin.ps1',
   'restart-pc':          'setup/Restart-PC.ps1',
+  'check-uptime':        'setup/Get-Uptime.ps1',
   'sfc-scannow':         'setup/SFC-Scan.ps1',
   'chkdsk':              'setup/ChkDsk.ps1',
 };
 
 app.use(express.static(__dirname));
+
+// Returns system uptime so the browser can display it live
+app.get('/api/uptime', (req, res) => {
+  const secs  = os.uptime();
+  const days  = Math.floor(secs / 86400);
+  const hours = Math.floor((secs % 86400) / 3600);
+  const mins  = Math.floor((secs % 3600) / 60);
+  res.json({ seconds: secs, days, hours, mins, warn: secs >= 86400 });
+});
 
 app.post('/api/run/:action', (req, res) => {
   const scriptRel = ACTIONS[req.params.action];
