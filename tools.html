@@ -41,7 +41,6 @@
       position: relative;
     }
 
-
     /* ── Top navigation bar ── */
     .topbar {
       width: 100%;
@@ -317,9 +316,9 @@
     .card.danger .run-btn { background: linear-gradient(135deg, #ef4444, #dc2626); }
     .card.danger .run-btn:hover { box-shadow: 0 2px 10px rgba(220,38,38,0.35); }
 
-    .uptime-display { display: none; align-items: center; gap: .6rem; padding: .5rem .7rem; border-radius: 7px; font-size: .78rem; font-weight: 600; }
-    .uptime-display.ok   { display: flex; background: rgba(22,163,74,0.07);  color: var(--green); border: 1px solid rgba(22,163,74,0.2); }
-    .uptime-display.warn { display: flex; background: rgba(217,119,6,0.07);  color: var(--amber); border: 1px solid rgba(217,119,6,0.2); }
+    .uptime-display { display: flex; align-items: center; gap: .6rem; padding: .5rem .7rem; border-radius: 7px; font-size: .78rem; font-weight: 600; background: rgba(107,127,150,0.07); color: var(--muted); border: 1px solid rgba(107,127,150,0.15); }
+    .uptime-display.ok   { background: rgba(22,163,74,0.07);  color: var(--green); border: 1px solid rgba(22,163,74,0.2); }
+    .uptime-display.warn { background: rgba(217,119,6,0.07);  color: var(--amber); border: 1px solid rgba(217,119,6,0.2); }
 
     .cstatus { font-size: .7rem; font-weight: 600; opacity: 0; transition: opacity .3s; }
     .cstatus.show { opacity: 1; }
@@ -487,8 +486,8 @@
   <!-- Legend -->
   <div class="legend">
     <div class="legend-item">
-      <span class="leg-run">▶ Run</span>
-      <span>Sends the request to the server — PowerShell runs the script instantly.</span>
+      <span class="leg-run">&#9654; Run</span>
+      <span>Downloads a launcher — double-click it to run the PowerShell fix instantly.</span>
     </div>
   </div>
 
@@ -678,14 +677,16 @@
     toast('Launcher downloaded — double-click to schedule restart', 'a');
   }
 
-  // ── Live uptime display (silently no-ops on static hosting) ─────────
+  // ── Live uptime display (auto-loads; falls back gracefully on static hosting) ──
   (async function loadUptime() {
+    const el = document.getElementById('uptime-display');
+    if (!el) return;
+    el.textContent = '⏳ Checking uptime…';
+    el.className = 'uptime-display';
     try {
       const r = await fetch('/api/uptime');
-      if (!r.ok) return;
+      if (!r.ok) throw new Error();
       const d = await r.json();
-      const el = document.getElementById('uptime-display');
-      if (!el) return;
       const label = d.days > 0
         ? `${d.days}d ${d.hours}h ${d.mins}m`
         : `${d.hours}h ${d.mins}m`;
@@ -693,7 +694,10 @@
         ? `⚠️ ${label} — restart recommended`
         : `✅ ${label} — healthy`;
       el.className = 'uptime-display ' + (d.warn ? 'warn' : 'ok');
-    } catch {}
+    } catch {
+      el.textContent = '⬇️ Click Check to view uptime in a new window';
+      el.className = 'uptime-display';
+    }
   })();
 
   document.getElementById('overlay').addEventListener('click', e => {
@@ -706,7 +710,6 @@
   const _NS  = 'barclays-it-selfservice-2026';
 
   (async function initStats() {
-    // Increment visitor count on every load
     try {
       const r = await fetch(`${_API}/hit/${_NS}/visits`);
       if (r.ok) {
@@ -715,7 +718,6 @@
       }
     } catch {}
 
-    // Read upvote count without incrementing
     try {
       const r = await fetch(`${_API}/get/${_NS}/upvotes`);
       if (r.ok) {
@@ -724,7 +726,6 @@
       }
     } catch {}
 
-    // Restore upvoted state for returning users
     if (localStorage.getItem('it-portal-upvoted')) markUpvoted(false);
   })();
 
