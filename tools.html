@@ -320,6 +320,49 @@
     .uptime-display.ok   { background: rgba(22,163,74,0.07);  color: var(--green); border: 1px solid rgba(22,163,74,0.2); }
     .uptime-display.warn { background: rgba(217,119,6,0.07);  color: var(--amber); border: 1px solid rgba(217,119,6,0.2); }
 
+    /* ── Topbar uptime circle badge ── */
+    .uptime-badge {
+      width: 40px; height: 40px; border-radius: 50%;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      border: 2.5px solid var(--border);
+      gap: 1px; flex-shrink: 0; cursor: default;
+      transition: border-color .4s, background .4s;
+    }
+    .uptime-main { font-size: .68rem; font-weight: 800; color: var(--muted); line-height: 1; }
+    .uptime-sub  { font-size: .5rem;  font-weight: 700; color: var(--muted); line-height: 1; }
+    .uptime-badge.green  { border-color: var(--green); background: rgba(22,163,74,0.08); }
+    .uptime-badge.green  .uptime-main,
+    .uptime-badge.green  .uptime-sub  { color: var(--green); }
+    .uptime-badge.yellow { border-color: var(--amber); background: rgba(217,119,6,0.08); }
+    .uptime-badge.yellow .uptime-main,
+    .uptime-badge.yellow .uptime-sub  { color: var(--amber); }
+    .uptime-badge.red    { border-color: var(--red); background: rgba(220,38,38,0.08); animation: badge-pulse 1.8s ease-in-out infinite; }
+    .uptime-badge.red    .uptime-main,
+    .uptime-badge.red    .uptime-sub  { color: var(--red); }
+    @keyframes badge-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(220,38,38,0.4); }
+      60%       { box-shadow: 0 0 0 6px rgba(220,38,38,0); }
+    }
+
+    /* ── Restart alert bar ── */
+    .restart-alert {
+      display: none; width: 100%;
+      background: rgba(220,38,38,0.07);
+      border-bottom: 1px solid rgba(220,38,38,0.18);
+      padding: .5rem 2rem; align-items: center; gap: .6rem;
+      font-size: .74rem; color: var(--red); font-weight: 500;
+      position: relative; z-index: 99;
+    }
+    .restart-alert.show { display: flex; }
+    .restart-close {
+      margin-left: auto; background: none; border: none;
+      color: var(--red); opacity: .6; cursor: pointer;
+      font-size: .85rem; padding: .1rem .4rem; border-radius: 4px;
+      flex-shrink: 0; transition: opacity .15s, background .15s;
+    }
+    .restart-close:hover { opacity: 1; background: rgba(220,38,38,0.08); }
+
     .cstatus { font-size: .7rem; font-weight: 600; opacity: 0; transition: opacity .3s; }
     .cstatus.show { opacity: 1; }
     .cstatus.ok   { color: var(--green); }
@@ -461,9 +504,20 @@
       <div class="live-dot"></div>
       Connected
     </div>
+    <div class="uptime-badge" id="topbar-uptime" title="Checking uptime…">
+      <span class="uptime-main" id="uptime-main">…</span>
+      <span class="uptime-sub"  id="uptime-sub">uptime</span>
+    </div>
     <div class="avatar">AK</div>
   </div>
 </nav>
+
+<!-- ── Restart alert bar (shown when uptime > 3 days) ── -->
+<div class="restart-alert" id="restart-alert">
+  <span>⚠️</span>
+  <span id="restart-msg">Your PC has been running for several days — a restart is strongly recommended.</span>
+  <button class="restart-close" onclick="document.getElementById('restart-alert').classList.remove('show')">&#x2715;</button>
+</div>
 
 <!-- ── Announcement banner ── -->
 <div class="announce">
@@ -677,26 +731,43 @@
     toast('Launcher downloaded — double-click to schedule restart', 'a');
   }
 
-  // ── Live uptime display (auto-loads; falls back gracefully on static hosting) ──
+  // ── Uptime circle badge + alert bar ──────────────────────────
   (async function loadUptime() {
-    const el = document.getElementById('uptime-display');
-    if (!el) return;
-    el.textContent = '⏳ Checking uptime…';
-    el.className = 'uptime-display';
+    const badge   = document.getElementById('topbar-uptime');
+    const mainEl  = document.getElementById('uptime-main');
+    const subEl   = document.getElementById('uptime-sub');
+    const alertEl = document.getElementById('restart-alert');
+    const msgEl   = document.getElementById('restart-msg');
+    const cardEl  = document.getElementById('uptime-display');
     try {
       const r = await fetch('/api/uptime');
       if (!r.ok) throw new Error();
       const d = await r.json();
-      const label = d.days > 0
-        ? `${d.days}d ${d.hours}h ${d.mins}m`
-        : `${d.hours}h ${d.mins}m`;
-      el.textContent = d.warn
-        ? `⚠️ ${label} — restart recommended`
-        : `✅ ${label} — healthy`;
-      el.className = 'uptime-display ' + (d.warn ? 'warn' : 'ok');
+      const cls  = d.days >= 3 ? 'red' : d.days >= 1 ? 'yellow' : 'green';
+      const main = d.days > 0  ? `${d.days}d`   : `${d.hours}h`;
+      const sub  = d.days > 0  ? `${d.hours}h`  : `${d.mins}m`;
+      if (badge)  badge.className = `uptime-badge ${cls}`;
+      if (mainEl) mainEl.textContent = main;
+      if (subEl)  subEl.textContent  = sub;
+      if (badge)  badge.title = cls === 'red'
+        ? `⚠️ ${d.days}d ${d.hours}h — restart required`
+        : cls === 'yellow'
+        ? `⏱ ${d.days}d ${d.hours}h — consider restarting`
+        : `✅ ${d.hours}h ${d.mins}m — healthy`;
+      if (cls === 'red' && alertEl) {
+        if (msgEl) msgEl.textContent = `Your PC has been running for ${d.days} day${d.days !== 1 ? 's' : ''} — a restart is strongly recommended to apply pending updates and improve performance.`;
+        alertEl.classList.add('show');
+      }
+      if (cardEl) {
+        cardEl.textContent = cls === 'red'   ? `⚠️ ${d.days}d ${d.hours}h — restart recommended`
+                           : cls === 'yellow' ? `⏱ ${d.days}d ${d.hours}h — consider restarting`
+                           : `✅ ${d.hours}h ${d.mins}m — healthy`;
+        cardEl.className = 'uptime-display ' + (cls === 'green' ? 'ok' : 'warn');
+      }
     } catch {
-      el.textContent = '⬇️ Click Check to view uptime in a new window';
-      el.className = 'uptime-display';
+      if (mainEl) mainEl.textContent = '—';
+      if (subEl)  subEl.textContent  = 'uptime';
+      if (cardEl) { cardEl.textContent = '⬇️ Click Check to view uptime'; cardEl.className = 'uptime-display'; }
     }
   })();
 
