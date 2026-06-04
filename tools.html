@@ -485,9 +485,109 @@
       background: var(--white);
     }
     .footer a { color: var(--blue2); text-decoration: none; }
+
+    /* ── Welcome / disclaimer overlay ── */
+    .welcome-overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,27,46,0.72);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 9999;
+      display: flex; align-items: center; justify-content: center;
+      padding: 1.5rem;
+      animation: wFadeIn .35s ease;
+    }
+    .welcome-overlay.out { animation: wFadeOut .3s ease forwards; }
+    @keyframes wFadeIn  { from { opacity:0; } to { opacity:1; } }
+    @keyframes wFadeOut { from { opacity:1; } to { opacity:0; } }
+    .welcome-modal {
+      background: var(--white);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem 2rem 1.8rem;
+      max-width: 430px; width: 100%;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05), 0 24px 64px rgba(0,0,0,0.28);
+      animation: wPopIn .4s cubic-bezier(.34,1.56,.64,1);
+    }
+    @keyframes wPopIn {
+      from { opacity:0; transform:scale(.88) translateY(16px); }
+      to   { opacity:1; transform:scale(1)   translateY(0); }
+    }
+    .welcome-icon-wrap {
+      width: 56px; height: 56px; border-radius: 14px;
+      background: linear-gradient(135deg, rgba(0,174,239,0.12), rgba(0,114,188,0.08));
+      border: 1px solid rgba(0,174,239,0.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.6rem; margin: 0 auto 1.1rem;
+    }
+    .welcome-modal h2 {
+      font-size: 1.1rem; font-weight: 800; color: var(--text);
+      text-align: center; margin-bottom: .4rem; letter-spacing: -.02em;
+    }
+    .welcome-sub {
+      font-size: .78rem; color: var(--muted);
+      text-align: center; line-height: 1.6; margin-bottom: 1.2rem;
+    }
+    .welcome-checklist {
+      list-style: none;
+      background: rgba(0,174,239,0.04);
+      border: 1px solid rgba(0,174,239,0.12);
+      border-radius: 10px;
+      padding: .85rem 1rem;
+      margin-bottom: 1rem;
+      display: flex; flex-direction: column; gap: .55rem;
+    }
+    .welcome-checklist li {
+      display: flex; align-items: flex-start; gap: .6rem;
+      font-size: .79rem; color: var(--text2); line-height: 1.5;
+    }
+    .wcheck {
+      width: 18px; height: 18px; border-radius: 5px;
+      background: linear-gradient(135deg, var(--blue), var(--blue2));
+      color: #fff; font-size: .62rem; font-weight: 900;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: .1rem;
+    }
+    .welcome-warn {
+      display: flex; align-items: flex-start; gap: .5rem;
+      background: rgba(217,119,6,0.07); border: 1px solid rgba(217,119,6,0.2);
+      border-radius: 8px; padding: .6rem .8rem;
+      font-size: .75rem; color: var(--amber); font-weight: 500;
+      margin-bottom: 1.35rem; line-height: 1.5;
+    }
+    .btn-proceed {
+      width: 100%; padding: .65rem 1rem; border-radius: 9px; border: none;
+      background: linear-gradient(135deg, var(--blue), var(--blue2));
+      box-shadow: 0 2px 8px rgba(0,114,188,0.3);
+      color: #fff; font-size: .88rem; font-weight: 700;
+      cursor: pointer; font-family: inherit; letter-spacing: .01em;
+      transition: opacity .15s, transform .15s;
+    }
+    .btn-proceed:hover  { opacity: .92; transform: translateY(-1px); }
+    .btn-proceed:active { transform: none; }
   </style>
 </head>
 <body>
+
+<!-- ── Welcome / disclaimer overlay ── -->
+<div class="welcome-overlay" id="welcome-overlay">
+  <div class="welcome-modal">
+    <div class="welcome-icon-wrap">💾</div>
+    <h2>Save Your Work First</h2>
+    <p class="welcome-sub">Please read before using this portal.</p>
+    <ul class="welcome-checklist">
+      <li><span class="wcheck">✓</span><span>Save all open documents, spreadsheets, and emails</span></li>
+      <li><span class="wcheck">✓</span><span><strong>Microsoft Teams</strong> will be closed and relaunched by most scripts</span></li>
+      <li><span class="wcheck">✓</span><span><strong>Microsoft Outlook</strong> may be closed and relaunched by some scripts</span></li>
+      <li><span class="wcheck">✓</span><span>Scripts run immediately and cannot be stopped once started</span></li>
+    </ul>
+    <div class="welcome-warn">
+      <span>⚠️</span>
+      <span>If you are in a Teams call or meeting, do not run any scripts that restart Teams.</span>
+    </div>
+    <button class="btn-proceed" onclick="dismissWelcome()">I Understand — Take Me to the Portal</button>
+  </div>
+</div>
 
 <!-- ── Top navigation bar ── -->
 <nav class="topbar">
@@ -695,7 +795,14 @@
 </footer>
 
 <script>
-  // ── Toast ─────────────────────────────────────────────
+  // ── Welcome overlay ──
+  function dismissWelcome() {
+    const el = document.getElementById('welcome-overlay');
+    el.classList.add('out');
+    setTimeout(() => { el.style.display = 'none'; }, 300);
+  }
+
+  // ── Toast ──
   function toast(msg, cls) {
     document.getElementById('tmsg').textContent = msg;
     document.getElementById('tdot').className = 'tdot ' + cls;
@@ -716,7 +823,7 @@
     toast('Launcher downloaded — double-click it to run', 'g');
   }
 
-  // ── Restart modal ───────────────────────────────────────────
+  // ── Restart modal ──
   function openModal()  { document.getElementById('overlay').classList.add('active'); }
   function closeModal() { document.getElementById('overlay').classList.remove('active'); }
   function runRestart() {
@@ -731,7 +838,7 @@
     toast('Launcher downloaded — double-click to schedule restart', 'a');
   }
 
-  // ── Uptime circle badge + alert bar ──────────────────────────
+  // ── Uptime circle badge + alert bar ──
   (async function loadUptime() {
     const badge   = document.getElementById('topbar-uptime');
     const mainEl  = document.getElementById('uptime-main');
@@ -776,7 +883,7 @@
   });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
 
-  // ── Visitor counter & upvote (countapi.xyz) ──────────────────
+  // ── Visitor counter & upvote (countapi.xyz) ──
   const _API = 'https://api.countapi.xyz';
   const _NS  = 'barclays-it-selfservice-2026';
 
