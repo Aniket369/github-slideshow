@@ -2,14 +2,127 @@
 <html class="{% if site.solarized.theme %}{{site.solarized.theme}}{% else %}dark{% endif %}">
 <head>
   {% include head.html %}
+  <style>
+    /* ── Warning Modal ─────────────────────────────────── */
+    #warn-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.82);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 99999;
+      backdrop-filter: blur(4px);
+    }
+
+    #warn-box {
+      background: #1e1e2e;
+      border: 1px solid #f38ba8;
+      border-radius: 12px;
+      padding: 36px 40px;
+      max-width: 480px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+      font-family: 'Segoe UI', Arial, sans-serif;
+      animation: warn-in 0.25s ease;
+    }
+
+    @keyframes warn-in {
+      from { opacity: 0; transform: scale(0.92); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    #warn-box .warn-icon {
+      font-size: 3rem;
+      line-height: 1;
+      margin-bottom: 14px;
+    }
+
+    #warn-box h2 {
+      color: #f38ba8;
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin: 0 0 12px;
+      letter-spacing: 0.02em;
+    }
+
+    #warn-box p {
+      color: #cdd6f4;
+      font-size: 0.97rem;
+      line-height: 1.6;
+      margin: 0 0 10px;
+    }
+
+    #warn-box .warn-apps {
+      display: flex;
+      justify-content: center;
+      gap: 18px;
+      margin: 16px 0 22px;
+    }
+
+    #warn-box .warn-app {
+      background: #313244;
+      border-radius: 8px;
+      padding: 8px 16px;
+      color: #fab387;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    #warn-ok {
+      background: #f38ba8;
+      color: #1e1e2e;
+      border: none;
+      border-radius: 8px;
+      padding: 12px 36px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+      letter-spacing: 0.03em;
+    }
+
+    #warn-ok:hover  { background: #ff6e88; }
+    #warn-ok:active { transform: scale(0.97); }
+  </style>
 </head>
 <body>
-	<div class="reveal">
-		<div class="slides">
-			{{ content }}
-		</div>
-	</div>
-	{% include script.html %}
+
+  <!-- ── Save-work warning modal ───────────────────────── -->
+  <div id="warn-overlay" role="dialog" aria-modal="true" aria-labelledby="warn-title">
+    <div id="warn-box">
+      <div class="warn-icon">⚠️</div>
+      <h2 id="warn-title">Save Your Work Before Continuing</h2>
+      <p>The scripts on this page will <strong>close the following applications</strong> as part of the process:</p>
+      <div class="warn-apps">
+        <span class="warn-app">📧 Outlook</span>
+        <span class="warn-app">💬 Teams</span>
+      </div>
+      <p>Please <strong>save all open documents and emails</strong> before running any script to avoid losing unsaved work.</p>
+      <br>
+      <button id="warn-ok" onclick="document.getElementById('warn-overlay').remove(); document.body.style.overflow='';">
+        Okay, I've saved my work
+      </button>
+    </div>
+  </div>
+
+  <div class="reveal">
+    <div class="slides">
+      {{ content }}
+    </div>
+  </div>
+  {% include script.html %}
+
+  <script>
+    // Prevent page scroll while modal is open
+    document.body.style.overflow = 'hidden';
+    // Allow dismissing with Enter or Space
+    document.getElementById('warn-ok').addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') this.click();
+    });
+  </script>
+
 </body>
 </html>
 
