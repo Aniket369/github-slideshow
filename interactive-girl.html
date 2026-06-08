@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interactive Animated Girl</title>
+<style>
+  :root {
+    --hair: #caa6ff;
+    --skin: #ffe7d6;
+    --hoodie: #7bc468;
+    --ink: #5a4a7a;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    margin: 0;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    min-height: 100vh;
+    padding: 24px;
+    font-family: -apple-system, "Segoe UI", Roboto, sans-serif;
+    background: linear-gradient(180deg, #ffe1ef 0%, #cdb8ff 100%);
+    color: var(--ink);
+    text-align: center;
+  }
+  h1 { margin: 0; font-size: 1.3rem; }
+  p.hint { margin: 0 0 6px; color: #7a6a9a; font-size: 0.95rem; }
+
+  #scene-wrap { width: min(640px, 94vw); }
+  svg { display: block; width: 100%; height: auto; }
+
+  /* trailing cursor sparkle */
+  #cursor-dot {
+    position: fixed;
+    top: 0; left: 0;
+    width: 16px; height: 16px;
+    margin: -8px 0 0 -8px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #fff, #ffb3d6 55%, #caa6ff);
+    box-shadow: 0 0 10px rgba(202,166,255,.8);
+    pointer-events: none;
+    z-index: 999;
+    transition: transform .08s ease;
+  }
+  #cursor-dot.down { transform: scale(.55); }
+
+  /* eyes */
+  .eye-white { transform-box: fill-box; transform-origin: center; transition: transform .08s ease; }
+  .blink .eye-white { transform: scaleY(.08); }
+  .pupil { transition: transform .05s linear; }
+
+  /* eyebrows */
+  #brow-left, #brow-right { transition: transform .15s ease; }
+  .clicking #brow-left, .clicking #brow-right { transform: translateY(-3px); }
+
+  /* mouth */
+  #mouth-smile { opacity: 1; transition: opacity .15s ease; }
+  #mouth-o { opacity: 0; transition: opacity .15s ease; transform-box: fill-box; transform-origin: center; }
+  .clicking #mouth-smile, .typing #mouth-smile { opacity: 0; }
+  .clicking #mouth-o, .typing #mouth-o { opacity: 1; }
+  .typing #mouth-o { animation: talk .32s ease-in-out infinite alternate; }
+  @keyframes talk { from { transform: scaleY(.55); } to { transform: scaleY(1.15); } }
+
+  /* idle breathing + typing bob */
+  #character {
+    transform-box: fill-box;
+    transform-origin: bottom center;
+    animation: breathe 3.2s ease-in-out infinite;
+  }
+  @keyframes breathe {
+    0%, 100% { transform: scaleY(1); }
+    50%      { transform: scaleY(1.015); }
+  }
+  .typing #character { animation: breathe 3.2s ease-in-out infinite, bob .44s ease-in-out infinite; }
+  @keyframes bob {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-3px); }
+  }
+
+  /* hands */
+  #left-hand, #right-hand { transition: transform .05s linear; }
+  .typing #left-hand  { animation: type-bounce .22s infinite alternate; }
+  .typing #right-hand { animation: type-bounce .22s infinite alternate .11s; }
+  @keyframes type-bounce {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-7px); }
+  }
+  .clicking #right-hand { animation: click-press .2s ease; }
+  @keyframes click-press {
+    0%   { transform: translateY(0); }
+    45%  { transform: translateY(9px); }
+    100% { transform: translateY(0); }
+  }
+
+  /* mouse graphic */
+  #mouse-graphic { transform-box: fill-box; transform-origin: center; }
+  .clicking #mouse-graphic { animation: mouse-squish .2s ease; }
+  @keyframes mouse-squish {
+    0%   { transform: scaleY(1); }
+    45%  { transform: scaleY(.78); }
+    100% { transform: scaleY(1); }
+  }
+
+  /* keyboard keys */
+  .key { fill: #46465a; transition: fill .12s ease; }
+  .key.lit { fill: #ffd866; }
+
+  /* speech bubble */
+  #bubble {
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity .25s ease, transform .25s ease;
+  }
+  #bubble.show { opacity: 1; transform: translateY(0); }
+</style>
+</head>
+<body>
+  <h1>Hi! I react to everything you do 👋</h1>
+  <p class="hint">Move your mouse, click anywhere, or start typing — watch her follow along.</p>
+
+  <div id="scene-wrap">
+    <svg id="scene" viewBox="0 0 600 520" xmlns="http://www.w3.org/2000/svg"
+         role="img" aria-label="Animated character sitting at a desk who reacts to mouse movement, clicks and typing">
+      <defs>
+        <linearGradient id="skyGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#ffe1ef"/>
+          <stop offset="100%" stop-color="#cdb8ff"/>
+        </linearGradient>
+      </defs>
+      <rect width="600" height="520" fill="url(#skyGrad)"/>
+
+      <!-- desk -->
+      <rect x="40" y="372" width="520" height="22" rx="6" fill="#9a6a45"/>
+      <rect x="40" y="394" width="520" height="14" fill="#7a5236"/>
+
+      <!-- mouse pad + mouse -->
+      <rect x="392" y="318" width="118" height="78" rx="12" fill="#3c3c54"/>
+      <g transform="translate(440,332)">
+        <g id="mouse-graphic">
+          <rect x="0" y="0" width="34" height="48" rx="17" fill="#f4f4f8" stroke="#bdbdcf" stroke-width="2"/>
+          <line x1="17" y1="2" x2="17" y2="20" stroke="#bdbdcf" stroke-width="2"/>
+        </g>
+      </g>
+
+      <!-- keyboard -->
+      <g transform="translate(96,300)">
+        <rect width="240" height="92" rx="12" fill="#33334a"/>
+        <g id="keys" transform="translate(14,14)"></g>
+      </g>
+
+      <!-- speech bubble -->
+      <g id="bubble">
+        <path d="M 410 86 h150 a14 14 0 0 1 14 14 v34 a14 14 0 0 1 -14 14 h-96 l-22 20 l4 -20 h-36 a14 14 0 0 1 -14 -14 v-34 a14 14 0 0 1 14 -14 z"
+              fill="#ffffff" stroke="#caa6ff" stroke-width="2"/>
+        <text id="bubble-text" x="487" y="128" text-anchor="middle" font-size="15" fill="#5a4a7a">Hi there!</text>
+      </g>
+
+      <!-- character -->
+      <g transform="translate(300,236)">
+        <g id="character">
+          <!-- twin tails -->
+          <ellipse cx="-86" cy="6" rx="17" ry="46" fill="var(--hair)"/>
+          <ellipse cx="86" cy="6" rx="17" ry="46" fill="var(--hair)"/>
+
+          <!-- body / hoodie -->
+          <path d="M -118 168 Q -120 50 0 40 Q 120 50 118 168 Z" fill="var(--hoodie)"/>
+          <rect x="-118" y="150" width="236" height="20" fill="#6cae5a"/>
+
+          <!-- arms -->
+          <ellipse cx="-92" cy="118" rx="20" ry="38" fill="var(--hoodie)"/>
+          <ellipse cx="92" cy="118" rx="20" ry="38" fill="var(--hoodie)"/>
+
+          <!-- hands (kept in their own group so animations don't fight the base position) -->
+          <g transform="translate(-78,150)"><g id="left-hand"><circle r="13" fill="var(--skin)"/></g></g>
+          <g transform="translate(78,150)"><g id="right-hand"><circle r="13" fill="var(--skin)"/></g></g>
+
+          <!-- head -->
+          <g transform="translate(0,-26)">
+            <ellipse cx="0" cy="0" rx="76" ry="74" fill="var(--hair)"/>
+            <circle cx="0" cy="6" r="62" fill="var(--skin)"/>
+            <path d="M -62 -8 Q 0 -66 62 -8 Q 38 -34 0 -34 Q -38 -34 -62 -8 Z" fill="var(--hair)"/>
+
+            <path id="brow-left" d="M -34 -13 Q -23 -20 -12 -13" stroke="#7a5a8a" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path id="brow-right" d="M 12 -13 Q 23 -20 34 -13" stroke="#7a5a8a" stroke-width="3" fill="none" stroke-linecap="round"/>
+
+            <g class="eye" transform="translate(-25,7)">
+              <ellipse class="eye-white" rx="13" ry="15" fill="#fff"/>
+              <circle class="pupil" r="6.5" fill="var(--ink)"/>
+            </g>
+            <g class="eye" transform="translate(25,7)">
+              <ellipse class="eye-white" rx="13" ry="15" fill="#fff"/>
+              <circle class="pupil" r="6.5" fill="var(--ink)"/>
+            </g>
+
+            <ellipse cx="-42" cy="28" rx="10" ry="6" fill="#ffb3c4" opacity="0.65"/>
+            <ellipse cx="42" cy="28" rx="10" ry="6" fill="#ffb3c4" opacity="0.65"/>
+
+            <path id="mouth-smile" d="M -9 38 Q 0 45 9 38" stroke="#a9748a" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path id="mouth-o" d="M -7 39 a 7 6 0 1 0 14 0 a 7 6 0 1 0 -14 0" fill="#a9748a"/>
+          </g>
+        </g>
+      </g>
+    </svg>
+  </div>
+
+  <div id="cursor-dot"></div>
+
+<script>
+(function () {
+  var SVGNS = 'http://www.w3.org/2000/svg';
+  var character  = document.getElementById('character');
+  var pupils     = Array.prototype.slice.call(document.querySelectorAll('.pupil'));
+  var cursorDot  = document.getElementById('cursor-dot');
+  var bubble     = document.getElementById('bubble');
+  var bubbleText = document.getElementById('bubble-text');
+  var keysGroup  = document.getElementById('keys');
+
+  // build a little keyboard grid
+  var cols = 11, rows = 3, keyW = 17, keyH = 17, gap = 4;
+  var keyEls = [];
+  for (var r = 0; r < rows; r++) {
+    for (var c = 0; c < cols; c++) {
+      var rect = document.createElementNS(SVGNS, 'rect');
+      rect.setAttribute('x', c * (keyW + gap));
+      rect.setAttribute('y', r * (keyH + gap));
+      rect.setAttribute('width', keyW);
+      rect.setAttribute('height', keyH);
+      rect.setAttribute('rx', 3);
+      rect.setAttribute('class', 'key');
+      keysGroup.appendChild(rect);
+      keyEls.push(rect);
+    }
+  }
+  function lightRandomKeys(n) {
+    for (var i = 0; i < n; i++) {
+      var k = keyEls[Math.floor(Math.random() * keyEls.length)];
+      k.classList.add('lit');
+      (function (el) { setTimeout(function () { el.classList.remove('lit'); }, 180); })(k);
+    }
+  }
+
+  // where the character's "face" is on screen, used for eye tracking
+  var faceCenter = { x: 0, y: 0 };
+  function measure() {
+    var rect = character.getBoundingClientRect();
+    faceCenter.x = rect.left + rect.width / 2;
+    faceCenter.y = rect.top + rect.height * 0.32;
+  }
+  measure();
+  window.addEventListener('resize', measure);
+  window.addEventListener('scroll', measure, { passive: true });
+  setTimeout(measure, 300); // re-measure once layout/fonts settle
+
+  var bubbleTimer = null;
+  function showBubble(text) {
+    bubbleText.textContent = text;
+    bubble.classList.add('show');
+    clearTimeout(bubbleTimer);
+  }
+  function hideBubbleSoon(delay) {
+    clearTimeout(bubbleTimer);
+    bubbleTimer = setTimeout(function () { bubble.classList.remove('show'); }, delay);
+  }
+
+  // eyes follow the real cursor + a little sparkle trails it
+  document.addEventListener('mousemove', function (e) {
+    cursorDot.style.transform = 'translate(' + e.clientX + 'px,' + e.clientY + 'px)';
+
+    var dx = e.clientX - faceCenter.x;
+    var dy = e.clientY - faceCenter.y;
+    var dist = Math.hypot(dx, dy) || 1;
+    var pull = Math.min(1, dist / 260);
+    var ox = (dx / dist) * 4.5 * pull;
+    var oy = (dy / dist) * 5 * pull;
+    pupils.forEach(function (p) { p.style.transform = 'translate(' + ox + 'px,' + oy + 'px)'; });
+  });
+
+  // clicking: surprised face + a little tap on the mouse button
+  document.addEventListener('mousedown', function () {
+    cursorDot.classList.add('down');
+    character.classList.add('clicking');
+    var lines = ['Eep!', 'Ooh!', 'Click!', 'Tee-hee~', 'Whee!'];
+    showBubble(lines[Math.floor(Math.random() * lines.length)]);
+  });
+  document.addEventListener('mouseup', function () {
+    cursorDot.classList.remove('down');
+    character.classList.remove('clicking');
+    hideBubbleSoon(700);
+  });
+
+  // typing: hands bounce on the keyboard, random keys light up
+  var typingTimeout = null;
+  document.addEventListener('keydown', function (e) {
+    if (e.repeat) { lightRandomKeys(1); return; }
+    character.classList.add('typing');
+    showBubble('Typing along with you!');
+    lightRandomKeys(2);
+    clearTimeout(typingTimeout);
+  });
+  document.addEventListener('keyup', function () {
+    clearTimeout(typingTimeout);
+    typingTimeout = setTimeout(function () {
+      character.classList.remove('typing');
+      hideBubbleSoon(400);
+    }, 600);
+  });
+
+  // gentle random blinking
+  function blink() {
+    character.classList.add('blink');
+    setTimeout(function () { character.classList.remove('blink'); }, 120);
+    setTimeout(blink, 2200 + Math.random() * 3500);
+  }
+  setTimeout(blink, 1800);
+})();
+</script>
+</body>
+</html>
