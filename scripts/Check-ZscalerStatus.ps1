@@ -29,8 +29,16 @@ $status = & $trayManager '/status' 2>$null | Out-String
 # 3. Prompt to log out if currently logged in
 if ($status -match 'Logged In') {
     Write-Host "Zscaler is currently logged in." -ForegroundColor Cyan
-    $answer = Read-Host "Do you want to log out now? (Y/N)"
-    if ($answer -match '^[Yy]') {
+
+    Add-Type -AssemblyName System.Windows.Forms
+    $result = [System.Windows.Forms.MessageBox]::Show(
+        "Zscaler is currently logged in. Do you want to log out now?",
+        "Zscaler Client Connector",
+        [System.Windows.Forms.MessageBoxButtons]::YesNo,
+        [System.Windows.Forms.MessageBoxIcon]::Question
+    )
+
+    if ($result -eq [System.Windows.Forms.DialogResult]::Yes) {
         & $trayManager '/logout' | Out-Null
         Write-Host "Logout command sent." -ForegroundColor Green
     }
