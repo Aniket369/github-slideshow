@@ -72,25 +72,6 @@ if ($pkg) {
     Add-Failure "New Teams package not found on this machine"
 }
 
-$configFile = "$env:APPDATA\Microsoft\Teams\desktop-config.json"
-if (Test-Path $configFile) {
-    try {
-        $config     = Get-Content $configFile -Raw | ConvertFrom-Json
-        $disableUDP = if ($null -ne $config.disableUDP) { $config.disableUDP } else { "Not set (UDP enabled)" }
-        Write-Info "Disable UDP: $disableUDP"
-        Add-Report "Config disableUDP : $disableUDP"
-        if ($config.disableUDP -eq $true) {
-            Write-Warn "UDP is disabled in Teams config — call quality may be degraded"
-            Add-Warning "UDP disabled in Teams desktop-config.json — degrades call/meeting quality"
-        }
-    } catch {
-        Write-Warn "Could not parse Teams config file"
-        Add-Report "Config file : Parse error"
-    }
-} else {
-    Write-Info "Teams config file not found (Teams 2.0 / fresh install)"
-    Add-Report "Config file : Not found"
-}
 
 # ════════════════════════════════════════════════════════════
 #  MODULE 2 — NETWORK ADAPTERS
