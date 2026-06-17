@@ -3,22 +3,40 @@
 #  Combined Teams + Zscaler network health & compliance check
 #  (merges TeamsAssurancePlatform.ps1 + Zscaler-NetworkCompliance.ps1)
 #  Read-Only — No admin required (DNS cache clear may prompt for elevation)
-#  All results are buffered and printed together at the end.
+#  Shows a live progress bar with elapsed time / ETA while running.
+#  All results are buffered and printed together once the scan finishes.
 # ================================================================
 
 $Host.UI.RawUI.WindowTitle = "Zscaler & Teams Network Compliance Check"
 Clear-Host
 [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 
-Write-Host ""
-Write-Host "  Running full Teams + Zscaler network & compliance scan, please wait..." -ForegroundColor Cyan
-Write-Host ""
-
 # ── Helpers — buffer console lines instead of printing immediately ──
 $ConsoleBuffer = [System.Collections.Generic.List[psobject]]::new()
 
-function Buffer-Line   { param($t, $c = 'White') $ConsoleBuffer.Add([pscustomobject]@{ Text = $t; Color = $c }) }
-function Write-Header  { param($t) Buffer-Line "`n  ┌─────────────────────────────────────────────┐`n  │  $t`n  └─────────────────────────────────────────────┘" 'Cyan' }
+# ── Live progress bar (elapsed time + ETA) ───────────────────
+$ScriptStartTime = Get-Date
+$ModuleCounter   = 0
+$TotalModules    = 14
+
+function Buffer-Line { param($t, $c = 'White') $ConsoleBuffer.Add([pscustomobject]@{ Text = $t; Color = $c }) }
+
+function Write-Header {
+    param($t)
+    $script:ModuleCounter++
+    $elapsed      = (Get-Date) - $ScriptStartTime
+    $avgPerModule = if ($ModuleCounter -gt 1) { $elapsed.TotalSeconds / ($ModuleCounter - 1) } else { 4 }
+    $etaSeconds   = [math]::Round([math]::Max(0, ($TotalModules - $ModuleCounter) * $avgPerModule))
+    $percent      = [math]::Min(100, [math]::Round(($ModuleCounter / $TotalModules) * 100))
+
+    Write-Progress -Activity "Zscaler & Teams Network Compliance Check — Running..." `
+        -Status "[$ModuleCounter/$TotalModules] $t   |   Elapsed: $($elapsed.ToString('mm\:ss'))" `
+        -PercentComplete $percent `
+        -SecondsRemaining $etaSeconds
+
+    Buffer-Line "`n  ┌─────────────────────────────────────────────┐`n  │  $t`n  └─────────────────────────────────────────────┘" 'Cyan'
+}
+
 function Write-Section { param($t) Buffer-Line "`n  ── $t " 'DarkCyan' }
 function Write-OK      { param($m) Buffer-Line "     ✔  $m" 'Green' }
 function Write-Warn    { param($m) Buffer-Line "     ⚠  $m" 'Yellow' }
@@ -159,12 +177,81 @@ if ($adapters) {
 }
 
 # ════════════════════════════════════════════════════════════
-#  MODULE 4 — DNS RESOLUTION
+#  MODULE 4 — VPN CLIENT DETECTION
 # ════════════════════════════════════════════════════════════
-Write-Header "Module 4 — DNS Resolution"
+Write-Header "Module 4 — VPN Client Detection"
 Add-Report ""
 Add-Report "----------------------------------------------------------------"
-Add-Report " MODULE 4 : DNS RESOLUTION"
+Add-Report " MODULE 4 : VPN CLIENT DETECTION"
+Add-Report "----------------------------------------------------------------"
+
+$vpnClients = @(
+    @{ Name = 'Cisco AnyConnect / Secure Client'; Processes = @('vpnui','vpnagent','acwebhelper'); Services = @('vpnagent'); Paths = @("$env:ProgramFiles\Cisco\Cisco AnyConnect Secure Mobility Client", "${env:ProgramFiles(x86)}\Cisco\Cisco AnyConnect Secure Mobility Client", "$env:ProgramFiles\Cisco\Cisco Secure Client", "${env:ProgramFiles(x86)}\Cisco\Cisco Secure Client") },
+    @{ Name = 'Zscaler Client Connector';          Processes = @('ZSATray','ZSATrayManager','ZSAUpm');           Services = @('ZSAService');  Paths = @("$env:ProgramFiles\Zscaler", "${env:ProgramFiles(x86)}\Zscaler") },
+    @{ Name = 'Palo Alto GlobalProtect';            Processes = @('PanGPA','PanGPS');                            Services = @('PanGPS');      Paths = @("$env:ProgramFiles\Palo Alto Networks\GlobalProtect", "${env:ProgramFiles(x86)}\Palo Alto Networks\GlobalProtect") },
+    @{ Name = 'Pulse Secure / Ivanti Secure Access'; Processes = @('Pulse','dsAccessService');                   Services = @('DSAccessService'); Paths = @("${env:ProgramFiles(x86)}\Common Files\Pulse Secure", "$env:ProgramFiles\Common Files\Pulse Secure") },
+    @{ Name = 'FortiClient';                        Processes = @('FortiClient','FCAppDB');                     Services = @('FAService');   Paths = @("$env:ProgramFiles\Fortinet\FortiClient", "${env:ProgramFiles(x86)}\Fortinet\FortiClient") },
+    @{ Name = 'SonicWall NetExtender';              Processes = @('NeService','NEGui');                         Services = @('NeService');   Paths = @("${env:ProgramFiles(x86)}\SonicWALL\SSL-VPN\NetExtender", "$env:ProgramFiles\SonicWALL\SSL-VPN\NetExtender") },
+    @{ Name = 'OpenVPN';                            Processes = @('openvpn','openvpn-gui');                     Services = @('OpenVPNService'); Paths = @("$env:ProgramFiles\OpenVPN", "${env:ProgramFiles(x86)}\OpenVPN") },
+    @{ Name = 'WireGuard';                          Processes = @('wireguard');                                 Services = @('WireGuardManager'); Paths = @("$env:ProgramFiles\WireGuard") }
+)
+
+$installedVpns = @()
+$activeVpns    = @()
+
+foreach ($vpn in $vpnClients) {
+    $pathFound    = $vpn.Paths     | Where-Object { Test-Path $_ } | Select-Object -First 1
+    $serviceFound = $vpn.Services  | ForEach-Object { Get-Service -Name $_ -ErrorAction SilentlyContinue } | Select-Object -First 1
+    $procFound    = $vpn.Processes | ForEach-Object { Get-Process -Name $_ -ErrorAction SilentlyContinue } | Select-Object -First 1
+
+    $isInstalled = [bool]($pathFound -or $serviceFound)
+    $isActive    = [bool]($procFound -or ($serviceFound -and $serviceFound.Status -eq 'Running'))
+
+    if ($isInstalled) { $installedVpns += $vpn.Name }
+    if ($isActive)    { $activeVpns    += $vpn.Name }
+}
+
+$usingCisco = $activeVpns -contains 'Cisco AnyConnect / Secure Client'
+
+if ($installedVpns.Count -eq 0) {
+    Write-Info "No known VPN client software detected on this machine."
+    Add-Report "VPN Clients Installed : None detected"
+} else {
+    Write-Info "VPN client(s) installed: $($installedVpns -join ', ')"
+    Add-Report "VPN Clients Installed : $($installedVpns -join ', ')"
+}
+
+if ($activeVpns.Count -eq 0) {
+    Write-Warn "No VPN client currently appears to be active/connected."
+    Add-Report "VPN Clients Active : None"
+    Add-Warning "No active VPN client detected — confirm the user is connected via a sanctioned VPN/Zscaler tunnel"
+} else {
+    foreach ($v in $activeVpns) {
+        if ($v -eq 'Cisco AnyConnect / Secure Client') {
+            Write-OK "Active VPN: Cisco AnyConnect / Secure Client"
+            Add-Report "VPN Active : Cisco AnyConnect / Secure Client"
+        } else {
+            Write-Info "Active VPN: $v"
+            Add-Report "VPN Active : $v"
+        }
+    }
+}
+
+if ($usingCisco) {
+    Write-OK "This device IS currently using Cisco AnyConnect."
+    Add-Report "Using Cisco AnyConnect : YES"
+} else {
+    Write-Info "This device is NOT currently using Cisco AnyConnect."
+    Add-Report "Using Cisco AnyConnect : NO"
+}
+
+# ════════════════════════════════════════════════════════════
+#  MODULE 5 — DNS RESOLUTION
+# ════════════════════════════════════════════════════════════
+Write-Header "Module 5 — DNS Resolution"
+Add-Report ""
+Add-Report "----------------------------------------------------------------"
+Add-Report " MODULE 5 : DNS RESOLUTION"
 Add-Report "----------------------------------------------------------------"
 
 $dnsServers = Get-DnsClientServerAddress -AddressFamily IPv4 -ErrorAction SilentlyContinue |
@@ -201,12 +288,12 @@ foreach ($target in $dnsTargets) {
 }
 
 # ════════════════════════════════════════════════════════════
-#  MODULE 5 — PROXY CONFIGURATION
+#  MODULE 6 — PROXY CONFIGURATION
 # ════════════════════════════════════════════════════════════
-Write-Header "Module 5 — Proxy Configuration"
+Write-Header "Module 6 — Proxy Configuration"
 Add-Report ""
 Add-Report "----------------------------------------------------------------"
-Add-Report " MODULE 5 : PROXY CONFIGURATION"
+Add-Report " MODULE 6 : PROXY CONFIGURATION"
 Add-Report "----------------------------------------------------------------"
 
 $proxy = Get-ItemProperty "HKCU:\Software\Microsoft\Windows\CurrentVersion\Internet Settings" -ErrorAction SilentlyContinue
@@ -243,12 +330,12 @@ $winhttpOutput = netsh winhttp show proxy 2>&1
 $winhttpOutput | ForEach-Object { Write-Info $_; Add-Report "WinHTTP: $_" }
 
 # ════════════════════════════════════════════════════════════
-#  MODULE 6 — TCP CONNECTIVITY
+#  MODULE 7 — TCP CONNECTIVITY
 # ════════════════════════════════════════════════════════════
-Write-Header "Module 6 — TCP Connectivity (Port 443)"
+Write-Header "Module 7 — TCP Connectivity (Port 443)"
 Add-Report ""
 Add-Report "----------------------------------------------------------------"
-Add-Report " MODULE 6 : TCP CONNECTIVITY (Port 443)"
+Add-Report " MODULE 7 : TCP CONNECTIVITY (Port 443)"
 Add-Report "----------------------------------------------------------------"
 
 $tcpEndpoints = @(
@@ -290,12 +377,12 @@ foreach ($ep in $tcpEndpoints) {
 }
 
 # ════════════════════════════════════════════════════════════
-#  MODULE 7 — UDP MEDIA PORTS
+#  MODULE 8 — UDP MEDIA PORTS
 # ════════════════════════════════════════════════════════════
-Write-Header "Module 7 — UDP Media Ports (Teams Calling & Meetings)"
+Write-Header "Module 8 — UDP Media Ports (Teams Calling & Meetings)"
 Add-Report ""
 Add-Report "----------------------------------------------------------------"
-Add-Report " MODULE 7 : UDP MEDIA PORTS"
+Add-Report " MODULE 8 : UDP MEDIA PORTS"
 Add-Report "----------------------------------------------------------------"
 Write-Info "Teams prefers UDP 3478-3481 for audio/video. Blocked UDP forces TCP fallback."
 
@@ -333,12 +420,12 @@ foreach ($ep in $udpTargets) {
 }
 
 # ════════════════════════════════════════════════════════════
-#  MODULE 8 — TLS / SSL INSPECTION
+#  MODULE 9 — TLS / SSL INSPECTION
 # ════════════════════════════════════════════════════════════
-Write-Header "Module 8 — TLS / SSL Certificate Inspection"
+Write-Header "Module 9 — TLS / SSL Certificate Inspection"
 Add-Report ""
 Add-Report "----------------------------------------------------------------"
-Add-Report " MODULE 8 : TLS / SSL INSPECTION"
+Add-Report " MODULE 9 : TLS / SSL INSPECTION"
 Add-Report "----------------------------------------------------------------"
 Write-Info "Checking if SSL inspection is intercepting Teams/Zscaler traffic..."
 
@@ -381,12 +468,12 @@ foreach ($url in $tlsTargets) {
 }
 
 # ════════════════════════════════════════════════════════════
-#  MODULE 9 — HOSTS FILE
+#  MODULE 10 — HOSTS FILE
 # ════════════════════════════════════════════════════════════
-Write-Header "Module 9 — Hosts File Inspection"
+Write-Header "Module 10 — Hosts File Inspection"
 Add-Report ""
 Add-Report "----------------------------------------------------------------"
-Add-Report " MODULE 9 : HOSTS FILE"
+Add-Report " MODULE 10 : HOSTS FILE"
 Add-Report "----------------------------------------------------------------"
 
 try {
@@ -410,12 +497,12 @@ try {
 }
 
 # ════════════════════════════════════════════════════════════
-#  MODULE 10 — NETWORK ROUTING
+#  MODULE 11 — NETWORK ROUTING
 # ════════════════════════════════════════════════════════════
-Write-Header "Module 10 — Network Routing"
+Write-Header "Module 11 — Network Routing"
 Add-Report ""
 Add-Report "----------------------------------------------------------------"
-Add-Report " MODULE 10 : NETWORK ROUTING"
+Add-Report " MODULE 11 : NETWORK ROUTING"
 Add-Report "----------------------------------------------------------------"
 
 foreach ($ip in @("8.8.8.8", "1.1.1.1", "52.112.0.0", "13.107.64.0", "52.120.0.0")) {
@@ -434,12 +521,12 @@ foreach ($ip in @("8.8.8.8", "1.1.1.1", "52.112.0.0", "13.107.64.0", "52.120.0.0
 }
 
 # ════════════════════════════════════════════════════════════
-#  MODULE 11 — DNS CACHE SNAPSHOT
+#  MODULE 12 — DNS CACHE SNAPSHOT
 # ════════════════════════════════════════════════════════════
-Write-Header "Module 11 — DNS Cache Snapshot"
+Write-Header "Module 12 — DNS Cache Snapshot"
 Add-Report ""
 Add-Report "----------------------------------------------------------------"
-Add-Report " MODULE 11 : DNS CACHE"
+Add-Report " MODULE 12 : DNS CACHE"
 Add-Report "----------------------------------------------------------------"
 
 try {
@@ -462,9 +549,9 @@ try {
 }
 
 # ════════════════════════════════════════════════════════════
-#  MODULE 12 — DNS CACHE CLEAR
+#  MODULE 13 — DNS CACHE CLEAR
 # ════════════════════════════════════════════════════════════
-Write-Header "Module 12 — Clear DNS Cache"
+Write-Header "Module 13 — Clear DNS Cache"
 Write-Info "Clearing the DNS cache can resolve stale/incorrect Teams or Zscaler DNS entries."
 
 Add-Type -AssemblyName System.Windows.Forms
@@ -477,7 +564,7 @@ $clearResult = [System.Windows.Forms.MessageBox]::Show(
 
 Add-Report ""
 Add-Report "----------------------------------------------------------------"
-Add-Report " MODULE 12 : DNS CACHE CLEAR"
+Add-Report " MODULE 13 : DNS CACHE CLEAR"
 Add-Report "----------------------------------------------------------------"
 
 if ($clearResult -eq [System.Windows.Forms.DialogResult]::Yes) {
@@ -506,12 +593,12 @@ if ($clearResult -eq [System.Windows.Forms.DialogResult]::Yes) {
 }
 
 # ════════════════════════════════════════════════════════════
-#  MODULE 13 — ZSCALER AD GROUP COMPLIANCE (only if Zscaler is enabled)
+#  MODULE 14 — ZSCALER AD GROUP COMPLIANCE (only if Zscaler is enabled)
 # ════════════════════════════════════════════════════════════
-Write-Header "Module 13 — Zscaler AD Group Compliance"
+Write-Header "Module 14 — Zscaler AD Group Compliance"
 Add-Report ""
 Add-Report "----------------------------------------------------------------"
-Add-Report " MODULE 13 : ZSCALER AD GROUP COMPLIANCE"
+Add-Report " MODULE 14 : ZSCALER AD GROUP COMPLIANCE"
 Add-Report "----------------------------------------------------------------"
 
 $requiredGroups = @(
@@ -567,8 +654,14 @@ if (-not $zscalerEnabled) {
         } else {
             Write-Fail "Device is NOT compliant — missing $($missing.Count) required group(s)."
             Add-Report "AD Group Compliance : FAIL — missing $($missing -join ', ')"
-            Add-Failure "Device not a member of required Zscaler AD group(s): $($missing -join ', ')"
-            $notCompliant = $true
+
+            if ($usingCisco) {
+                Write-OK "Device is already connected via Cisco AnyConnect — acceptable fallback in use."
+                Add-Report "Cisco Fallback : ALREADY IN USE"
+            } else {
+                Add-Failure "Device not a member of required Zscaler AD group(s): $($missing -join ', ') — not using Cisco either"
+                $notCompliant = $true
+            }
         }
     }
 }
@@ -576,15 +669,21 @@ if (-not $zscalerEnabled) {
 # ════════════════════════════════════════════════════════════
 #  SUMMARY
 # ════════════════════════════════════════════════════════════
+Write-Progress -Activity "Zscaler & Teams Network Compliance Check — Running..." -Completed
+
 Buffer-Line ""
 Buffer-Line "  ╔═══════════════════════════════════════════════╗" 'Cyan'
 Buffer-Line "  ║              DIAGNOSTIC SUMMARY              ║" 'Cyan'
 Buffer-Line "  ╚═══════════════════════════════════════════════╝" 'Cyan'
 
+$totalElapsed = (Get-Date) - $ScriptStartTime
+Buffer-Line "  Total scan time: $($totalElapsed.ToString('mm\:ss'))" 'White'
+
 Add-Report ""
 Add-Report "================================================================"
 Add-Report " SUMMARY"
 Add-Report "================================================================"
+Add-Report "Total scan time : $($totalElapsed.ToString('mm\:ss'))"
 
 if ($Failures.Count -eq 0 -and $Warnings.Count -eq 0) {
     Write-OK "All checks passed — no issues detected."
