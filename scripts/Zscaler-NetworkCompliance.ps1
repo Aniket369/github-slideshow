@@ -2,19 +2,28 @@
 #  Zscaler-NetworkCompliance.ps1
 #  Full network health check + Zscaler enabled/AD group compliance
 #  Read-Only — No admin required
+#  All results are buffered and printed together at the end.
 # ================================================================
 
 $Host.UI.RawUI.WindowTitle = "Zscaler Network & Compliance Check"
 Clear-Host
 [Net.ServicePointManager]::SecurityProtocol = [Net.ServicePointManager]::SecurityProtocol -bor [Net.SecurityProtocolType]::Tls12
 
-# ── Helpers ─────────────────────────────────────────────────
-function Write-Header  { param($t) Write-Host "`n  ┌─────────────────────────────────────────────┐`n  │  $t`n  └─────────────────────────────────────────────┘" -ForegroundColor Cyan }
-function Write-Section { param($t) Write-Host "`n  ── $t " -ForegroundColor DarkCyan }
-function Write-OK      { param($m) Write-Host "     ✔  $m" -ForegroundColor Green  }
-function Write-Warn    { param($m) Write-Host "     ⚠  $m" -ForegroundColor Yellow }
-function Write-Fail    { param($m) Write-Host "     ✘  $m" -ForegroundColor Red    }
-function Write-Info    { param($m) Write-Host "     ℹ  $m" -ForegroundColor White  }
+Write-Host ""
+Write-Host "  Running full Zscaler network & compliance scan, please wait..." -ForegroundColor Cyan
+Write-Host ""
+
+# ── Helpers — buffer console lines instead of printing immediately ──
+$ConsoleBuffer = [System.Collections.Generic.List[psobject]]::new()
+
+function Buffer-Line   { param($t, $c = 'White') $ConsoleBuffer.Add([pscustomobject]@{ Text = $t; Color = $c }) }
+function Write-Header  { param($t) Buffer-Line "`n  ┌─────────────────────────────────────────────┐`n  │  $t`n  └─────────────────────────────────────────────┘" 'Cyan' }
+function Write-Section { param($t) Buffer-Line "`n  ── $t " 'DarkCyan' }
+function Write-OK      { param($m) Buffer-Line "     ✔  $m" 'Green' }
+function Write-Warn    { param($m) Buffer-Line "     ⚠  $m" 'Yellow' }
+function Write-Fail    { param($m) Buffer-Line "     ✘  $m" 'Red' }
+function Write-Info    { param($m) Buffer-Line "     ℹ  $m" 'White' }
+function Flush-Console { foreach ($line in $ConsoleBuffer) { Write-Host $line.Text -ForegroundColor $line.Color } }
 
 $Report   = [System.Collections.Generic.List[string]]::new()
 $Warnings = [System.Collections.Generic.List[string]]::new()
@@ -25,11 +34,10 @@ function Add-Warning { param($m) $Warnings.Add($m) }
 function Add-Failure { param($m) $Failures.Add($m) }
 
 # ── Banner ──────────────────────────────────────────────────
-Write-Host ""
-Write-Host "  ╔═══════════════════════════════════════════════╗" -ForegroundColor Cyan
-Write-Host "  ║     ZSCALER NETWORK & COMPLIANCE CHECK         ║" -ForegroundColor Cyan
-Write-Host "  ║     Read-Only  •  No Admin Required            ║" -ForegroundColor Cyan
-Write-Host "  ╚═══════════════════════════════════════════════╝" -ForegroundColor Cyan
+Buffer-Line "  ╔═══════════════════════════════════════════════╗" 'Cyan'
+Buffer-Line "  ║     ZSCALER NETWORK & COMPLIANCE CHECK         ║" 'Cyan'
+Buffer-Line "  ║     Read-Only  •  No Admin Required            ║" 'Cyan'
+Buffer-Line "  ╚═══════════════════════════════════════════════╝" 'Cyan'
 
 $scanDate = Get-Date -Format 'dd-MMM-yyyy HH:mm:ss'
 Write-Info "Scan started : $scanDate"
@@ -313,6 +321,9 @@ $requiredGroups = @(
     'GLO-CLI-SEC-FAT-iwZscalerCLIENT4301-EN'
 )
 
+$notCompliant = $false
+$missing = @()
+
 if (-not $zscalerEnabled) {
     Write-Info "Skipped — Zscaler is not enabled/active on this machine."
     Add-Report "AD Group Check : Skipped (Zscaler not enabled)"
@@ -359,14 +370,7 @@ if (-not $zscalerEnabled) {
             Write-Fail "Device is NOT compliant — missing $($missing.Count) required group(s)."
             Add-Report "AD Group Compliance : FAIL — missing $($missing -join ', ')"
             Add-Failure "Device not a member of required Zscaler AD group(s): $($missing -join ', ')"
-
-            Add-Type -AssemblyName System.Windows.Forms
-            [System.Windows.Forms.MessageBox]::Show(
-                "This device is not a member of the required Zscaler AD group(s):`n`n$($missing -join "`n")`n`nZscaler may not function correctly on this device.`nPlease use Cisco AnyConnect VPN instead.",
-                "Zscaler AD Group Compliance",
-                [System.Windows.Forms.MessageBoxButtons]::OK,
-                [System.Windows.Forms.MessageBoxIcon]::Warning
-            ) | Out-Null
+            $notCompliant = $true
         }
     }
 }
@@ -374,10 +378,10 @@ if (-not $zscalerEnabled) {
 # ════════════════════════════════════════════════════════════
 #  SUMMARY
 # ════════════════════════════════════════════════════════════
-Write-Host ""
-Write-Host "  ╔═══════════════════════════════════════════════╗" -ForegroundColor Cyan
-Write-Host "  ║              DIAGNOSTIC SUMMARY              ║" -ForegroundColor Cyan
-Write-Host "  ╚═══════════════════════════════════════════════╝" -ForegroundColor Cyan
+Buffer-Line ""
+Buffer-Line "  ╔═══════════════════════════════════════════════╗" 'Cyan'
+Buffer-Line "  ║              DIAGNOSTIC SUMMARY              ║" 'Cyan'
+Buffer-Line "  ╚═══════════════════════════════════════════════╝" 'Cyan'
 
 Add-Report ""
 Add-Report "================================================================"
@@ -389,13 +393,13 @@ if ($Failures.Count -eq 0 -and $Warnings.Count -eq 0) {
     Add-Report "Result : ALL CHECKS PASSED"
 } else {
     if ($Failures.Count -gt 0) {
-        Write-Host ""
-        Write-Host "  FAILURES ($($Failures.Count)):" -ForegroundColor Red
+        Buffer-Line ""
+        Buffer-Line "  FAILURES ($($Failures.Count)):" 'Red'
         $Failures | ForEach-Object { Write-Fail $_; Add-Report "FAILURE : $_" }
     }
     if ($Warnings.Count -gt 0) {
-        Write-Host ""
-        Write-Host "  WARNINGS ($($Warnings.Count)):" -ForegroundColor Yellow
+        Buffer-Line ""
+        Buffer-Line "  WARNINGS ($($Warnings.Count)):" 'Yellow'
         $Warnings | ForEach-Object { Write-Warn $_; Add-Report "WARNING : $_" }
     }
 }
@@ -404,9 +408,23 @@ if ($Failures.Count -eq 0 -and $Warnings.Count -eq 0) {
 $reportFile = "$env:USERPROFILE\Desktop\ZscalerCompliance_$(Get-Date -Format 'yyyyMMdd_HHmmss').txt"
 $Report | Out-File -FilePath $reportFile -Encoding UTF8 -ErrorAction SilentlyContinue
 
-Write-Host ""
+Buffer-Line ""
 if (Test-Path $reportFile) {
     Write-OK "Report saved to: $reportFile"
+}
+
+# ── Print everything that was buffered, all at once ─────────
+Flush-Console
+
+# ── Show the Cisco fallback popup last, after all output is visible ──
+if ($notCompliant) {
+    Add-Type -AssemblyName System.Windows.Forms
+    [System.Windows.Forms.MessageBox]::Show(
+        "This device is not a member of the required Zscaler AD group(s):`n`n$($missing -join "`n")`n`nZscaler may not function correctly on this device.`nPlease use Cisco AnyConnect VPN instead.",
+        "Zscaler AD Group Compliance",
+        [System.Windows.Forms.MessageBoxButtons]::OK,
+        [System.Windows.Forms.MessageBoxIcon]::Warning
+    ) | Out-Null
 }
 
 Write-Host ""
