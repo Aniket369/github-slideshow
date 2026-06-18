@@ -105,7 +105,141 @@ try {
     Write-Warn "Could not read default audio device info from the registry (not available on all Windows builds)."
 }
 
-# ── 4. Camera Devices ────────────────────────────────────────
+# ── 4. System Volume & Mute Status (Speaker & Microphone) ──
+Write-Header "System Volume & Mute Status"
+
+$volumeInteropCode = @"
+using System;
+using System.Runtime.InteropServices;
+
+namespace TeamsAVVolumeCheck
+{
+    internal enum EDataFlow { eRender = 0, eCapture = 1, eAll = 2 }
+    internal enum ERole { eConsole = 0, eMultimedia = 1, eCommunications = 2 }
+
+    [ComImport, Guid("BCDE0395-E52F-467C-8E3D-C4579291692E")]
+    internal class MMDeviceEnumeratorComObject { }
+
+    [ComImport, Guid("A95664D2-9614-4F35-A746-DE8DB63617E6"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    internal interface IMMDeviceEnumerator
+    {
+        int EnumAudioEndpoints(EDataFlow dataFlow, int dwStateMask, out IntPtr ppDevices);
+        int GetDefaultAudioEndpoint(EDataFlow dataFlow, ERole role, out IMMDevice ppEndpoint);
+        int GetDevice([MarshalAs(UnmanagedType.LPWStr)] string pwstrId, out IMMDevice ppDevice);
+        int RegisterEndpointNotificationCallback(IntPtr pClient);
+        int UnregisterEndpointNotificationCallback(IntPtr pClient);
+    }
+
+    [ComImport, Guid("D666063F-1587-4E43-81F1-B948E807363F"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    internal interface IMMDevice
+    {
+        int Activate(ref Guid iid, int dwClsCtx, IntPtr pActivationParams, [MarshalAs(UnmanagedType.IUnknown)] out object ppInterface);
+        int OpenPropertyStore(int stgmAccess, out IntPtr ppProperties);
+        int GetId([MarshalAs(UnmanagedType.LPWStr)] out string ppstrId);
+        int GetState(out int pdwState);
+    }
+
+    [ComImport, Guid("5CDF2C82-841E-4546-9722-0CF74078229A"), InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
+    internal interface IAudioEndpointVolume
+    {
+        int RegisterControlChangeNotify(IntPtr pNotify);
+        int UnregisterControlChangeNotify(IntPtr pNotify);
+        int GetChannelCount(out int pnChannelCount);
+        int SetMasterVolumeLevel(float fLevelDB, ref Guid pguidEventContext);
+        int SetMasterVolumeLevelScalar(float fLevel, ref Guid pguidEventContext);
+        int GetMasterVolumeLevel(out float pfLevelDB);
+        int GetMasterVolumeLevelScalar(out float pfLevel);
+        int SetChannelVolumeLevel(int nChannel, float fLevelDB, ref Guid pguidEventContext);
+        int SetChannelVolumeLevelScalar(int nChannel, float fLevel, ref Guid pguidEventContext);
+        int GetChannelVolumeLevel(int nChannel, out float pfLevelDB);
+        int GetChannelVolumeLevelScalar(int nChannel, out float pfLevel);
+        int SetMute(bool bMute, ref Guid pguidEventContext);
+        int GetMute([MarshalAs(UnmanagedType.Bool)] out bool pbMute);
+        int GetVolumeStepInfo(out int pnStep, out int pnStepCount);
+        int VolumeStepUp(ref Guid pguidEventContext);
+        int VolumeStepDown(ref Guid pguidEventContext);
+        int QueryHardwareSupport(out int pdwHardwareSupportMask);
+        int GetVolumeRange(out float pflVolumeMindB, out float pflVolumeMaxdB, out float pflVolumeIncrementdB);
+    }
+
+    public static class AudioVolumeHelper
+    {
+        public static bool TryGetVolume(int dataFlow, out float scalarLevel, out bool isMuted)
+        {
+            scalarLevel = -1f;
+            isMuted = false;
+            try
+            {
+                var enumerator = (IMMDeviceEnumerator)(object)new MMDeviceEnumeratorComObject();
+                IMMDevice device;
+                int hr = enumerator.GetDefaultAudioEndpoint((EDataFlow)dataFlow, ERole.eConsole, out device);
+                if (hr != 0 || device == null) return false;
+
+                Guid iid = typeof(IAudioEndpointVolume).GUID;
+                object iface;
+                hr = device.Activate(ref iid, 1, IntPtr.Zero, out iface);
+                if (hr != 0 || iface == null) return false;
+
+                var epVolume = (IAudioEndpointVolume)iface;
+                epVolume.GetMasterVolumeLevelScalar(out scalarLevel);
+                epVolume.GetMute(out isMuted);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+    }
+}
+"@
+
+$volumeCheckAvailable = $false
+try {
+    Add-Type -TypeDefinition $volumeInteropCode -ErrorAction Stop
+    $volumeCheckAvailable = $true
+} catch {
+    Write-Warn "Could not load the audio volume interop helper — skipping volume/mute checks."
+}
+
+if ($volumeCheckAvailable) {
+    $spkLevel = 0.0; $spkMuted = $false
+    $micLevel = 0.0; $micMuted = $false
+    $spkOk = [TeamsAVVolumeCheck.AudioVolumeHelper]::TryGetVolume(0, [ref]$spkLevel, [ref]$spkMuted)
+    $micOk = [TeamsAVVolumeCheck.AudioVolumeHelper]::TryGetVolume(1, [ref]$micLevel, [ref]$micMuted)
+
+    if ($spkOk) {
+        $spkPct = [math]::Round($spkLevel * 100)
+        if ($spkMuted) {
+            Write-Fail "Default speaker/output is MUTED in Windows volume settings."
+            Add-Issue "Default speaker/output device is muted"
+        } elseif ($spkPct -eq 0) {
+            Write-Fail "Default speaker/output volume slider is at 0% in Windows volume settings."
+            Add-Issue "Default speaker/output volume is at 0%"
+        } else {
+            Write-OK "Default speaker/output volume: $spkPct% (not muted)"
+        }
+    } else {
+        Write-Warn "Could not read default speaker volume/mute state."
+    }
+
+    if ($micOk) {
+        $micPct = [math]::Round($micLevel * 100)
+        if ($micMuted) {
+            Write-Fail "Default microphone is MUTED in Windows sound settings."
+            Add-Issue "Default microphone is muted"
+        } elseif ($micPct -eq 0) {
+            Write-Fail "Default microphone input level is at 0% in Windows sound settings."
+            Add-Issue "Default microphone input level is at 0%"
+        } else {
+            Write-OK "Default microphone level: $micPct% (not muted)"
+        }
+    } else {
+        Write-Warn "Could not read default microphone volume/mute state."
+    }
+}
+
+# ── 5. Camera Devices ────────────────────────────────────────
 Write-Header "Camera Devices"
 
 $cameras  = @()
@@ -131,7 +265,7 @@ if ($cameras.Count -eq 0) {
     }
 }
 
-# ── 5. Windows Privacy Permissions (Camera & Microphone) ────
+# ── 6. Windows Privacy Permissions (Camera & Microphone) ────
 Write-Header "Windows Privacy Permissions (Camera & Microphone)"
 
 function Get-ConsentStatus {
@@ -176,7 +310,7 @@ foreach ($entry in $teamsAppConsentPaths) {
     }
 }
 
-# ── 6. Other Apps That May Be Holding the Camera/Microphone ─
+# ── 7. Other Apps That May Be Holding the Camera/Microphone ─
 Write-Header "Other Apps That May Be Holding the Camera/Microphone"
 
 $conflictApps = @(
